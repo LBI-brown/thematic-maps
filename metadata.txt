@@ -18,9 +18,9 @@ changelog=
 	0.1 initial version from Themeselector plugin version 3.3.5
 
 tags=layer, preset, settings, options, theme, select, layout 
-homepage=https://github.com/mach0/themeselector
-tracker=https://github.com/mach0/themeselector/issues
-repository=https://github.com/mach0/themeselector
+homepage=https://github.com/LBI-brown/thematic-maps
+tracker=https://github.com/LBI-brown/thematic-maps/issues
+repository=https://github.com/LBI-brown/thematic-maps
 icon=img/selector.png
 experimental=True
 deprecated=False
