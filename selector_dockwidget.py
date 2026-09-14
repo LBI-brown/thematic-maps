@@ -43,14 +43,7 @@ class SelectorDockWidget(QDockWidget, FORM_CLASS):
         
         # 4. Add it to an existing layout in your UI.
         # inside your selector_dockwidget_base.ui file.
-        if hasattr(self, 'coverageSelector'):
-            self.verticalLayout.addWidget(self.extentWidget)
-        else:
-            # Fallback if no specific layout name matches, creates a default layout
-            from qgis.PyQt.QtWidgets import QVBoxLayout
-            if not self.widget().layout():
-                self.widget().setLayout(QVBoxLayout())
-            self.widget().layout().addWidget(self.extentWidget)
+        self.coverageSelector.addWidget(self.extentWidget)
 
     def getAvailableThemes(self):
         """
