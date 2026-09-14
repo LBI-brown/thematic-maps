@@ -14,7 +14,7 @@
    <set>QDockWidget::AllDockWidgetFeatures</set>
   </property>
   <property name="windowTitle">
-   <string>ThemeSelector</string>
+   <string>Thematic maps</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
