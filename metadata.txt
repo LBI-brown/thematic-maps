@@ -1,5 +1,5 @@
 [general]
-name=ThematicMaps
+name=Thematic Maps
 name[de]=Themenauswahl
 qgisMinimumVersion=3.00
 qgisMaximumVersion=3.98
