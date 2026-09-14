@@ -1,8 +1,8 @@
 [general]
 name=ThematicMaps
 name[de]=Themenauswahl
-qgisMinimumVersion=1.00
-qgisMaximumVersion=1.00
+qgisMinimumVersion=3.00
+qgisMaximumVersion=3.98
 description=This plugin maintains thematic maps in a layout Atlas based on visibility themes 
 description[de]=n/a
 about=Take saved themes and apply them with a selection by dropdown.
