@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+Selector<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>SelectorDockWidgetBase</class>
  <widget class="QDockWidget" name="SelectorDockWidgetBase">
@@ -58,7 +58,7 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="4">
-     <widget class="QComboBox" name="PresetComboBox">
+     <widget class="QComboBox" name="coverageSelector">
       <property name="toolTip">
        <string>Coverage</string>
       </property>
