@@ -17,10 +17,10 @@
 
 import os
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QDockWidget
+from qgis.PyQt.QtWidgets import QDockWidget, QVBoxLayout
 from qgis.core import QgsProject
-from qgis.gui import QgsExtentWidget  # 1. Import the QGIS Extent Widget
-from qgis.utils import iface          # Import iface to access the active map canvas
+from qgis.gui import QgsExtentWidget
+from qgis.utils import iface
 
 # Load the UI file dynamically using uic
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__),
@@ -34,16 +34,20 @@ class SelectorDockWidget(QDockWidget, FORM_CLASS):
         """Constructor: Set up the UI and initialize attributes."""
         super().__init__(parent)
         self.setupUi(self)
-
-        # 2. Initialize the QgsExtentWidget
+        
+        # Initialize the QgsExtentWidget
         self.extentWidget = QgsExtentWidget(self)
         
-        # 3. Connect it to the map canvas so "Draw on Canvas" functions work
+        # Connect it to the active map canvas
         self.extentWidget.setMapCanvas(iface.mapCanvas())
         
-        # 4. Add it to an existing layout in your UI.
-        # inside your selector_dockwidget_base.ui file.
-        self.coverageSelector.addWidget(self.extentWidget)
+        # Safely add the widget to your UI layout
+        if hasattr(self, 'coverageSelector'):
+            self.coverageSelector.addWidget(self.extentWidget)
+        else:
+            if not self.widget().layout():
+                self.widget().setLayout(QVBoxLayout())
+            self.widget().layout().addWidget(self.extentWidget)
 
     def getAvailableThemes(self):
         """
@@ -55,7 +59,12 @@ class SelectorDockWidget(QDockWidget, FORM_CLASS):
         """
         return QgsProject.instance().mapThemeCollection().mapThemes()
 
-     def get_user_extent(self):
-        # 2. Extract the chosen bounding box as a QgsRectangle
-        chosen_extent = self.extent_widget.outputExtent()
-        return chosen_extent
+    def getSelectedExtent(self):
+        """
+        Retrieve the extent currently selected by the user in the UI.
+
+        Returns:
+            QgsRectangle: The selected bounding box coordinates.
+        """
+        return self.extentWidget.outputExtent()
+
