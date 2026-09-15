@@ -25,19 +25,25 @@ from qgis.PyQt.QtCore import (
     QCoreApplication,
     QFileInfo,
     Qt,
-    QSize
+    QSize,
+    QVariant
 )
 from qgis.PyQt.QtWidgets import (
     QInputDialog,
     QMessageBox
 )
 from qgis.PyQt.QtGui import QIcon
-from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap
+from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField
 
 
 # Import the code for the DockWidget
 from .selector_dockwidget import SelectorDockWidget
 
+# Define your target layer configuration
+TARGET_LAYER_ID = "coverage_id_001"
+LAYER_NAME = "COVERAGE"
+GEOMETRY_TYPE = "Polygon"  # Options: 'Point', 'LineString', 'Polygon', 'None'
+CRS = "EPSG:4326"
 
 class Selector:
     """QGIS Plugin Implementation.
@@ -94,6 +100,41 @@ class Selector:
         # Initialize widget functionality
         self.populate()
         self.connect_signals()
+
+        #find or create layer
+        self.coverage_layer()
+
+    def coverage_layer()
+
+        project = QgsProject.instance()
+        layer = project.mapLayer(TARGET_LAYER_ID)
+
+        if layer:
+            print(f"Layer found: {layer.name()} (ID: {layer.id()})")
+        else:
+            print(f"Layer with ID '{TARGET_LAYER_ID}' not found. Creating a new one...")
+            
+            # 2. Create a new memory (scratch) layer
+            # Format URI syntax: "Type?crs=EPSG:xxxx"
+            uri = f"{GEOMETRY_TYPE}?crs={CRS}"
+            layer = QgsVectorLayer(uri, LAYER_NAME, "memory")
+            
+            # 3. Set the custom layer ID
+            # Note: QGIS automatically appends a random string to custom IDs to ensure absolute uniqueness
+            layer.setId(TARGET_LAYER_ID)
+            
+            # 4. Add a new field to the layer
+            # We use dataProvider() to add fields before the layer is loaded into the project registry
+            provider = layer.dataProvider()
+            new_field = QgsField("theme", QVariant.String, len=100)
+            provider.addAttributes([new_field])
+            
+            # Update the layer layout to recognize the new field structure
+            layer.updateFields()
+            
+            # 5. Add the newly created layer to the QGIS Project
+            project.addMapLayer(layer)
+            print(f"Successfully created and added layer: {layer.name()} with ID: {layer.id()}")
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
