@@ -104,7 +104,7 @@ class Selector:
         #find or create layer
         self.coverage_layer()
 
-    def coverage_layer()
+    def coverage_layer(self):
 
         project = QgsProject.instance()
         layer = project.mapLayer(TARGET_LAYER_ID)
