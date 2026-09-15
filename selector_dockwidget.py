@@ -41,13 +41,21 @@ class SelectorDockWidget(QDockWidget, FORM_CLASS):
         # Connect it to the active map canvas
         self.extentWidget.setMapCanvas(iface.mapCanvas())
         
-        # Safely add the widget to your UI layout
-        if hasattr(self, 'coverageSelector'):
-            self.coverageSelector.addWidget(self.extentWidget)
-        else:
-            if not self.widget().layout():
-                self.widget().setLayout(QVBoxLayout())
-            self.widget().layout().addWidget(self.extentWidget)
+        # 2. Dynamically swap the placeholder widget 'coverageSelector' 
+        # with our newly created QgsExtentWidget inside the layout
+        if hasattr(self, 'coverageSelector') and self.coverageSelector.parentWidget():
+            parent_layout = self.coverageSelector.parentWidget().layout()
+            if parent_layout:
+                # Find where coverageSelector sits in the layout grid and swap it
+                index = parent_layout.indexOf(self.coverageSelector)
+                if index != -1:
+                    # Capture the grid parameters (row 1, col 0, colspan 4) automatically
+                    row, column, row_span, column_span = parent_layout.getItemPosition(index)
+                    parent_layout.removeWidget(self.coverageSelector)
+                    self.coverageSelector.deleteLater()
+                    
+                    # Insert the native QGIS Extent Widget into its place
+                    parent_layout.addWidget(self.extentWidget, row, column, row_span, column_span)
 
     def getAvailableThemes(self):
         """
