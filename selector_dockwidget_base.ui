@@ -57,8 +57,8 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="4" name="coverageSelector">
-     <widget name="coverageSelector">
+    <item row="1" column="0" colspan="4">
+     <widget class="QComboBox" name="coverageSelector">
       <property name="toolTip">
        <string>Coverage</string>
       </property>
