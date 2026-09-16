@@ -177,6 +177,7 @@ class Selector:
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
         self.dockwidget.pushButton_duplicate.clicked.connect(self.duplicate_maptheme)
+        self.dockwidget.coverageSelector.clicked.connect(self.update_coverage_layer)
 
         # Set button icons
         self.dockwidget.pushButton_up.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowLeft.svg'))
