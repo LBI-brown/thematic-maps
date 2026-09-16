@@ -148,21 +148,11 @@ class Selector:
     def update_coverage_layer_extents(self, extentsRectangle):
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
-        
-        print(f"Successfully updated layer theme extents")
-
-        # 2. Open an edit session to modify the features
-        with edit(layer):
-            for feature in layer.getFeatures():
-                # Get the bounding box/extent of the current feature geometry
-                feature_extent = feature.geometry().boundingBox()
-                
-                # Convert that extent bounding box into a Polygon geometry
-                rectangle_geometry = QgsGeometry.fromRect(extentsRectangle)
-                
-                # Update the feature's geometry with the new rectangle
-                layer.changeGeometry(feature.id(), rectangle_geometry)
-
+        geom=QgsGeometry.fromRect(extentsRectangle)
+        layer.startEditing() 
+        for feature in layer.getFeatures():
+            feature.setGeometry(geom)
+        layer.commitChanges()
         print("Successfully converted all layer features to their individual extent rectangles!")
         
     def unload(self):
