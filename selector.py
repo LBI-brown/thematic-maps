@@ -33,7 +33,7 @@ from qgis.PyQt.QtWidgets import (
     QMessageBox
 )
 from qgis.PyQt.QtGui import QIcon
-from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField
+from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField, QgsGeometry
 
 
 # Import the code for the DockWidget
@@ -145,11 +145,25 @@ class Selector:
         
         print(f"Successfully updated layer theme names")
 
-    def update_coverage_layer_extents(self):
+    def update_coverage_layer_extents(self, extentsRectangle):
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
         
         print(f"Successfully updated layer theme extents")
+
+        # 2. Open an edit session to modify the features
+        with edit(layer):
+            for feature in layer.getFeatures():
+                # Get the bounding box/extent of the current feature geometry
+                feature_extent = feature.geometry().boundingBox()
+                
+                # Convert that extent bounding box into a Polygon geometry
+                rectangle_geometry = QgsGeometry.fromRect(extentsRectangle)
+                
+                # Update the feature's geometry with the new rectangle
+                layer.changeGeometry(feature.id(), rectangle_geometry)
+
+        print("Successfully converted all layer features to their individual extent rectangles!")
         
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
