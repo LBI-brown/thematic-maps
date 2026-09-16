@@ -136,7 +136,7 @@ class Selector:
             project.addMapLayer(layer)
             print(f"Successfully created and added layer: {layer.name()} with ID: {layer.id()}")
 
-            return layer
+        return layer
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
