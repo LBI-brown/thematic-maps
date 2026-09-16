@@ -149,13 +149,21 @@ class Selector:
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
         geom=QgsGeometry.fromRect(extentsRectangle)
-        layer.startEditing() 
+        geometry_map = {}
+
+        # Loop through all features to build the map
         for feature in layer.getFeatures():
-            feature.changeGeometry(geom)
-            theme_field_value = feature[LAYER_THEME_FIELD_NAME]
-            print(f"{theme_field_value} has geometry")
-        layer.commitChanges()
-        print("Successfully converted all layer features to their individual extent rectangles!")
+            current_geom = feature.geometry()
+            
+            # Add the pair to our dictionary { feature_id: new_geometry }
+            geometry_map[feature.id()] = geom
+        
+        # Send the bulk dictionary to the data provider in one action
+        layer.dataProvider().changeGeometryValues(geometry_map)
+        
+        # Force QGIS to redraw the screen to show changes
+        layer.triggerRepaint()
+        print(f"Directly updated {len(geometry_map)} features in the data source.")
         
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
