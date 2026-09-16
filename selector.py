@@ -344,6 +344,7 @@ class Selector:
         self.dockwidget.pushButton_add.setEnabled(False)
         self.dockwidget.pushButton_rename.setEnabled(False)
         self.dockwidget.pushButton_duplicate.setEnabled(False)
+        self.dockwidget.coverageSelector.setEnabled(False)
 
     def enable_buttons(self):
         """Enable theme buttons."""
@@ -352,3 +353,4 @@ class Selector:
         self.dockwidget.pushButton_add.setEnabled(True)
         self.dockwidget.pushButton_rename.setEnabled(True)
         self.dockwidget.pushButton_duplicate.setEnabled(True)
+        self.dockwidget.coverageSelector.setEnabled(True)
