@@ -141,7 +141,7 @@ class Selector:
 
     def update_coverage_layer(self):
         #create or get coverage layer
-        layer=coverage_layer()
+        layer=self.coverage_layer()
         
         print(f"Successfully updated layer")
         
