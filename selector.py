@@ -138,6 +138,10 @@ class Selector:
 
         return layer
 
+    def update_coverage_layer(self):
+        
+        print(f"Successfully updated layer")
+        
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         self.iface.removeToolBarIcon(self.action)
@@ -166,9 +170,6 @@ class Selector:
         self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
-        #QgsProject.instance().mapThemeCollection().mapThemeChanged.connect(self.populate)
-        #QgsProject.instance().mapThemeCollection().mapThemesChanged.connect(self.populate)
-        #QgsProject.instance().mapThemesCollection().mapThemesChanged.connect(self.populate)
 
         self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
         self.dockwidget.pushButton_replace.clicked.connect(self.replace_maptheme)
@@ -193,13 +194,14 @@ class Selector:
         self.disable_buttons()
 
     def populate(self):
-        """Populate combobox with available themes."""
+        """Populate combobox with available themes and update changes to coverage layer"""
         self.clear()
         themes = self.dockwidget.getAvailableThemes()
 
         for setting in themes:
             self.dockwidget.PresetComboBox.addItem(setting)
-
+        
+        self.update_coverage_layer()
         self.set_combo_theme()
         self.enable_buttons()
 
