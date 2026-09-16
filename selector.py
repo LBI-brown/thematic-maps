@@ -44,6 +44,7 @@ TARGET_LAYER_ID = "coverage_id_001"
 LAYER_NAME = "COVERAGE"
 GEOMETRY_TYPE = "Polygon"  # Options: 'Point', 'LineString', 'Polygon', 'None'
 CRS = "EPSG:4326"
+LAYER_THEME_FIELD_NAME = "theme_name"
 
 class Selector:
     """QGIS Plugin Implementation.
@@ -126,7 +127,7 @@ class Selector:
             # 4. Add a new field to the layer
             # We use dataProvider() to add fields before the layer is loaded into the project registry
             provider = layer.dataProvider()
-            new_field = QgsField("theme", QVariant.String, len=100)
+            new_field = QgsField(LAYER_THEME_FIELD_NAME, QVariant.String, len=100)
             provider.addAttributes([new_field])
             
             # Update the layer layout to recognize the new field structure
