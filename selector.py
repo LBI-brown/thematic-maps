@@ -152,6 +152,8 @@ class Selector:
         layer.startEditing() 
         for feature in layer.getFeatures():
             feature.setGeometry(geom)
+            theme_field_value = feature[LAYER_THEME_FIELD_NAME]
+            print(f"{theme_field_value} has geometry")
         layer.commitChanges()
         print("Successfully converted all layer features to their individual extent rectangles!")
         
