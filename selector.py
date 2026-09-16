@@ -143,7 +143,13 @@ class Selector:
         #create or get coverage layer
         layer=self.coverage_layer()
         
-        print(f"Successfully updated layer")
+        print(f"Successfully updated layer theme names")
+
+    def update_coverage_layer_extents(self):
+        #set geometries of all feature polygons to extents from extentsWidget
+        layer=self.coverage_layer()
+        
+        print(f"Successfully updated layer theme extents")
         
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -180,7 +186,7 @@ class Selector:
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
         self.dockwidget.pushButton_duplicate.clicked.connect(self.duplicate_maptheme)
-        self.dockwidget.coverageSelector.extentChanged.connect(self.update_coverage_layer)
+        self.dockwidget.coverageSelector.extentChanged.connect(self.update_coverage_layer_extents)
 
         # Set button icons
         self.dockwidget.pushButton_up.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowLeft.svg'))
