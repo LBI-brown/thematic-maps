@@ -25,19 +25,26 @@ from qgis.PyQt.QtCore import (
     QCoreApplication,
     QFileInfo,
     Qt,
-    QSize
+    QSize,
+    QVariant
 )
 from qgis.PyQt.QtWidgets import (
     QInputDialog,
     QMessageBox
 )
-from qgis.PyQt.QtGui import QIcon
-from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap
+from qgis.PyQt.QtGui import QIcon, QColor
+from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField, QgsGeometry, QgsFeature
 
 
 # Import the code for the DockWidget
 from .selector_dockwidget import SelectorDockWidget
 
+# Define your target layer configuration
+TARGET_LAYER_ID = "coverage_id_001"
+LAYER_NAME = "COVERAGE"
+GEOMETRY_TYPE = "Polygon"  # Options: 'Point', 'LineString', 'Polygon', 'None'
+CRS = "EPSG:4326"
+LAYER_THEME_FIELD_NAME = "theme_name"
 
 class Selector:
     """QGIS Plugin Implementation.
@@ -95,6 +102,107 @@ class Selector:
         self.populate()
         self.connect_signals()
 
+        #find or create layer
+        self.coverage_layer()
+
+    def coverage_layer(self):
+
+        project = QgsProject.instance()
+        layer = project.mapLayer(TARGET_LAYER_ID)
+
+        if layer:
+            print(f"Layer found: {layer.name()} (ID: {layer.id()})")
+        else:
+            print(f"Layer with ID '{TARGET_LAYER_ID}' not found. Creating a new one...")
+            
+            # 2. Create a new memory (scratch) layer
+            # Format URI syntax: "Type?crs=EPSG:xxxx"
+            # uri = f"{GEOMETRY_TYPE}?crs={CRS}" DEPRECATED
+            layer = QgsVectorLayer(GEOMETRY_TYPE, LAYER_NAME, "memory")
+            layer.setCrs(project.crs())
+            
+            # 3. Set the custom layer ID
+            # Note: QGIS automatically appends a random string to custom IDs to ensure absolute uniqueness
+            layer.setId(TARGET_LAYER_ID)
+            
+            # 4. Add a new field to the layer
+            # We use dataProvider() to add fields before the layer is loaded into the project registry
+            provider = layer.dataProvider()
+            new_field = QgsField(LAYER_THEME_FIELD_NAME, QVariant.String, len=100)
+            provider.addAttributes([new_field])
+            
+            # Update the layer layout to recognize the new field structure
+            layer.updateFields()
+
+            # 2. Access the layer's renderer and default symbol
+            renderer = layer.renderer()
+            symbol = renderer.symbol()
+            symbol_layer = symbol.symbolLayer(0)  # Gets the primary QgsSimpleFillSymbolLayer
+            
+            # 3. Modify the symbol properties
+            # Set the stroke (line) color to solid red
+            symbol_layer.setStrokeColor(QColor("red"))
+            
+            # Set the fill color to transparent (Alpha channel = 0)
+            symbol_layer.setFillColor(QColor(0, 0, 0, 0))
+            
+            # Make the stroke line thicker (e.g., 0.6 mm) for better visibility
+            symbol_layer.setStrokeWidth(0.6)
+            
+            # 5. Add the newly created layer to the QGIS Project
+            project.addMapLayer(layer)
+            layer.triggerRepaint()
+            print(f"Successfully created and added layer: {layer.name()} with ID: {layer.id()}")
+
+        return layer
+
+    def update_coverage_layer(self,themes):
+        #create or get coverage layer
+        layer=self.coverage_layer()
+        #remove all features in layer
+        
+        # Start editing session
+        layer.startEditing()
+    
+        # Loop and delete each feature using its ID
+        for feature in layer.getFeatures():
+            layer.deleteFeature(feature.id())
+        #iterate through themes adding features
+        new_features = []
+        field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
+        for i, value in enumerate(themes):
+            # Initialize a clean feature
+            fet = QgsFeature(layer.fields())
+            fet.setAttribute(field_index, value)
+            new_features.append(fet)
+        layer.addFeatures(new_features)    
+        # 3. Save changes
+        layer.commitChanges()
+        extentsRectangle = self.dockwidget.coverageSelector.outputExtent()  
+        self.update_coverage_layer_extents(extentsRectangle)
+        print(f"Successfully updated layer theme names")
+
+    def update_coverage_layer_extents(self, extentsRectangle):
+        
+        #set geometries of all feature polygons to extents from extentsWidget
+        layer=self.coverage_layer()
+        geom=QgsGeometry.fromRect(extentsRectangle)
+        geometry_map = {}
+
+        # Loop through all features to build the map
+        for feature in layer.getFeatures():
+            current_geom = feature.geometry()
+            
+            # Add the pair to our dictionary { feature_id: new_geometry }
+            geometry_map[feature.id()] = geom
+        
+        # Send the bulk dictionary to the data provider in one action
+        layer.dataProvider().changeGeometryValues(geometry_map)
+        
+        # Force QGIS to redraw the screen to show changes
+        layer.triggerRepaint()
+        print(f"Directly updated {len(geometry_map)} features in the data source.")
+        
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         self.iface.removeToolBarIcon(self.action)
@@ -123,9 +231,6 @@ class Selector:
         self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
-        #QgsProject.instance().mapThemeCollection().mapThemeChanged.connect(self.populate)
-        #QgsProject.instance().mapThemeCollection().mapThemesChanged.connect(self.populate)
-        #QgsProject.instance().mapThemesCollection().mapThemesChanged.connect(self.populate)
 
         self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
         self.dockwidget.pushButton_replace.clicked.connect(self.replace_maptheme)
@@ -133,6 +238,7 @@ class Selector:
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
         self.dockwidget.pushButton_duplicate.clicked.connect(self.duplicate_maptheme)
+        self.dockwidget.coverageSelector.extentChanged.connect(self.update_coverage_layer_extents)
 
         # Set button icons
         self.dockwidget.pushButton_up.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowLeft.svg'))
@@ -150,13 +256,14 @@ class Selector:
         self.disable_buttons()
 
     def populate(self):
-        """Populate combobox with available themes."""
+        """Populate combobox with available themes and update changes to coverage layer"""
         self.clear()
         themes = self.dockwidget.getAvailableThemes()
 
         for setting in themes:
             self.dockwidget.PresetComboBox.addItem(setting)
-
+        
+        self.update_coverage_layer(themes)
         self.set_combo_theme()
         self.enable_buttons()
 
@@ -297,6 +404,7 @@ class Selector:
         self.dockwidget.pushButton_add.setEnabled(False)
         self.dockwidget.pushButton_rename.setEnabled(False)
         self.dockwidget.pushButton_duplicate.setEnabled(False)
+        self.dockwidget.coverageSelector.setEnabled(False)
 
     def enable_buttons(self):
         """Enable theme buttons."""
@@ -305,3 +413,4 @@ class Selector:
         self.dockwidget.pushButton_add.setEnabled(True)
         self.dockwidget.pushButton_rename.setEnabled(True)
         self.dockwidget.pushButton_duplicate.setEnabled(True)
+        self.dockwidget.coverageSelector.setEnabled(True)
