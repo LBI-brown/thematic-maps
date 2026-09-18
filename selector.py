@@ -108,7 +108,7 @@ class Selector:
                 geom = first_feature.geometry()
     
                 if geom and not geom.isEmpty():
-                    self.dockwidget.coverageSelector.setExtent(geom.boundingBox())
+                    self.dockwidget.coverageSelector.setCurrentExtent(geom.boundingBox())
                     print("Successfully retrieved extent from coverage layer")
                 else:
                     print("The first feature in coverage layer does not have a valid geometry.")
