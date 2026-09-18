@@ -117,8 +117,9 @@ class Selector:
             
             # 2. Create a new memory (scratch) layer
             # Format URI syntax: "Type?crs=EPSG:xxxx"
-            uri = f"{GEOMETRY_TYPE}?crs={CRS}"
-            layer = QgsVectorLayer(uri, LAYER_NAME, "memory")
+            # uri = f"{GEOMETRY_TYPE}?crs={CRS}" DEPRECATED
+            layer = QgsVectorLayer(GEOMETRY_TYPE, LAYER_NAME, "memory")
+            layer.setCrs(project.crs())
             
             # 3. Set the custom layer ID
             # Note: QGIS automatically appends a random string to custom IDs to ensure absolute uniqueness
