@@ -151,6 +151,8 @@ class Selector:
             
             # 5. Add the newly created layer to the QGIS Project
             project.addMapLayer(layer)
+            layer_node = project.layerTreeRoot().findLayer(layer.id())
+            layer_node.setItemVisibilityChecked(True)
             layer.triggerRepaint()
             print(f"Successfully created and added layer: {layer.name()} with ID: {layer.id()}")
 
