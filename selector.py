@@ -98,6 +98,25 @@ class Selector:
         # Add the toolbar icon to the QGIS toolbar
         self.iface.addToolBarIcon(self.action)
 
+        #populate extent parameter if coverage layer
+        project = QgsProject.instance()
+        layer = project.mapLayer(TARGET_LAYER_ID)
+        if layer:
+            try:
+                first_feature = next(layer.getFeatures())
+                # 3. Extract its geometry object
+                geom = first_feature.geometry()
+    
+            if geom and not geom.isEmpty():
+                self.dockwidget.coverageSelector.setExtents(geom.boundingBox())
+                print("Successfully retrieved extent from coverage layer")
+            else:
+                print("The first feature in coverage layer does not have a valid geometry.")
+        
+            except StopIteration:
+                print("The coverage layer contains no features.")
+        else:
+            print ("No coverage layer found")
         # Initialize widget functionality
         self.populate()
         self.connect_signals()
