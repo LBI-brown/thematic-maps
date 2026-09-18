@@ -137,16 +137,17 @@ class Selector:
             # 2. Access the layer's renderer and default symbol
             renderer = layer.renderer()
             symbol = renderer.symbol()
+            symbol_layer = symbol.symbolLayer(0)  # Gets the primary QgsSimpleFillSymbolLayer
             
             # 3. Modify the symbol properties
             # Set the stroke (line) color to solid red
-            symbol.setStrokeColor(QColor("red"))
+            symbol_layer.setStrokeColor(QColor("red"))
             
             # Set the fill color to transparent (Alpha channel = 0)
-            symbol.setFillColor(QColor(0, 0, 0, 0))
+            symbol_layer.setFillColor(QColor(0, 0, 0, 0))
             
             # Make the stroke line thicker (e.g., 0.6 mm) for better visibility
-            symbol.setStrokeWidth(0.6)
+            symbol_layer.setStrokeWidth(0.6)
             
             # 5. Add the newly created layer to the QGIS Project
             project.addMapLayer(layer)
