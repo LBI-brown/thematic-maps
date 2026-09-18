@@ -156,13 +156,36 @@ class Selector:
 
         return layer
 
-    def update_coverage_layer(self):
+    def update_coverage_layer(self,themes):
         #create or get coverage layer
         layer=self.coverage_layer()
+        #remove all features in layer
         
+        # Start editing session
+        layer.startEditing()
+    
+        # Loop and delete each feature using its ID
+        for feature in layer.getFeatures():
+            layer.deleteFeature(feature.id())
+        #iterate through themes adding features
+        new_features = []
+        field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
+        for i, value in enumerate(themes):
+            # Initialize a clean feature
+            fet = QgsFeature(layer.fields())
+            fet.setAttribute(field_index, value)
+            new_features.append(fet)
+        layer.addFeatures(new_features)    
+        # 3. Save changes
+        layer.commitChanges()
+          
+        update_coverage_layer_extents()
         print(f"Successfully updated layer theme names")
 
     def update_coverage_layer_extents(self, extentsRectangle):
+        #if function called by update-coverage-layer ie not passing extent change rectangle
+        if not extentsRectangle:
+            extentsRectangle = self.dockwidget.coverageSelector.outputExtent()
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
         geom=QgsGeometry.fromRect(extentsRectangle)
@@ -242,7 +265,7 @@ class Selector:
         for setting in themes:
             self.dockwidget.PresetComboBox.addItem(setting)
         
-        self.update_coverage_layer()
+        self.update_coverage_layer(themes)
         self.set_combo_theme()
         self.enable_buttons()
 
