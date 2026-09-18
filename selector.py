@@ -32,7 +32,7 @@ from qgis.PyQt.QtWidgets import (
     QInputDialog,
     QMessageBox
 )
-from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField, QgsGeometry
 
 
@@ -133,9 +133,24 @@ class Selector:
             
             # Update the layer layout to recognize the new field structure
             layer.updateFields()
+
+            # 2. Access the layer's renderer and default symbol
+            renderer = layer.renderer()
+            symbol = renderer.symbol()
+            
+            # 3. Modify the symbol properties
+            # Set the stroke (line) color to solid red
+            symbol.setStrokeColor(QColor("red"))
+            
+            # Set the fill color to transparent (Alpha channel = 0)
+            symbol.setFillColor(QColor(0, 0, 0, 0))
+            
+            # Make the stroke line thicker (e.g., 0.6 mm) for better visibility
+            symbol.setStrokeWidth(0.6)
             
             # 5. Add the newly created layer to the QGIS Project
             project.addMapLayer(layer)
+            layer.triggerRepaint()
             print(f"Successfully created and added layer: {layer.name()} with ID: {layer.id()}")
 
         return layer
