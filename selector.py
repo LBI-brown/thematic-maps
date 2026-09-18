@@ -179,7 +179,7 @@ class Selector:
         # 3. Save changes
         layer.commitChanges()
           
-        update_coverage_layer_extents()
+        self.update_coverage_layer_extents()
         print(f"Successfully updated layer theme names")
 
     def update_coverage_layer_extents(self, extentsRectangle):
