@@ -178,14 +178,12 @@ class Selector:
         layer.addFeatures(new_features)    
         # 3. Save changes
         layer.commitChanges()
-          
-        self.update_coverage_layer_extents()
+        extentsRectangle = self.dockwidget.coverageSelector.outputExtent()  
+        self.update_coverage_layer_extents(extentsRectangle)
         print(f"Successfully updated layer theme names")
 
     def update_coverage_layer_extents(self, extentsRectangle):
-        #if function called by update-coverage-layer ie not passing extent change rectangle
-        if not extentsRectangle:
-            extentsRectangle = self.dockwidget.coverageSelector.outputExtent()
+        
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
         geom=QgsGeometry.fromRect(extentsRectangle)
