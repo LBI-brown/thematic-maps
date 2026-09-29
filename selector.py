@@ -330,6 +330,13 @@ class Selector:
         model = iface.layerTreeView().layerTreeModel()
         QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
 
+    def apply_selected_bookmark(self):
+        """Apply the selected theme based on the current combobox selection."""
+        theme_name = self.dockwidget.PresetComboBox.currentText()
+        root = QgsProject.instance().layerTreeRoot()
+        model = iface.layerTreeView().layerTreeModel()
+        QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
+    
     def set_combo_text(self, name):
         """Set combobox to the newly created theme."""
         index = self.dockwidget.PresetComboBox.findText(name, Qt.MatchFixedString)
