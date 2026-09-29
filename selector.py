@@ -254,6 +254,7 @@ class Selector:
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
 
         self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
+        self.dockwidget.BookmarkComboBox.currentIndexChanged.connect(self.apply_selected_bookmark)
         self.dockwidget.pushButton_replace.clicked.connect(self.replace_maptheme)
         self.dockwidget.pushButton_add.clicked.connect(self.add_maptheme)
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
@@ -274,15 +275,21 @@ class Selector:
     def clear(self):
         """Clear combobox and disable buttons."""
         self.dockwidget.PresetComboBox.clear()
+        self.dockwidget.BookmarkComboBox.clear()
         self.disable_buttons()
 
     def populate(self):
-        """Populate combobox with available themes and update changes to coverage layer"""
+        """Populate comboboxes with available themes and associated bookmarks and update changes to coverage layer"""
         self.clear()
         themes = self.dockwidget.getAvailableThemes()
+        bookmarks = self.dockwidget.getAvailableBookmarks()
 
         for setting in themes:
             self.dockwidget.PresetComboBox.addItem(setting)
+
+        for bmk in bookmarks:
+            
+            self.dockwidget.BookmarkComboBox.addItem(f"Name: {bmk.name()} | Group: {bmk.group()}" )
         
         self.update_coverage_layer(themes)
         self.set_combo_theme()
