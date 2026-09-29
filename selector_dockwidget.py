@@ -56,7 +56,7 @@ class SelectorDockWidget(QDockWidget, FORM_CLASS):
         """
         return self.extentWidget.outputExtent()
 
-     def getAvailableBookmarks(self):
+    def getAvailableBookmarks(self):
         """
         Retrieve and return the available bookmarks from the current 
         QGIS project.
