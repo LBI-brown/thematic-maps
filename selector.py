@@ -289,7 +289,7 @@ class Selector:
 
         for bmk in bookmarks:
             
-            self.dockwidget.BookmarkComboBox.addItem(f"Name: {bmk.name()} | Group: {bmk.group()}" )
+            self.dockwidget.BookmarkComboBox.addItem(f"Extent: {bmk.name()} | Group: {bmk.group()}" )
         
         self.update_coverage_layer(themes)
         self.set_combo_theme()
