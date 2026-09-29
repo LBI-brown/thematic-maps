@@ -288,7 +288,7 @@ class Selector:
             self.dockwidget.PresetComboBox.addItem(setting)
 
         for bmk in bookmarks:
-            
+            print (f"Bookmark: {bmk.name()}")
             self.dockwidget.BookmarkComboBox.addItem(f"Extent: {bmk.name()} | Group: {bmk.group()}" )
         
         self.update_coverage_layer(themes)
