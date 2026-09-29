@@ -60,9 +60,11 @@ class SelectorDockWidget(QDockWidget, FORM_CLASS):
         """
         Retrieve and return the available bookmarks from the current 
         QGIS project.
-
+        
         Returns:
             list: A list of available bookmarks.
         """
-        return QgsProject.instance().bookmarkManager()
+        manager = QgsProject.instance().bookmarkManager()   
+        bookmarks = manager.bookmarks()
+        return bookmarks
 
