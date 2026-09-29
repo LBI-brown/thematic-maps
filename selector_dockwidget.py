@@ -18,7 +18,7 @@
 import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDockWidget, QVBoxLayout
-from qgis.core import QgsProject
+from qgis.core import QgsProject, QgsBookmark
 from qgis.gui import QgsExtentWidget
 from qgis.utils import iface
 
@@ -55,4 +55,14 @@ class SelectorDockWidget(QDockWidget, FORM_CLASS):
             QgsRectangle: The selected bounding box coordinates.
         """
         return self.extentWidget.outputExtent()
+
+     def getAvailableBookmarks(self):
+        """
+        Retrieve and return the available bookmarks from the current 
+        QGIS project.
+
+        Returns:
+            list: A list of available bookmarks.
+        """
+        return QgsProject.instance().bookmarkManager()
 
