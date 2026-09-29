@@ -16,6 +16,7 @@ email=Nicholas.brown@islington.gov.uk
 ; optional metadata entries
 changelog=
 	0.1 initial version from Themeselector plugin version 3.3.5
+	1.0 functional version with coverage layer features created and maintained from themes
 
 tags=layer, preset, settings, options, theme, select, layout 
 homepage=https://github.com/LBI-brown/thematic-maps
