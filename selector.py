@@ -184,10 +184,7 @@ class Selector:
         #create or get coverage layer
         layer=self.coverage_layer()
         #remove all features in layer
-        
-        # Start editing session
-        layer.startEditing()
-    
+        layer.startEditing()    
         # Loop and delete each feature using its ID
         for feature in layer.getFeatures():
             layer.deleteFeature(feature.id())
