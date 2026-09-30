@@ -19,7 +19,6 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDockWidget, QVBoxLayout
 from qgis.core import QgsProject, QgsBookmark
-from qgis.gui import QgsExtentWidget
 from qgis.utils import iface
 
 # Load the UI file dynamically using uic
@@ -47,14 +46,6 @@ class SelectorDockWidget(QDockWidget, FORM_CLASS):
         """
         return QgsProject.instance().mapThemeCollection().mapThemes()
 
-    def getSelectedExtent(self):
-        """
-        Retrieve the extent currently selected by the user in the UI.
-
-        Returns:
-            QgsRectangle: The selected bounding box coordinates.
-        """
-        return self.extentWidget.outputExtent()
 
     def getAvailableBookmarks(self):
         """
