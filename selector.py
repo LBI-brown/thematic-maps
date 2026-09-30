@@ -246,16 +246,29 @@ class Selector:
         self.enable_buttons()
 
     def set_combo_theme(self):
-        """Set combo box to the current theme."""
+        """Set combo box to the current theme and bookmark."""
         theme = self.get_current_theme()
+        bookmark_for_theme = bookmark_lookup(theme)
         if theme is not None:
-            index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
-            self.dockwidget.PresetComboBox.setCurrentIndex(index)
-            self.dockwidget.BookmarkComboBox.setCurrentText("hello")
+            theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
+            self.dockwidget.PresetComboBox.setCurrentIndex(theme_index)
+        if bookmark_for_theme is not None:
+            bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
+            self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
 
     def get_current_theme(self):
         """Retrieve the currently selected theme by name."""
         return self.dockwidget.PresetComboBox.currentText()
+
+    def bookmark_lookup(self,theme):
+        layer=self.coverage_layer()
+        lookup_field = LAYER_THEME_FIELD_NAME
+        target_field = LAYER_BOOKMARK_FIELD_NAME
+
+        # Create an in-memory key-value dictionary {lookup_value: target_value}
+        # This loops through the features once and indexes them
+        bookmark_lookup = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
+        return bookmark_lookup.get(theme, "Bookmark Not Found")
 
     #def theme_up(self):
         """Move to the previous theme based on the index in the combobox."""
