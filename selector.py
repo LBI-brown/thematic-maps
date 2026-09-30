@@ -201,13 +201,10 @@ class Selector:
             print(f"Found geometry for '{bookmark}':", geom)
         else:
             print(f"No bookmark found named '{bookmark}'")
-
-        # Create a feature request with a filter expression
-        # Note the combination of single and double quotes for the expression
-        request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
+        
         #reproject bookmark geometry if different crs to coverge layer
         # Retrieve the referenced rectangle extent
-        referenced_extent = bookmark.extent()
+        referenced_extent = bookmark_match.extent()
         #Extract the CRS object from the referenced extent
         bookmark_crs = referenced_extent.crs()
         layer_crs = layer.crs()
@@ -217,6 +214,9 @@ class Selector:
             print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
         else:
             print(f"matching bookmark and coverage layer crs")
+
+        # Create a feature request with a filter expression
+        request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
         # Use an iterator to grab the first match
         features = layer.getFeatures(request)
         try:
@@ -236,7 +236,7 @@ class Selector:
             print(f"Feature {first_match.id()} updated successfully.")
             layer.commitChanges()
         
-        except StopIteration:
+        except:
             print("No matching feature was found.")
         
         # Force QGIS to redraw the screen to show changes
