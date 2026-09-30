@@ -205,6 +205,13 @@ class Selector:
         # Create a feature request with a filter expression
         # Note the combination of single and double quotes for the expression
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
+        #reproject bookmark geometry if different crs to coverge layer
+        bookmark_crs = raw_extent.crs()
+        layer_crs = layer.crs()
+        if bookmark_crs != layer_crs:
+            transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
+            geom.transform(transform)
+            print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
 
         # Use an iterator to grab the first match
         features = layer.getFeatures(request)
@@ -217,13 +224,13 @@ class Selector:
             print(f"Field index: {field_idx}")
             if field_idx == -1:
                 print(f"Error: Field '{LAYER_BOOKMARK_FIELD_NAME}' does not exist.")
-            else:
-                layer.startEditing()
-                # Apply the value change directly to the data provider
-                layer.changeAttributeValue(first_match.id(), field_idx, bookmark.name())
-                layer.changeGeometry(first_match.id(),geom)
-                print(f"Feature {first_match.id()} updated successfully.")
-                layer.commitChanges()
+           
+            layer.startEditing()
+            # Apply the value change directly to the data provider
+            layer.changeAttributeValue(first_match.id(), field_idx, bookmark.name())
+            layer.changeGeometry(first_match.id(),geom)
+            print(f"Feature {first_match.id()} updated successfully.")
+            layer.commitChanges()
         
         except StopIteration:
             print("No matching feature was found.")
