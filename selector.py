@@ -97,28 +97,6 @@ class Selector:
 
         # Add the toolbar icon to the QGIS toolbar
         self.iface.addToolBarIcon(self.action)
-
-        #populate extent parameter if coverage layer
-        project = QgsProject.instance()
-        layer = project.mapLayer(TARGET_LAYER_ID)
-        if layer:
-            try:
-                first_feature = next(layer.getFeatures())
-                # 3. Extract its geometry object
-                geom = first_feature.geometry()
-    
-                if geom and not geom.isEmpty():
-                    extent_widget = self.dockwidget.coverageSelector
-                    extent_widget.setOutputCrs(project.crs())
-                    extent_widget.setCurrentExtent(geom.boundingBox(),project.crs())
-                    print("Successfully retrieved extent from coverage layer")
-                else:
-                    print("The first feature in coverage layer does not have a valid geometry.")
-        
-            except StopIteration:
-                print("The coverage layer contains no features.")
-        else:
-            print ("No coverage layer found")
             
         # Initialize widget functionality
         self.populate()
@@ -133,9 +111,9 @@ class Selector:
         layer = project.mapLayer(TARGET_LAYER_ID)
 
         if layer:
-            print(f"Layer found: {layer.name()} (ID: {layer.id()})")
+            print(f"Coverage Layer found: {layer.name()} (ID: {layer.id()})")
         else:
-            print(f"Layer with ID '{TARGET_LAYER_ID}' not found. Creating a new one...")
+            print(f"Coverage Layer with ID '{TARGET_LAYER_ID}' not found. Creating a new one...")
             
             # 2. Create a new memory (scratch) layer
             # Format URI syntax: "Type?crs=EPSG:xxxx"
@@ -185,44 +163,14 @@ class Selector:
         layer=self.coverage_layer()
         #remove all features in layer
         layer.startEditing()    
-        # Loop and delete each feature using its ID
-        for feature in layer.getFeatures():
-            layer.deleteFeature(feature.id())
-        #iterate through themes adding features
-        new_features = []
-        field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
-        for i, value in enumerate(themes):
-            # Initialize a clean feature
-            fet = QgsFeature(layer.fields())
-            fet.setAttribute(field_index, value)
-            new_features.append(fet)
-        layer.addFeatures(new_features)    
-        # 3. Save changes
+        
         layer.commitChanges()
-        extentsRectangle = self.dockwidget.coverageSelector.outputExtent()  
-        self.update_coverage_layer_extents(extentsRectangle)
+        
         print(f"Successfully updated layer theme names")
 
-    def update_coverage_layer_extents(self, extentsRectangle):
-        
-        #set geometries of all feature polygons to extents from extentsWidget
-        layer=self.coverage_layer()
-        geom=QgsGeometry.fromRect(extentsRectangle)
-        geometry_map = {}
-
-        # Loop through all features to build the map
-        for feature in layer.getFeatures():
-            current_geom = feature.geometry()
-            
-            # Add the pair to our dictionary { feature_id: new_geometry }
-            geometry_map[feature.id()] = geom
-        
-        # Send the bulk dictionary to the data provider in one action
-        layer.dataProvider().changeGeometryValues(geometry_map)
-        
-        # Force QGIS to redraw the screen to show changes
-        layer.triggerRepaint()
-        print(f"Directly updated {len(geometry_map)} features in the data source.")
+    def update_coverage_layer_extents(self):
+                
+        print("update_coverage_layer_extents called")
         
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -260,7 +208,7 @@ class Selector:
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
         self.dockwidget.pushButton_duplicate.clicked.connect(self.duplicate_maptheme)
-        self.dockwidget.coverageSelector.extentChanged.connect(self.update_coverage_layer_extents)
+        
 
         # Set button icons
         self.dockwidget.pushButton_up.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowLeft.svg'))
@@ -439,8 +387,7 @@ class Selector:
         self.dockwidget.pushButton_add.setEnabled(False)
         self.dockwidget.pushButton_rename.setEnabled(False)
         self.dockwidget.pushButton_duplicate.setEnabled(False)
-        self.dockwidget.coverageSelector.setEnabled(False)
-
+       
     def enable_buttons(self):
         """Enable theme buttons."""
         self.dockwidget.pushButton_remove.setEnabled(True)
@@ -448,4 +395,4 @@ class Selector:
         self.dockwidget.pushButton_add.setEnabled(True)
         self.dockwidget.pushButton_rename.setEnabled(True)
         self.dockwidget.pushButton_duplicate.setEnabled(True)
-        self.dockwidget.coverageSelector.setEnabled(True)
+        
