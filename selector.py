@@ -91,21 +91,15 @@ class Selector:
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
         self.dockwidget.show()
 
-        # Set up the icon for the toolbar
-        #icon_path = QFileInfo(__file__).absolutePath() + '/img/selector.svg'
-        #self.action.setIcon(QIcon(icon_path))
-        #self.action.setText(self.tr('Theme&Selector'))
-
-        # Add the toolbar icon to the QGIS toolbar
-        #self.iface.addToolBarIcon(self.action)
+        #create layer if not existing
+        self.dockwidget.getAvailableThemes()
+        self.new_coverage_layer(themes)
             
         # Initialize widget functionality
         self.populate()
         self.connect_signals()
 
-        #create layer if not existing
-        self.dockwidget.getAvailableThemes()
-        self.new_coverage_layer(themes)
+       
 
     def new_coverage_layer(self,themes):
 
