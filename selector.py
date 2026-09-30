@@ -341,6 +341,7 @@ class Selector:
         # Create an in-memory key-value dictionary {lookup_value: target_value}
         # This loops through the features once and indexes them
         bookmark_lookup = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
+        print(f"bookmark dict:{bookmark_lookup}")
         return bookmark_lookup.get(theme, "Bookmark Not Found")
 
     #def theme_up(self):
