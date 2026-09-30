@@ -215,7 +215,8 @@ class Selector:
             transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
             geom.transform(transform)
             print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
-
+        else:
+            print(f"matching bookmark and coverage layer crs")
         # Use an iterator to grab the first match
         features = layer.getFeatures(request)
         try:
