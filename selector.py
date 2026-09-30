@@ -213,7 +213,7 @@ class Selector:
             geom.transform(transform)
             print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
         else:
-            print(f"matching bookmark and coverage layer crs")
+            print(f"Matching bookmark and coverage layer crs")
 
         # Create a feature request with a filter expression
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
@@ -228,14 +228,12 @@ class Selector:
             print(f"Field index: {field_idx}")
             if field_idx == -1:
                 print(f"Error: Field '{LAYER_BOOKMARK_FIELD_NAME}' does not exist.")
-           
             layer.startEditing()
             # Apply the value change directly to the data provider
             layer.changeAttributeValue(first_match.id(), field_idx, bookmark.name())
             layer.changeGeometry(first_match.id(),geom)
             print(f"Feature {first_match.id()} updated successfully.")
             layer.commitChanges()
-        
         except:
             print("No matching feature was found.")
         
