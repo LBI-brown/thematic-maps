@@ -188,9 +188,7 @@ class Selector:
         #create or get coverage layer
         layer=self.coverage_layer()
         #remove all features in layer
-        layer.startEditing()    
         
-        layer.commitChanges()
         
         print(f"Successfully updated layer theme names")
 
