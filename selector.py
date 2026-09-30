@@ -104,9 +104,10 @@ class Selector:
         self.connect_signals()
 
         #find or create layer
-        self.coverage_layer()
+        self.dockwidget.getAvailableThemes()
+        self.coverage_layer(themes)
 
-    def coverage_layer(self):
+    def coverage_layer(self,themes):
 
         project = QgsProject.instance()
         layer = project.mapLayer(TARGET_LAYER_ID)
@@ -157,6 +158,21 @@ class Selector:
             layer_node.setItemVisibilityChecked(True)
             layer.triggerRepaint()
             print(f"Successfully created and added layer: {layer.name()} with ID: {layer.id()}")
+
+            # Start editing session
+            layer.startEditing()
+        
+            #iterate through themes adding features
+            new_features = []
+            field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
+            for i, value in enumerate(themes):
+                # Initialize a clean feature
+                fet = QgsFeature(layer.fields())
+                fet.setAttribute(field_index, value)
+                new_features.append(fet)
+            layer.addFeatures(new_features)    
+            # 3. Save changes
+            layer.commitChanges()
 
         return layer
 
