@@ -239,7 +239,7 @@ class Selector:
 
         for bmk in bookmarks:
             print (f"Bookmark: {bmk.name()}")
-            self.dockwidget.BookmarkComboBox.addItem(f"Extent: {bmk.name()} | Group: {bmk.group()}" )
+            self.dockwidget.BookmarkComboBox.addItem(f"COVERAGE: {bmk.name()}" )
         
         self.update_coverage_layer(themes)
         self.set_combo_theme()
@@ -251,6 +251,7 @@ class Selector:
         if theme is not None:
             index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
             self.dockwidget.PresetComboBox.setCurrentIndex(index)
+            self.dockwidget.BookmarkComboBox.setCurrentText("hello")
 
     def get_current_theme(self):
         """Retrieve the currently selected theme by name."""
