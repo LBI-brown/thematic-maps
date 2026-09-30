@@ -212,18 +212,18 @@ class Selector:
             first_match = next(features)
             # Extract the value by its field name string
             result_value = first_match[LAYER_BOOKMARK_FIELD_NAME]
-            print(f"Found Value: {result_value}")
+            print(f"Found feature id: {first_match.id()}")
             field_idx = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
 
             if field_idx == -1:
                 print(f"Error: Field '{LAYER_BOOKMARK_FIELD_NAME}' does not exist.")
             else:
-                # 4. Open an edit session
-                with edit(layer):
-                    # Apply the value change directly to the data provider
-                    layer.changeAttributeValue(first_match.id(), field_idx, bookmark)
-                    layer.changeGeometry(first_match.id(),geom)
-                    print(f"Feature {first_match.id()} updated successfully.")
+                layer.startEditing()
+                # Apply the value change directly to the data provider
+                layer.changeAttributeValue(first_match.id(), field_idx, bookmark.name())
+                layer.changeGeometry(first_match.id(),geom)
+                print(f"Feature {first_match.id()} updated successfully.")
+                layer.commitChanges()
         
         except StopIteration:
             print("No matching feature was found.")
