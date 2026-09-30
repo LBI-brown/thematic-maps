@@ -103,11 +103,11 @@ class Selector:
         self.populate()
         self.connect_signals()
 
-        #find or create layer
+        #create layer if not existing
         self.dockwidget.getAvailableThemes()
-        self.coverage_layer(themes)
+        self.new_coverage_layer(themes)
 
-    def coverage_layer(self,themes):
+    def new_coverage_layer(self,themes):
 
         project = QgsProject.instance()
         layer = project.mapLayer(TARGET_LAYER_ID)
@@ -157,7 +157,7 @@ class Selector:
             layer_node = project.layerTreeRoot().findLayer(layer.id())
             layer_node.setItemVisibilityChecked(True)
             layer.triggerRepaint()
-            print(f"Successfully created and added layer: {layer.name()} with ID: {layer.id()}")
+            
 
             # Start editing session
             layer.startEditing()
@@ -173,6 +173,14 @@ class Selector:
             layer.addFeatures(new_features)    
             # 3. Save changes
             layer.commitChanges()
+
+            print(f"Successfully created, added and populated COVERAGE layer: {layer.name()} with ID: {layer.id()}")
+
+        
+    def coverage_layer(self):
+
+        project = QgsProject.instance()
+        layer = project.mapLayer(TARGET_LAYER_ID)
 
         return layer
 
