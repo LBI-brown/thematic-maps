@@ -299,7 +299,7 @@ class Selector:
 
         for bmk in bookmarks:
             print (f"Bookmark: {bmk.name()}")
-            self.dockwidget.BookmarkComboBox.addItem(f"COVERAGE: {bmk.name()}" )
+            self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}" )
         
         self.update_coverage_layer(themes)
         self.set_combo_theme()
