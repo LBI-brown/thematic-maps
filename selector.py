@@ -221,19 +221,18 @@ class Selector:
         features = layer.getFeatures(request)
         
         first_match = next(features)
-        # Extract the value by its field name string
-        result_value = first_match[LAYER_BOOKMARK_FIELD_NAME]
-        print(f"Found feature id: {first_match.id()}")
+        print(f"Found first match feature id: {first_match.id()}")
         field_idx = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
-        print(f"Field index: {field_idx}")
+        print(f"'{LAYER_BOOKMARK_FIELD_NAME}' field index: {field_idx}")
         if field_idx == -1:
             print(f"Error: Field '{LAYER_BOOKMARK_FIELD_NAME}' does not exist.")
-        layer.startEditing()
-        # Apply the value change directly to the data provider
-        layer.changeAttributeValue(first_match.id(), field_idx, bookmark.name())
-        layer.changeGeometry(first_match.id(),geom)
-        print(f"Feature {first_match.id()} updated successfully.")
-        layer.commitChanges()
+        else:
+            layer.startEditing()
+            # Apply the value change directly to the data provider
+            layer.changeAttributeValue(first_match.id(), field_idx, bookmark_match.name())
+            layer.changeGeometry(first_match.id(),geom)
+            print(f"Feature {first_match.id()} updated successfully.")
+            layer.commitChanges()
         
         
         # Force QGIS to redraw the screen to show changes
