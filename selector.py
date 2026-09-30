@@ -91,12 +91,12 @@ class Selector:
         self.dockwidget.show()
 
         # Set up the icon for the toolbar
-        icon_path = QFileInfo(__file__).absolutePath() + '/img/selector.svg'
-        self.action.setIcon(QIcon(icon_path))
-        self.action.setText(self.tr('Theme&Selector'))
+        #icon_path = QFileInfo(__file__).absolutePath() + '/img/selector.svg'
+        #self.action.setIcon(QIcon(icon_path))
+        #self.action.setText(self.tr('Theme&Selector'))
 
         # Add the toolbar icon to the QGIS toolbar
-        self.iface.addToolBarIcon(self.action)
+        #self.iface.addToolBarIcon(self.action)
             
         # Initialize widget functionality
         self.populate()
@@ -211,10 +211,10 @@ class Selector:
         
 
         # Set button icons
-        self.dockwidget.pushButton_up.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowLeft.svg'))
-        self.dockwidget.pushButton_down.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowRight.svg'))
-        self.dockwidget.pushButton_up.clicked.connect(self.theme_up)
-        self.dockwidget.pushButton_down.clicked.connect(self.theme_down)
+        #self.dockwidget.pushButton_up.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowLeft.svg'))
+        #self.dockwidget.pushButton_down.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowRight.svg'))
+        #self.dockwidget.pushButton_up.clicked.connect(self.theme_up)
+        #self.dockwidget.pushButton_down.clicked.connect(self.theme_down)
 
         # Disable buttons if no layers present
         if len(QgsProject.instance().mapLayers()) == 0:
@@ -254,22 +254,22 @@ class Selector:
         """Retrieve the currently selected theme by name."""
         return self.dockwidget.PresetComboBox.currentText()
 
-    def theme_up(self):
+    #def theme_up(self):
         """Move to the previous theme based on the index in the combobox."""
-        index = self.dockwidget.PresetComboBox.currentIndex()
-        if index > 0:
+        #index = self.dockwidget.PresetComboBox.currentIndex()
+        #if index > 0:
             # Move to the previous theme by decreasing index
-            self.dockwidget.PresetComboBox.setCurrentIndex(index - 1)
-            self.apply_selected_theme()  
+            #self.dockwidget.PresetComboBox.setCurrentIndex(index - 1)
+            #self.apply_selected_theme()  
 
-    def theme_down(self):
+    #def theme_down(self):
         """Move to the next theme based on the index in the combobox."""
-        maximum = self.dockwidget.PresetComboBox.count()  # Total number of themes
-        index = self.dockwidget.PresetComboBox.currentIndex()
-        if index < maximum - 1:
+        #maximum = self.dockwidget.PresetComboBox.count()  # Total number of themes
+        #index = self.dockwidget.PresetComboBox.currentIndex()
+        #if index < maximum - 1:
             # Move to the next theme by increasing index
-            self.dockwidget.PresetComboBox.setCurrentIndex(index + 1)
-            self.apply_selected_theme()  
+            #self.dockwidget.PresetComboBox.setCurrentIndex(index + 1)
+            #self.apply_selected_theme()  
 
     def apply_selected_theme(self):
         """Apply the selected theme based on the current combobox selection."""
