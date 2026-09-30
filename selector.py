@@ -220,10 +220,10 @@ class Selector:
             else:
                 # 4. Open an edit session
                 with edit(layer):
-                # Apply the value change directly to the data provider
-                layer.changeAttributeValue(first_match.id(), field_idx, bookmark)
-                layer.changeGeometry(first_match.id(),geom)
-                print(f"Feature {first_match.id()} updated successfully.")
+                    # Apply the value change directly to the data provider
+                    layer.changeAttributeValue(first_match.id(), field_idx, bookmark)
+                    layer.changeGeometry(first_match.id(),geom)
+                    print(f"Feature {first_match.id()} updated successfully.")
         
         except StopIteration:
             print("No matching feature was found.")
