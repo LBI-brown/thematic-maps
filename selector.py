@@ -92,7 +92,7 @@ class Selector:
         self.dockwidget.show()
 
         #create layer if not existing
-        self.dockwidget.getAvailableThemes()
+        themes = self.dockwidget.getAvailableThemes()
         self.new_coverage_layer(themes)
             
         # Initialize widget functionality
