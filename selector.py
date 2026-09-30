@@ -365,6 +365,8 @@ class Selector:
         root = QgsProject.instance().layerTreeRoot()
         model = iface.layerTreeView().layerTreeModel()
         QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
+        #update bookmark combo to bookmark associated with theme
+        self.set_combo_theme()
     
     def set_combo_text(self, name):
         """Set combobox to the newly created theme."""
