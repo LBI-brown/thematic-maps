@@ -206,7 +206,10 @@ class Selector:
         # Note the combination of single and double quotes for the expression
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
         #reproject bookmark geometry if different crs to coverge layer
-        bookmark_crs = raw_extent.crs()
+        # Retrieve the referenced rectangle extent
+        referenced_extent = bookmark.extent()
+        #Extract the CRS object from the referenced extent
+        bookmark_crs = referenced_extent.crs()
         layer_crs = layer.crs()
         if bookmark_crs != layer_crs:
             transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
