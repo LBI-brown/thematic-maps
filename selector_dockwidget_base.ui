@@ -64,14 +64,7 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0" colspan="5">
-     <widget class="QgsExtentWidget" name="coverageSelector">
-      <property name="toolTip">
-       <string>Coverage</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="2">
+    <item row="2" column="0" colspan="2">
      <widget class="QPushButton" name="pushButton_replace">
       <property name="toolTip">
        <string>Replace theme in dropdown box with what is actually on map</string>
@@ -81,7 +74,7 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
+    <item row="2" column="2">
      <widget class="QPushButton" name="pushButton_rename">
       <property name="toolTip">
        <string>Rename theme</string>
@@ -91,7 +84,7 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="3" colspan="2">
+    <item row="2" column="3" colspan="2">
      <widget class="QPushButton" name="pushButton_remove">
       <property name="toolTip">
        <string>Remove theme</string>
@@ -107,7 +100,7 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="2">
+    <item row="3" column="2">
      <widget class="QPushButton" name="pushButton_duplicate">
       <property name="toolTip">
        <string>Duplicate theme</string>
@@ -117,7 +110,7 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="3" colspan="2">
+    <item row="3" column="3" colspan="2">
      <widget class="QPushButton" name="pushButton_add">
       <property name="toolTip">
        <string>Add shown map layers as new theme</string>
@@ -133,14 +126,7 @@
  <tabstops>
   <tabstop>PresetComboBox</tabstop>
  </tabstops>
- <!-- Crucial section: This tells Qt where to find the QGIS widget definition -->
- <customwidgets>
-  <customwidget>
-   <class>QgsExtentWidget</class>
-   <extends>QWidget</extends>
-   <header>qgsextentwidget.h</header>
-  </customwidget>
- </customwidgets>
+
  <resources/>
  <connections/>
 </ui>
