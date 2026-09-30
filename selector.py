@@ -214,7 +214,7 @@ class Selector:
             result_value = first_match[LAYER_BOOKMARK_FIELD_NAME]
             print(f"Found feature id: {first_match.id()}")
             field_idx = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
-
+            print(f"Field index: {field_idx}")
             if field_idx == -1:
                 print(f"Error: Field '{LAYER_BOOKMARK_FIELD_NAME}' does not exist.")
             else:
