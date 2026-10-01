@@ -369,7 +369,8 @@ class Selector:
         if ok and new_theme != "":
             rec = map_collection.createThemeFromCurrentState(root, model)
             map_collection.insert(new_theme, rec)
-            map_collection.applyTheme(new_theme, root, model)      
+            map_collection.applyTheme(new_theme, root, model) 
+            print (f"added '{new_theme}' to theme collection")
             self.add_theme_feature(new_theme)
             self.populate()                  
             self.set_combo_text(new_theme)
