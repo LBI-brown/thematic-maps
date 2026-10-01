@@ -92,8 +92,7 @@ class Selector:
         self.dockwidget.show()
 
         #create layer if not existing
-        themes = self.dockwidget.getAvailableThemes()
-        self.new_coverage_layer(themes)
+        self.coverage_layer()
             
         # Initialize widget functionality
         self.populate()
@@ -101,7 +100,7 @@ class Selector:
 
        
 
-    def new_coverage_layer(self,themes):
+    def coverage_layer(self):
 
         project = QgsProject.instance()
         layer = project.mapLayer(TARGET_LAYER_ID)
@@ -155,7 +154,7 @@ class Selector:
 
             # Start editing session
             layer.startEditing()
-        
+            themes = self.dockwidget.getAvailableThemes()
             #iterate through themes adding features
             new_features = []
             field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
@@ -168,7 +167,9 @@ class Selector:
             # 3. Save changes
             layer.commitChanges()
 
-            print(f"Successfully created, added and populated COVERAGE layer: {layer.name()} with ID: {layer.id()}")    
+            print(f"Successfully created, added and populated COVERAGE layer: {layer.name()} with ID: {layer.id()}") 
+
+        return layer
 
     def update_coverage_layer(self,themes):
         #create or get coverage layer
@@ -437,11 +438,6 @@ class Selector:
         assoc_bmk = bookmark_lookup.get(theme, None)  
         print(f"from fnc lookup bookmark dict:{bookmark_lookup} returning '{assoc_bmk}' ")
         return assoc_bmk  
-    
-    def coverage_layer(self):
-        project = QgsProject.instance()
-        layer = project.mapLayer(TARGET_LAYER_ID)
-        return layer
 
     def get_current_theme(self):
         """Retrieve the currently selected theme by name."""
