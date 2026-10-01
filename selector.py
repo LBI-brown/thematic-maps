@@ -401,9 +401,13 @@ class Selector:
 
     def add_theme_feature(self,new_theme):
         layer = self.coverage.layer()
+        print("got layer")
         layer.startEditing()
+        print("start edit")
         fet = QgsFeature(layer.fields())
+        print("create fet")
         fet[LAYER_THEME_FIELD_NAME] = new_theme
+        print("set value")
         layer.addFeature(fet)    
         layer.commitChanges()
         print(f"Successfully added '{new_theme}' to COVERAGE layer")
