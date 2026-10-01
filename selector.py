@@ -304,7 +304,6 @@ class Selector:
         for bmk in bookmarks:
             self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}" )
         
-        self.update_coverage_layer(themes)
         self.set_combo_theme()
         self.enable_buttons()
 
@@ -318,6 +317,8 @@ class Selector:
         if bookmark_for_theme is not None:
             bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
             self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
+        else:
+            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)
 
     def get_current_theme(self):
         """Retrieve the currently selected theme by name."""
@@ -336,7 +337,7 @@ class Selector:
         # This loops through the features once and indexes them
         bookmark_lookup = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
         print(f"bookmark dict:{bookmark_lookup}")
-        return bookmark_lookup.get(theme, "Bookmark Not Found")    
+        return bookmark_lookup.get(theme, None)    
 
     def apply_selected_theme(self):
         """Apply the selected theme based on the current combobox selection."""
@@ -394,10 +395,11 @@ class Selector:
         if ok and new_theme != "":
             rec = map_collection.createThemeFromCurrentState(root, model)
             map_collection.insert(new_theme, rec)
-            self.populate()
-            map_collection.applyTheme(new_theme, root, model)            
-            self.set_combo_text(new_theme)
+            map_collection.applyTheme(new_theme, root, model)      
             self.add_theme_feature(new_theme)
+            self.populate()                  
+            self.set_combo_text(new_theme)
+            
 
     def add_theme_feature(self,new_theme):
         layer = self.coverage.layer()
