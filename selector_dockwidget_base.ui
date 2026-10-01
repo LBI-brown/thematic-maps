@@ -19,7 +19,7 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="1" colspan="1">
-    <property name="text">
+    <property name="theme_combo">
        <string>Theme</string>
       </property>
     </item>
@@ -31,7 +31,7 @@
      </widget>
     </item>
     <item row="1" column="1" colspan="1">
-    <property name="text">
+    <property name="coverage_combo">
        <string>Coverage</string>
       </property>
     </item>
