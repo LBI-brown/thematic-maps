@@ -236,6 +236,7 @@ class Selector:
         print("update_coverage_layer_extents called")
 
     def coverage_feature(self,theme):
+        layer=self.coverage_layer()
         # Create a feature request with a filter expression
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
         # Use an iterator to grab the first match
