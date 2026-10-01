@@ -179,7 +179,7 @@ class Selector:
         
         print(f"Successfully updated layer theme names")
 
-    def update_coverage_layer_extents(self,bookmark):
+    def update_coverage_layer_extents(self):
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
         manager = QgsProject.instance().bookmarkManager()
@@ -211,22 +211,30 @@ class Selector:
         first_match = self.coverage_feature(theme)
         #get field index of bookmark field
         field_idx = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
-        print(f"'{LAYER_BOOKMARK_FIELD_NAME}' field index: {field_idx}")
-        if field_idx == -1:
-            print(f"Error: Field '{LAYER_BOOKMARK_FIELD_NAME}' does not exist.")
-        else:
-            layer.startEditing()
+        layer.startEditing()
+        #change geometry extents if theme already existing
+        if first_match:
+            
             # Apply the value change directly to the data provider
             layer.changeAttributeValue(first_match.id(), field_idx, bookmark_match.name())
             layer.changeGeometry(first_match.id(),geom)
-            print(f"Feature {first_match.id()} updated successfully.")
-            layer.commitChanges()
+            print(f"Feature '{first_match[LAYER_THEME_FIELD_NAME]}' updated successfully.")
         
-        
+        #add new theme feature with selectected bookmark geometry             
+        else:
+            print("start edit")
+            fet = QgsFeature(layer.fields())
+            print("create fet")
+            fet[LAYER_THEME_FIELD_NAME] = theme
+            fet.setGeometry(geom)
+            print("set value")
+            layer.addFeature(fet)                
+            print(f"Successfully added '{theme}' to COVERAGE layer")
+            
+        layer.commitChanges()           
         # Force QGIS to redraw the screen to show changes
         layer.triggerRepaint()
-        print(f"Directly updated {len(geometry_map)} features in the data source.")        
-        print("update_coverage_layer_extents called")
+       
 
     def coverage_feature(self,theme):
         layer=self.coverage_layer()
@@ -372,23 +380,10 @@ class Selector:
             map_collection.insert(new_theme, rec)
             map_collection.applyTheme(new_theme, root, model) 
             print (f"added '{new_theme}' to theme collection")
-            self.add_theme_feature(new_theme)
             self.populate()                  
             self.set_combo_text(new_theme)
+            self.update_coverage_layer_extents()
             
-
-    def add_theme_feature(self,new_theme):
-        layer = self.coverage.layer()
-        print("got layer")
-        layer.startEditing()
-        print("start edit")
-        fet = QgsFeature(layer.fields())
-        print("create fet")
-        fet[LAYER_THEME_FIELD_NAME] = new_theme
-        print("set value")
-        layer.addFeature(fet)    
-        layer.commitChanges()
-        print(f"Successfully added '{new_theme}' to COVERAGE layer")
     
     def rename_maptheme(self):
         """Rename the selected theme and update map layouts."""
