@@ -368,13 +368,13 @@ class Selector:
         QgsProject.instance().mapThemeCollection().removeMapTheme(theme)
         feature = self.coverage_feature(theme)
         layer = self.coverage_layer()
-        with edit(layer):
-            success = layer.deleteFeature(feature.id())
-            if success:
-                print(f"Feature '{theme}' deleted successfully from COVERAGE layer.")
-            else:
-                print(f"Failed to delete feature '{theme}' from COVERAGE layer.")
-        
+        layer.startEditting()
+        success = layer.deleteFeature(feature.id())
+        if success:
+            print(f"Feature '{theme}' deleted successfully from COVERAGE layer.")
+        else:
+            print(f"Failed to delete feature '{theme}' from COVERAGE layer.")
+        layer.commitChanges()
         self.populate()
 
     def replace_maptheme(self):
