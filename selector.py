@@ -361,11 +361,7 @@ class Selector:
         feature = self.coverage_feature(theme)
         layer = self.coverage_layer()
         layer.startEditing()
-        success = layer.deleteFeature(feature.id())
-        if success:
-            print(f"Feature '{theme}' deleted successfully from COVERAGE layer.")
-        else:
-            print(f"Failed to delete feature '{theme}' from COVERAGE layer.")
+        layer.deleteFeature(feature.id())
         layer.commitChanges()
         layer.triggerRepaint()
         self.populate()
@@ -399,10 +395,23 @@ class Selector:
         if ok and name != "":
             rec = map_collection.createThemeFromCurrentState(root, model)
             map_collection.insert(name, rec)
+            self.add_theme_feature(theme)
             self.populate()
-            map_collection.applyTheme(name, root, model)
+            map_collection.applyTheme(name, root, model)            
             self.set_combo_text(name)
 
+    def add_theme_feature(theme)
+        layer = self.coverage.layer()
+        layer.startEditing()
+        field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
+        fet = QgsFeature(layer.fields())
+        fet.setAttribute(field_index, theme)
+        layer.addFeature(fet)    
+        # 3. Save changes
+        layer.commitChanges()
+
+        print(f"Successfully added '{theme}' to COVERAGE layer")
+    
     def rename_maptheme(self):
         """Rename the selected theme and update map layouts."""
         theme = self.dockwidget.PresetComboBox.currentText()
