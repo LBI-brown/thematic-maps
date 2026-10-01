@@ -394,19 +394,17 @@ class Selector:
         if ok and new_theme != "":
             rec = map_collection.createThemeFromCurrentState(root, model)
             map_collection.insert(new_theme, rec)
-            self.add_theme_feature(new_theme)
             self.populate()
             map_collection.applyTheme(new_theme, root, model)            
             self.set_combo_text(new_theme)
+            self.add_theme_feature(new_theme)
 
     def add_theme_feature(self,new_theme):
         layer = self.coverage.layer()
         layer.startEditing()
-        field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
         fet = QgsFeature(layer.fields())
-        fet.setAttribute(field_index, new_theme)
+        fet[LAYER_THEME_FIELD_NAME] = new_theme
         layer.addFeature(fet)    
-        # 3. Save changes
         layer.commitChanges()
         print(f"Successfully added '{new_theme}' to COVERAGE layer")
     
