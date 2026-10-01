@@ -124,8 +124,8 @@ class Selector:
             # 4. Add a new field to the layer
             # We use dataProvider() to add fields before the layer is loaded into the project registry
             provider = layer.dataProvider()
-            theme_name_field = QgsField(LAYER_THEME_FIELD_NAME, QVariant.String, len=100)
-            bookmark_name_field = QgsField(LAYER_BOOKMARK_FIELD_NAME, QVariant.String, len=100)
+            theme_name_field = QgsField(LAYER_THEME_FIELD_NAME, QVariant.String, len=200)
+            bookmark_name_field = QgsField(LAYER_BOOKMARK_FIELD_NAME, QVariant.String, len=200)
             provider.addAttributes([theme_name_field,bookmark_name_field])
             
             # Update the layer layout to recognize the new field structure
@@ -199,21 +199,21 @@ class Selector:
         if bookmark_match:
             geom = QgsGeometry.fromRect(bookmark_match.extent())
             print(f"Found geometry for '{bookmark}':", geom)
+            #reproject bookmark geometry if different crs to coverge layer
+            # Retrieve the referenced rectangle extent
+            referenced_extent = bookmark_match.extent()
+            #Extract the CRS object from the referenced extent
+            bookmark_crs = referenced_extent.crs()
+            layer_crs = layer.crs()
+            if bookmark_crs != layer_crs:
+                transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
+                geom.transform(transform)
+                print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
+            else:
+                print(f"Matching bookmark and coverage layer crs")
         else:
             print(f"No bookmark found named '{bookmark}'")
         
-        #reproject bookmark geometry if different crs to coverge layer
-        # Retrieve the referenced rectangle extent
-        referenced_extent = bookmark_match.extent()
-        #Extract the CRS object from the referenced extent
-        bookmark_crs = referenced_extent.crs()
-        layer_crs = layer.crs()
-        if bookmark_crs != layer_crs:
-            transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
-            geom.transform(transform)
-            print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
-        else:
-            print(f"Matching bookmark and coverage layer crs")
         #get first matching feature with theme name
         first_match = self.coverage_feature(theme)
         #get field index of bookmark field
@@ -283,13 +283,6 @@ class Selector:
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
         self.dockwidget.pushButton_duplicate.clicked.connect(self.duplicate_maptheme)
         
-
-        # Set button icons
-        #self.dockwidget.pushButton_up.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowLeft.svg'))
-        #self.dockwidget.pushButton_down.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowRight.svg'))
-        #self.dockwidget.pushButton_up.clicked.connect(self.theme_up)
-        #self.dockwidget.pushButton_down.clicked.connect(self.theme_down)
-
         # Disable buttons if no layers present
         if len(QgsProject.instance().mapLayers()) == 0:
             self.disable_buttons()
@@ -310,7 +303,6 @@ class Selector:
             self.dockwidget.PresetComboBox.addItem(setting)
 
         for bmk in bookmarks:
-            print (f"Bookmark: {bmk.name()}")
             self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}" )
         
         self.update_coverage_layer(themes)
@@ -368,13 +360,14 @@ class Selector:
         QgsProject.instance().mapThemeCollection().removeMapTheme(theme)
         feature = self.coverage_feature(theme)
         layer = self.coverage_layer()
-        layer.startEditting()
+        layer.startEditing()
         success = layer.deleteFeature(feature.id())
         if success:
             print(f"Feature '{theme}' deleted successfully from COVERAGE layer.")
         else:
             print(f"Failed to delete feature '{theme}' from COVERAGE layer.")
         layer.commitChanges()
+        layer.triggerRepaint()
         self.populate()
 
     def replace_maptheme(self):
