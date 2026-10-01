@@ -380,9 +380,10 @@ class Selector:
             map_collection.insert(new_theme, rec)
             map_collection.applyTheme(new_theme, root, model) 
             print (f"added '{new_theme}' to theme collection")
-            self.populate()                  
+                             
             self.set_combo_text(new_theme)
             self.update_coverage_layer_extents()
+            self.populate() 
             
     
     def rename_maptheme(self):
