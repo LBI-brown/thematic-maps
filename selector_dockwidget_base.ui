@@ -46,16 +46,6 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="1" colspan="1" rowspan="2">
-     <widget class="QPushButton" name="pushButton_replace">
-      <property name="toolTip">
-       <string>Replace theme in dropdown box with what is actually on map</string>
-      </property>
-      <property name="text">
-       <string>Replace</string>
-      </property>
-     </widget>
-    </item>
     <item row="2" column="2">
      <widget class="QPushButton" name="pushButton_rename">
       <property name="toolTip">
@@ -82,13 +72,13 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
-     <widget class="QPushButton" name="pushButton_duplicate">
+    <item row="3" column="2" colspan="2">
+      <widget class="QPushButton" name="pushButton_replace">
       <property name="toolTip">
-       <string>Duplicate theme</string>
+       <string>Replace theme in dropdown box with what is actually on map</string>
       </property>
       <property name="text">
-       <string>Duplicate</string>
+       <string>Replace</string>
       </property>
      </widget>
     </item>
