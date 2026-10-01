@@ -281,7 +281,6 @@ class Selector:
         self.dockwidget.pushButton_add.clicked.connect(self.add_maptheme)
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
-        self.dockwidget.pushButton_duplicate.clicked.connect(self.duplicate_maptheme)
         
         # Disable buttons if no layers present
         if len(QgsProject.instance().mapLayers()) == 0:
@@ -391,25 +390,25 @@ class Selector:
                     return
 
         # Ask for new theme name
-        name, ok = QInputDialog.getText(None, self.tr('Themename'), self.tr('Name of the new theme'))
-        if ok and name != "":
+        new_theme, ok = QInputDialog.getText(None, self.tr('Themename'), self.tr('Name of the new theme'))
+        if ok and new_theme != "":
             rec = map_collection.createThemeFromCurrentState(root, model)
-            map_collection.insert(name, rec)
-            self.add_theme_feature(theme)
+            map_collection.insert(new_theme, rec)
+            self.add_theme_feature(new_theme)
             self.populate()
-            map_collection.applyTheme(name, root, model)            
-            self.set_combo_text(name)
+            map_collection.applyTheme(new_theme, root, model)            
+            self.set_combo_text(new_theme)
 
-    def add_theme_feature(self,theme):
+    def add_theme_feature(self,new_theme):
         layer = self.coverage.layer()
         layer.startEditing()
         field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
         fet = QgsFeature(layer.fields())
-        fet.setAttribute(field_index, theme)
+        fet.setAttribute(field_index, new_theme)
         layer.addFeature(fet)    
         # 3. Save changes
         layer.commitChanges()
-        print(f"Successfully added '{theme}' to COVERAGE layer")
+        print(f"Successfully added '{new_theme}' to COVERAGE layer")
     
     def rename_maptheme(self):
         """Rename the selected theme and update map layouts."""
@@ -447,27 +446,12 @@ class Selector:
                 QMessageBox.warning(None, self.tr("Theme Not Found"),
                                     self.tr(f"The theme '{theme}' was not found in the map theme collection."))
 
-    def duplicate_maptheme(self):
-        """Duplicate the selected theme."""
-        theme = self.dockwidget.PresetComboBox.currentText()
-        name, ok = QInputDialog.getText(None, self.tr('Duplicate Theme'),
-                                        self.tr('Name of the new theme:'),
-                                        0,
-                                        theme)
-        if ok and name != "":
-            map_collection = QgsProject.instance().mapThemeCollection()
-            state = map_collection.mapThemeState(theme)
-            map_collection.insert(name, state)
-            self.populate()
-            self.set_combo_text(name)
-
     def disable_buttons(self):
         """Disable theme buttons."""
         self.dockwidget.pushButton_remove.setEnabled(False)
         self.dockwidget.pushButton_replace.setEnabled(False)
         self.dockwidget.pushButton_add.setEnabled(False)
         self.dockwidget.pushButton_rename.setEnabled(False)
-        self.dockwidget.pushButton_duplicate.setEnabled(False)
        
     def enable_buttons(self):
         """Enable theme buttons."""
@@ -475,5 +459,4 @@ class Selector:
         self.dockwidget.pushButton_replace.setEnabled(True)
         self.dockwidget.pushButton_add.setEnabled(True)
         self.dockwidget.pushButton_rename.setEnabled(True)
-        self.dockwidget.pushButton_duplicate.setEnabled(True)
         
