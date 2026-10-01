@@ -189,7 +189,7 @@ class Selector:
         print(f"current bookmark: '{bookmark}'")
 
         # Find bookmark matching the name or return first bookmark
-        bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark.name()), None) or manager.bookmarks()[0]
+        bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) or manager.bookmarks()[0]
 
         if bookmark_match:
             geom = QgsGeometry.fromRect(bookmark_match.extent())
