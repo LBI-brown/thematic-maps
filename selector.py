@@ -168,15 +168,7 @@ class Selector:
             # 3. Save changes
             layer.commitChanges()
 
-            print(f"Successfully created, added and populated COVERAGE layer: {layer.name()} with ID: {layer.id()}")
-
-        
-    def coverage_layer(self):
-
-        project = QgsProject.instance()
-        layer = project.mapLayer(TARGET_LAYER_ID)
-
-        return layer
+            print(f"Successfully created, added and populated COVERAGE layer: {layer.name()} with ID: {layer.id()}")    
 
     def update_coverage_layer(self,themes):
         #create or get coverage layer
@@ -293,7 +285,7 @@ class Selector:
         self.disable_buttons()
 
     def populate(self):
-        """Populate comboboxes with available themes and associated bookmarks and update changes to coverage layer"""
+        """Populate comboboxes with available themes and bookmarks and update changes to coverage layer"""
         self.clear()
         themes = self.dockwidget.getAvailableThemes()
         bookmarks = self.dockwidget.getAvailableBookmarks()
@@ -318,26 +310,7 @@ class Selector:
             bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
             self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
         else:
-            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)
-
-    def get_current_theme(self):
-        """Retrieve the currently selected theme by name."""
-        return self.dockwidget.PresetComboBox.currentText()
-
-    def get_current_bookmark(self):
-        """Retrieve the currently selected theme by name."""
-        return self.dockwidget.BookmarkComboBox.currentText()
-
-    def bookmark_lookup(self,theme):
-        layer=self.coverage_layer()
-        lookup_field = LAYER_THEME_FIELD_NAME
-        target_field = LAYER_BOOKMARK_FIELD_NAME
-
-        # Create an in-memory key-value dictionary {lookup_value: target_value}
-        # This loops through the features once and indexes them
-        bookmark_lookup = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
-        print(f"bookmark dict:{bookmark_lookup}")
-        return bookmark_lookup.get(theme, None)    
+            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)   
 
     def apply_selected_theme(self):
         """Apply the selected theme based on the current combobox selection."""
@@ -392,6 +365,7 @@ class Selector:
 
         # Ask for new theme name
         new_theme, ok = QInputDialog.getText(None, self.tr('Themename'), self.tr('Name of the new theme'))
+        print(f"new theme name: {new_theme}")
         if ok and new_theme != "":
             rec = map_collection.createThemeFromCurrentState(root, model)
             map_collection.insert(new_theme, rec)
@@ -450,6 +424,32 @@ class Selector:
                 QMessageBox.warning(None, self.tr("Theme Not Found"),
                                     self.tr(f"The theme '{theme}' was not found in the map theme collection."))
 
+    def bookmark_lookup(self,theme):
+        layer=self.coverage_layer()
+        lookup_field = LAYER_THEME_FIELD_NAME
+        target_field = LAYER_BOOKMARK_FIELD_NAME
+
+        # Create an in-memory key-value dictionary {lookup_value: target_value}
+        # This loops through the features once and indexes them
+        bookmark_lookup = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
+        #finds bookmark corresponding to theme
+        assoc_bmk = bookmark_lookup.get(theme, None)  
+        print(f"from fnc lookup bookmark dict:{bookmark_lookup} returning '{assoc_bmk}' ")
+        return assoc_bmk  
+    
+    def coverage_layer(self):
+        project = QgsProject.instance()
+        layer = project.mapLayer(TARGET_LAYER_ID)
+        return layer
+
+    def get_current_theme(self):
+        """Retrieve the currently selected theme by name."""
+        return self.dockwidget.PresetComboBox.currentText()
+
+    def get_current_bookmark(self):
+        """Retrieve the currently selected theme by name."""
+        return self.dockwidget.BookmarkComboBox.currentText()    
+    
     def disable_buttons(self):
         """Disable theme buttons."""
         self.dockwidget.pushButton_remove.setEnabled(False)
