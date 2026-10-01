@@ -171,14 +171,6 @@ class Selector:
 
         return layer
 
-    def update_coverage_layer(self,themes):
-        #create or get coverage layer
-        layer=self.coverage_layer()
-        #remove all features in layer
-        
-        
-        print(f"Successfully updated layer theme names")
-
     def update_coverage_layer_extents(self):
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
@@ -245,8 +237,7 @@ class Selector:
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
         # Use an iterator to grab the first match
         features = layer.getFeatures(request)
-        first_match = next(features)
-        print(f"Found first match feature id: {first_match.id()}")
+        first_match = next(features) or None
         return first_match
     
     def unload(self):
