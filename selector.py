@@ -184,10 +184,12 @@ class Selector:
         layer=self.coverage_layer()
         manager = QgsProject.instance().bookmarkManager()
         theme = self.get_current_theme()
+        print(f"current theme: '{theme}'")
         bookmark = self.get_current_bookmark()
+        print(f"current bookmark: '{bookmark}'")
 
-        # Find bookmark matching the name
-        bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None)
+        # Find bookmark matching the name or return first bookmark
+        bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark.name()), None) or manager.bookmarks()[0]
 
         if bookmark_match:
             geom = QgsGeometry.fromRect(bookmark_match.extent())
@@ -205,7 +207,7 @@ class Selector:
             else:
                 print(f"Matching bookmark and coverage layer crs")
         else:
-            print(f"No bookmark found named '{bookmark}'")
+            print(f"No bookmarks found")
         
         #get first matching feature with theme name
         first_match = self.coverage_feature(theme)
@@ -230,7 +232,8 @@ class Selector:
             print("set value")
             layer.addFeature(fet)                
             print(f"Successfully added '{theme}' to COVERAGE layer")
-            
+        
+        print(layer.commitErrors())    
         layer.commitChanges()           
         # Force QGIS to redraw the screen to show changes
         layer.triggerRepaint()
