@@ -400,7 +400,7 @@ class Selector:
             map_collection.applyTheme(name, root, model)            
             self.set_combo_text(name)
 
-    def add_theme_feature(theme)
+    def add_theme_feature(self,theme):
         layer = self.coverage.layer()
         layer.startEditing()
         field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
@@ -409,7 +409,6 @@ class Selector:
         layer.addFeature(fet)    
         # 3. Save changes
         layer.commitChanges()
-
         print(f"Successfully added '{theme}' to COVERAGE layer")
     
     def rename_maptheme(self):
