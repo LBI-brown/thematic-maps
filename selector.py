@@ -214,14 +214,9 @@ class Selector:
             print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
         else:
             print(f"Matching bookmark and coverage layer crs")
-
-        # Create a feature request with a filter expression
-        request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
-        # Use an iterator to grab the first match
-        features = layer.getFeatures(request)
-        
-        first_match = next(features)
-        print(f"Found first match feature id: {first_match.id()}")
+        #get first matching feature with theme name
+        first_match = self.coverage_feature(theme)
+        #get field index of bookmark field
         field_idx = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
         print(f"'{LAYER_BOOKMARK_FIELD_NAME}' field index: {field_idx}")
         if field_idx == -1:
@@ -239,7 +234,16 @@ class Selector:
         layer.triggerRepaint()
         print(f"Directly updated {len(geometry_map)} features in the data source.")        
         print("update_coverage_layer_extents called")
-        
+
+    def coverage_feature(self,theme):
+        # Create a feature request with a filter expression
+        request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
+        # Use an iterator to grab the first match
+        features = layer.getFeatures(request)
+        first_match = next(features)
+        print(f"Found first match feature id: {first_match.id()}")
+        return first_match
+    
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         self.iface.removeToolBarIcon(self.action)
@@ -340,24 +344,7 @@ class Selector:
         # This loops through the features once and indexes them
         bookmark_lookup = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
         print(f"bookmark dict:{bookmark_lookup}")
-        return bookmark_lookup.get(theme, "Bookmark Not Found")
-
-    #def theme_up(self):
-        """Move to the previous theme based on the index in the combobox."""
-        #index = self.dockwidget.PresetComboBox.currentIndex()
-        #if index > 0:
-            # Move to the previous theme by decreasing index
-            #self.dockwidget.PresetComboBox.setCurrentIndex(index - 1)
-            #self.apply_selected_theme()  
-
-    #def theme_down(self):
-        """Move to the next theme based on the index in the combobox."""
-        #maximum = self.dockwidget.PresetComboBox.count()  # Total number of themes
-        #index = self.dockwidget.PresetComboBox.currentIndex()
-        #if index < maximum - 1:
-            # Move to the next theme by increasing index
-            #self.dockwidget.PresetComboBox.setCurrentIndex(index + 1)
-            #self.apply_selected_theme()  
+        return bookmark_lookup.get(theme, "Bookmark Not Found")    
 
     def apply_selected_theme(self):
         """Apply the selected theme based on the current combobox selection."""
@@ -378,6 +365,15 @@ class Selector:
         """Remove the selected theme."""
         theme = self.dockwidget.PresetComboBox.currentText()
         QgsProject.instance().mapThemeCollection().removeMapTheme(theme)
+        feature = self.coverage_feature(theme)
+        layer = self.coverage_layer()
+        with edit(layer):
+            success = layer.deleteFeature(feature.id())
+            if success:
+            print(f"Feature '{theme}' deleted successfully from COVERAGE layer.")
+            else:
+            print(f"Failed to delete feature '{theme}' from COVERAGE layer.")
+        
         self.populate()
 
     def replace_maptheme(self):
