@@ -370,9 +370,9 @@ class Selector:
         with edit(layer):
             success = layer.deleteFeature(feature.id())
             if success:
-            print(f"Feature '{theme}' deleted successfully from COVERAGE layer.")
+                print(f"Feature '{theme}' deleted successfully from COVERAGE layer.")
             else:
-            print(f"Failed to delete feature '{theme}' from COVERAGE layer.")
+                print(f"Failed to delete feature '{theme}' from COVERAGE layer.")
         
         self.populate()
 
