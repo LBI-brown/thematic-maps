@@ -184,7 +184,7 @@ class Selector:
 
         # Find bookmark matching the name or return first bookmark
         bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) or manager.bookmarks()[0]
-
+        print (f"bookmark match:{bookmark_match}")
         geom = QgsGeometry.fromRect(bookmark_match.extent())
         print(f"Found geometry for '{bookmark}':")
         #reproject bookmark geometry if different crs to coverge layer
@@ -267,7 +267,7 @@ class Selector:
         QgsProject.instance().cleared.connect(self.clear)
         QgsProject.instance().readProject.connect(self.populate)
 
-        self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
+        #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
@@ -440,9 +440,24 @@ class Selector:
        
         layer.commitChanges()
     
+    #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
 
-        pass  # Function logic to be added later
+        layer=self.coverage_layer()
+        manager = QgsApplication.bookmarkManager()
+        bookmark = manager.bookmarkById(id)
+        field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
+
+        # Create a feature request with a filter expression
+        request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
+        features = layer.getFeatures(request)
+        #change extents and name of existing bookmark in layer
+        if next(features):
+            layer.startEditing()
+            for feature in features:
+                layer.changeAttributeValue(feature.id(), field_idx1, bookmark.name())
+                layer.changeGeometry(feature.id(),bookmark.extent())
+            layer.commitChanges()
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
