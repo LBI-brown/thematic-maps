@@ -33,7 +33,7 @@ from qgis.PyQt.QtWidgets import (
     QMessageBox
 )
 from qgis.PyQt.QtGui import QIcon, QColor
-from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField, QgsGeometry, QgsFeature
+from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField, QgsGeometry, QgsFeature, QgsFeatureRequest
 
 
 # Import the code for the DockWidget
@@ -45,6 +45,7 @@ LAYER_NAME = "COVERAGE"
 GEOMETRY_TYPE = "Polygon"  # Options: 'Point', 'LineString', 'Polygon', 'None'
 CRS = "EPSG:4326"
 LAYER_THEME_FIELD_NAME = "theme_name"
+LAYER_BOOKMARK_FIELD_NAME = "bookmark_name"
 
 class Selector:
     """QGIS Plugin Implementation.
@@ -90,42 +91,14 @@ class Selector:
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
         self.dockwidget.show()
 
-        # Set up the icon for the toolbar
-        icon_path = QFileInfo(__file__).absolutePath() + '/img/selector.svg'
-        self.action.setIcon(QIcon(icon_path))
-        self.action.setText(self.tr('Theme&Selector'))
-
-        # Add the toolbar icon to the QGIS toolbar
-        self.iface.addToolBarIcon(self.action)
-
-        #populate extent parameter if coverage layer
-        project = QgsProject.instance()
-        layer = project.mapLayer(TARGET_LAYER_ID)
-        if layer:
-            try:
-                first_feature = next(layer.getFeatures())
-                # 3. Extract its geometry object
-                geom = first_feature.geometry()
-    
-                if geom and not geom.isEmpty():
-                    extent_widget = self.dockwidget.coverageSelector
-                    extent_widget.setOutputCrs(project.crs())
-                    extent_widget.setCurrentExtent(geom.boundingBox(),project.crs())
-                    print("Successfully retrieved extent from coverage layer")
-                else:
-                    print("The first feature in coverage layer does not have a valid geometry.")
-        
-            except StopIteration:
-                print("The coverage layer contains no features.")
-        else:
-            print ("No coverage layer found")
+        #create layer if not existing
+        self.coverage_layer()
             
         # Initialize widget functionality
         self.populate()
         self.connect_signals()
 
-        #find or create layer
-        self.coverage_layer()
+       
 
     def coverage_layer(self):
 
@@ -133,9 +106,9 @@ class Selector:
         layer = project.mapLayer(TARGET_LAYER_ID)
 
         if layer:
-            print(f"Layer found: {layer.name()} (ID: {layer.id()})")
+            print(f"Coverage Layer found: {layer.name()} (ID: {layer.id()})")
         else:
-            print(f"Layer with ID '{TARGET_LAYER_ID}' not found. Creating a new one...")
+            print(f"Coverage Layer with ID '{TARGET_LAYER_ID}' not found. Creating a new one...")
             
             # 2. Create a new memory (scratch) layer
             # Format URI syntax: "Type?crs=EPSG:xxxx"
@@ -150,8 +123,9 @@ class Selector:
             # 4. Add a new field to the layer
             # We use dataProvider() to add fields before the layer is loaded into the project registry
             provider = layer.dataProvider()
-            new_field = QgsField(LAYER_THEME_FIELD_NAME, QVariant.String, len=100)
-            provider.addAttributes([new_field])
+            theme_name_field = QgsField(LAYER_THEME_FIELD_NAME, QVariant.String, len=200)
+            bookmark_name_field = QgsField(LAYER_BOOKMARK_FIELD_NAME, QVariant.String, len=200)
+            provider.addAttributes([theme_name_field,bookmark_name_field])
             
             # Update the layer layout to recognize the new field structure
             layer.updateFields()
@@ -176,57 +150,94 @@ class Selector:
             layer_node = project.layerTreeRoot().findLayer(layer.id())
             layer_node.setItemVisibilityChecked(True)
             layer.triggerRepaint()
-            print(f"Successfully created and added layer: {layer.name()} with ID: {layer.id()}")
+            
+
+            # Start editing session
+            layer.startEditing()
+            themes = self.dockwidget.getAvailableThemes()
+            #iterate through themes adding features
+            new_features = []
+            field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
+            for i, value in enumerate(themes):
+                # Initialize a clean feature
+                fet = QgsFeature(layer.fields())
+                fet.setAttribute(field_index, value)
+                new_features.append(fet)
+            layer.addFeatures(new_features)    
+            # 3. Save changes
+            layer.commitChanges()
+
+            print(f"Successfully created, added and populated COVERAGE layer: {layer.name()} with ID: {layer.id()}") 
 
         return layer
 
-    def update_coverage_layer(self,themes):
-        #create or get coverage layer
-        layer=self.coverage_layer()
-        #remove all features in layer
-        
-        # Start editing session
-        layer.startEditing()
-    
-        # Loop and delete each feature using its ID
-        for feature in layer.getFeatures():
-            layer.deleteFeature(feature.id())
-        #iterate through themes adding features
-        new_features = []
-        field_index = layer.fields().indexOf(LAYER_THEME_FIELD_NAME)
-        for i, value in enumerate(themes):
-            # Initialize a clean feature
-            fet = QgsFeature(layer.fields())
-            fet.setAttribute(field_index, value)
-            new_features.append(fet)
-        layer.addFeatures(new_features)    
-        # 3. Save changes
-        layer.commitChanges()
-        extentsRectangle = self.dockwidget.coverageSelector.outputExtent()  
-        self.update_coverage_layer_extents(extentsRectangle)
-        print(f"Successfully updated layer theme names")
-
-    def update_coverage_layer_extents(self, extentsRectangle):
-        
+    def update_coverage_layer_extents(self):
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
-        geom=QgsGeometry.fromRect(extentsRectangle)
-        geometry_map = {}
+        manager = QgsProject.instance().bookmarkManager()
+        theme = self.get_current_theme()
+        print(f"current theme: '{theme}'")
+        bookmark = self.get_current_bookmark()
+        print(f"current bookmark: '{bookmark}'")
 
-        # Loop through all features to build the map
-        for feature in layer.getFeatures():
-            current_geom = feature.geometry()
-            
-            # Add the pair to our dictionary { feature_id: new_geometry }
-            geometry_map[feature.id()] = geom
+        # Find bookmark matching the name or return first bookmark
+        bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) or manager.bookmarks()[0]
+
+        geom = QgsGeometry.fromRect(bookmark_match.extent())
+        print(f"Found geometry for '{bookmark}':")
+        #reproject bookmark geometry if different crs to coverge layer
+        # Retrieve the referenced rectangle extent
+        referenced_extent = bookmark_match.extent()
+        #Extract the CRS object from the referenced extent
+        bookmark_crs = referenced_extent.crs()
+        layer_crs = layer.crs()
+        if bookmark_crs != layer_crs:
+            transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
+            geom.transform(transform)
+            print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
+        else:
+            print(f"Matching bookmark and coverage layer crs")
         
-        # Send the bulk dictionary to the data provider in one action
-        layer.dataProvider().changeGeometryValues(geometry_map)
+        #get field index of bookmark field
+        field_idx = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
+        layer.startEditing()
         
-        # Force QGIS to redraw the screen to show changes
-        layer.triggerRepaint()
-        print(f"Directly updated {len(geometry_map)} features in the data source.")
+        try:
+            #get first matching feature with theme name
+            first_match = self.coverage_feature(theme)
+            #change geometry extents if theme already existing   
+            # Apply the value change directly to the data provider
+            layer.changeAttributeValue(first_match.id(), field_idx, bookmark_match.name())
+            layer.changeGeometry(first_match.id(),geom)
+            print(f"Feature '{first_match[LAYER_THEME_FIELD_NAME]}' updated successfully.")
         
+        #add new theme feature with selectected bookmark geometry             
+        except:
+            print("start edit")
+            fet = QgsFeature(layer.fields())
+            print("create fet")
+            fet.setGeometry(geom)
+            fet[LAYER_THEME_FIELD_NAME] = theme
+            print("set value and geom")
+            layer.addFeature(fet)                
+            print(f"Successfully added '{theme}' to COVERAGE layer")
+
+        finally:
+            print(layer.commitErrors())    
+            layer.commitChanges()           
+            # Force QGIS to redraw the screen to show changes
+            layer.triggerRepaint()
+       
+
+    def coverage_feature(self,theme):
+        layer=self.coverage_layer()
+        # Create a feature request with a filter expression
+        request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_THEME_FIELD_NAME}" = \'{theme}\'')
+        # Use an iterator to grab the first match
+        features = layer.getFeatures(request)
+        first_match = next(features) or None
+        return first_match
+    
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         self.iface.removeToolBarIcon(self.action)
@@ -255,21 +266,15 @@ class Selector:
         self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
+        QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.populate)
 
         self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
+        self.dockwidget.BookmarkComboBox.currentIndexChanged.connect(self.update_coverage_layer_extents)
         self.dockwidget.pushButton_replace.clicked.connect(self.replace_maptheme)
         self.dockwidget.pushButton_add.clicked.connect(self.add_maptheme)
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
-        self.dockwidget.pushButton_duplicate.clicked.connect(self.duplicate_maptheme)
-        self.dockwidget.coverageSelector.extentChanged.connect(self.update_coverage_layer_extents)
-
-        # Set button icons
-        self.dockwidget.pushButton_up.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowLeft.svg'))
-        self.dockwidget.pushButton_down.setIcon(QIcon(QFileInfo(__file__).absolutePath() + '/img/mActionArrowRight.svg'))
-        self.dockwidget.pushButton_up.clicked.connect(self.theme_up)
-        self.dockwidget.pushButton_down.clicked.connect(self.theme_down)
-
+        
         # Disable buttons if no layers present
         if len(QgsProject.instance().mapLayers()) == 0:
             self.disable_buttons()
@@ -277,47 +282,36 @@ class Selector:
     def clear(self):
         """Clear combobox and disable buttons."""
         self.dockwidget.PresetComboBox.clear()
+        self.dockwidget.BookmarkComboBox.clear()
         self.disable_buttons()
 
     def populate(self):
-        """Populate combobox with available themes and update changes to coverage layer"""
+        """Populate comboboxes with available themes and bookmarks"""
         self.clear()
         themes = self.dockwidget.getAvailableThemes()
+        bookmarks = self.dockwidget.getAvailableBookmarks()
 
         for setting in themes:
             self.dockwidget.PresetComboBox.addItem(setting)
+
+        for bmk in bookmarks:
+            self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}" )
         
-        self.update_coverage_layer(themes)
         self.set_combo_theme()
         self.enable_buttons()
 
     def set_combo_theme(self):
-        """Set combo box to the current theme."""
+        """Set combo box to the current theme and bookmark."""
         theme = self.get_current_theme()
+        bookmark_for_theme = self.bookmark_lookup(theme)
         if theme is not None:
-            index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
-            self.dockwidget.PresetComboBox.setCurrentIndex(index)
-
-    def get_current_theme(self):
-        """Retrieve the currently selected theme by name."""
-        return self.dockwidget.PresetComboBox.currentText()
-
-    def theme_up(self):
-        """Move to the previous theme based on the index in the combobox."""
-        index = self.dockwidget.PresetComboBox.currentIndex()
-        if index > 0:
-            # Move to the previous theme by decreasing index
-            self.dockwidget.PresetComboBox.setCurrentIndex(index - 1)
-            self.apply_selected_theme()  
-
-    def theme_down(self):
-        """Move to the next theme based on the index in the combobox."""
-        maximum = self.dockwidget.PresetComboBox.count()  # Total number of themes
-        index = self.dockwidget.PresetComboBox.currentIndex()
-        if index < maximum - 1:
-            # Move to the next theme by increasing index
-            self.dockwidget.PresetComboBox.setCurrentIndex(index + 1)
-            self.apply_selected_theme()  
+            theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
+            self.dockwidget.PresetComboBox.setCurrentIndex(theme_index)
+        if bookmark_for_theme is not None:
+            bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
+            self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
+        else:
+            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)   
 
     def apply_selected_theme(self):
         """Apply the selected theme based on the current combobox selection."""
@@ -325,17 +319,19 @@ class Selector:
         root = QgsProject.instance().layerTreeRoot()
         model = iface.layerTreeView().layerTreeModel()
         QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
-
-    def set_combo_text(self, name):
-        """Set combobox to the newly created theme."""
-        index = self.dockwidget.PresetComboBox.findText(name, Qt.MatchFixedString)
-        if index >= 0:
-            self.dockwidget.PresetComboBox.setCurrentIndex(index)
+        #update bookmark combo to bookmark associated with theme
+        self.set_combo_theme()    
 
     def remove_maptheme(self):
         """Remove the selected theme."""
         theme = self.dockwidget.PresetComboBox.currentText()
         QgsProject.instance().mapThemeCollection().removeMapTheme(theme)
+        feature = self.coverage_feature(theme)
+        layer = self.coverage_layer()
+        layer.startEditing()
+        layer.deleteFeature(feature.id())
+        layer.commitChanges()
+        layer.triggerRepaint()
         self.populate()
 
     def replace_maptheme(self):
@@ -363,14 +359,26 @@ class Selector:
                     return
 
         # Ask for new theme name
-        name, ok = QInputDialog.getText(None, self.tr('Themename'), self.tr('Name of the new theme'))
-        if ok and name != "":
+        new_theme, ok = QInputDialog.getText(None, self.tr('Themename'), self.tr('Name of the new theme'))
+        print(f"new theme name: {new_theme}")
+        if ok and new_theme != "":
             rec = map_collection.createThemeFromCurrentState(root, model)
-            map_collection.insert(name, rec)
-            self.populate()
-            map_collection.applyTheme(name, root, model)
-            self.set_combo_text(name)
-
+            map_collection.insert(new_theme, rec)
+            map_collection.applyTheme(new_theme, root, model) 
+            print (f"added '{new_theme}' to theme collection")
+                                        
+            self.populate() 
+            self.set_combo_text(new_theme)
+            self.update_coverage_layer_extents()
+            
+    def set_combo_text(self, new_theme):
+        """Set combobox to the newly created theme."""
+        index = self.dockwidget.PresetComboBox.findText(new_theme, Qt.MatchFixedString)
+        if index >= 0:
+            self.dockwidget.PresetComboBox.setCurrentIndex(index)
+            print(f"set theme combo text to '{new_theme}'")
+    
+    
     def rename_maptheme(self):
         """Rename the selected theme and update map layouts."""
         theme = self.dockwidget.PresetComboBox.currentText()
@@ -407,34 +415,38 @@ class Selector:
                 QMessageBox.warning(None, self.tr("Theme Not Found"),
                                     self.tr(f"The theme '{theme}' was not found in the map theme collection."))
 
-    def duplicate_maptheme(self):
-        """Duplicate the selected theme."""
-        theme = self.dockwidget.PresetComboBox.currentText()
-        name, ok = QInputDialog.getText(None, self.tr('Duplicate Theme'),
-                                        self.tr('Name of the new theme:'),
-                                        0,
-                                        theme)
-        if ok and name != "":
-            map_collection = QgsProject.instance().mapThemeCollection()
-            state = map_collection.mapThemeState(theme)
-            map_collection.insert(name, state)
-            self.populate()
-            self.set_combo_text(name)
+    def bookmark_lookup(self,theme):
+        layer=self.coverage_layer()
+        lookup_field = LAYER_THEME_FIELD_NAME
+        target_field = LAYER_BOOKMARK_FIELD_NAME
 
+        # Create an in-memory key-value dictionary {lookup_value: target_value}
+        # This loops through the features once and indexes them
+        bookmark_lookup = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
+        #finds bookmark corresponding to theme
+        assoc_bmk = bookmark_lookup.get(theme, None)  
+        print(f"from fnc lookup bookmark dict:{bookmark_lookup} returning '{assoc_bmk}' ")
+        return assoc_bmk  
+
+    def get_current_theme(self):
+        """Retrieve the currently selected theme by name."""
+        return self.dockwidget.PresetComboBox.currentText()
+
+    def get_current_bookmark(self):
+        """Retrieve the currently selected theme by name."""
+        return self.dockwidget.BookmarkComboBox.currentText()    
+    
     def disable_buttons(self):
         """Disable theme buttons."""
         self.dockwidget.pushButton_remove.setEnabled(False)
         self.dockwidget.pushButton_replace.setEnabled(False)
         self.dockwidget.pushButton_add.setEnabled(False)
         self.dockwidget.pushButton_rename.setEnabled(False)
-        self.dockwidget.pushButton_duplicate.setEnabled(False)
-        self.dockwidget.coverageSelector.setEnabled(False)
-
+       
     def enable_buttons(self):
         """Enable theme buttons."""
         self.dockwidget.pushButton_remove.setEnabled(True)
         self.dockwidget.pushButton_replace.setEnabled(True)
         self.dockwidget.pushButton_add.setEnabled(True)
         self.dockwidget.pushButton_rename.setEnabled(True)
-        self.dockwidget.pushButton_duplicate.setEnabled(True)
-        self.dockwidget.coverageSelector.setEnabled(True)
+        

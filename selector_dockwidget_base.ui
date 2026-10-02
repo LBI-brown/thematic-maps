@@ -18,63 +18,35 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QPushButton" name="pushButton_up">
-      <property name="toolTip">
-       <string>Ctrl-Up Shortcut</string>
+    <item row="0" column="0" colspan="1">
+    <widget class="QLabel" name="theme_combo">
+    <property name="text">
+       <string>Theme</string>
       </property>
-      <property name="whatsThis">
-       <string>Change Theme with button</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="shortcut">
-       <string>Ctrl+Up</string>
-      </property>
-     </widget>
+    </widget>
     </item>
-    <item row="0" column="1" colspan="3">
+    <item row="0" column="1" colspan="4">
      <widget class="QComboBox" name="PresetComboBox">
       <property name="toolTip">
-       <string>Themebox</string>
+       <string>Theme for map</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="4">
-     <widget class="QPushButton" name="pushButton_down">
-      <property name="toolTip">
-       <string>Ctrl-Down Shortcut</string>
-      </property>
-      <property name="whatsThis">
-       <string>Change Theme with button</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="shortcut">
-       <string>Ctrl+Down</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="5">
-     <widget class="QgsExtentWidget" name="coverageSelector">
-      <property name="toolTip">
+    <item row="1" column="0" colspan="1">
+    <widget class="QLabel" name="coverage_combo">
+    <property name="text">
        <string>Coverage</string>
       </property>
-     </widget>
+    </widget>
     </item>
-    <item row="2" column="0" colspan="2">
-     <widget class="QPushButton" name="pushButton_replace">
+    <item row="1" column="1" colspan="4">
+     <widget class="QComboBox" name="BookmarkComboBox">
       <property name="toolTip">
-       <string>Replace theme in dropdown box with what is actually on map</string>
-      </property>
-      <property name="text">
-       <string>Replace</string>
+       <string>Bookmark coverage</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="2">
+    <item row="2" column="1" colspan="2">
      <widget class="QPushButton" name="pushButton_rename">
       <property name="toolTip">
        <string>Rename theme</string>
@@ -100,13 +72,13 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="2">
-     <widget class="QPushButton" name="pushButton_duplicate">
+    <item row="3" column="1" colspan="2">
+      <widget class="QPushButton" name="pushButton_replace">
       <property name="toolTip">
-       <string>Duplicate theme</string>
+       <string>Replace theme in dropdown box with what is actually on map</string>
       </property>
       <property name="text">
-       <string>Duplicate</string>
+       <string>Replace</string>
       </property>
      </widget>
     </item>
@@ -126,14 +98,7 @@
  <tabstops>
   <tabstop>PresetComboBox</tabstop>
  </tabstops>
- <!-- Crucial section: This tells Qt where to find the QGIS widget definition -->
- <customwidgets>
-  <customwidget>
-   <class>QgsExtentWidget</class>
-   <extends>QWidget</extends>
-   <header>qgsextentwidget.h</header>
-  </customwidget>
- </customwidgets>
+
  <resources/>
  <connections/>
 </ui>
