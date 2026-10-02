@@ -440,9 +440,24 @@ class Selector:
        
         layer.commitChanges()
     
+    #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
 
-        pass  # Function logic to be added later
+        layer=self.coverage_layer()
+        manager = QgsApplication.bookmarkManager()
+        bookmark = manager.bookmarkById(id)
+        field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
+
+        # Create a feature request with a filter expression
+        request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
+       
+        #change extents and name of existing bookmarks
+        if features = layer.getFeatures(request):
+            layer.startEditing()
+            for feature in features:
+                layer.changeAttributeValue(feature.id(), field_idx1, bookmark.name())
+                layer.changeGeometry(feature.id(),bookmark.extent())
+            layer.commitChanges()
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
