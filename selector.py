@@ -183,52 +183,50 @@ class Selector:
         # Find bookmark matching the name or return first bookmark
         bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) or manager.bookmarks()[0]
 
-        if bookmark_match:
-            geom = QgsGeometry.fromRect(bookmark_match.extent())
-            print(f"Found geometry for '{bookmark}':", geom)
-            #reproject bookmark geometry if different crs to coverge layer
-            # Retrieve the referenced rectangle extent
-            referenced_extent = bookmark_match.extent()
-            #Extract the CRS object from the referenced extent
-            bookmark_crs = referenced_extent.crs()
-            layer_crs = layer.crs()
-            if bookmark_crs != layer_crs:
-                transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
-                geom.transform(transform)
-                print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
-            else:
-                print(f"Matching bookmark and coverage layer crs")
+        geom = QgsGeometry.fromRect(bookmark_match.extent())
+        print(f"Found geometry for '{bookmark}':")
+        #reproject bookmark geometry if different crs to coverge layer
+        # Retrieve the referenced rectangle extent
+        referenced_extent = bookmark_match.extent()
+        #Extract the CRS object from the referenced extent
+        bookmark_crs = referenced_extent.crs()
+        layer_crs = layer.crs()
+        if bookmark_crs != layer_crs:
+            transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
+            geom.transform(transform)
+            print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
         else:
-            print(f"No bookmarks found")
+            print(f"Matching bookmark and coverage layer crs")
         
-        #get first matching feature with theme name
-        first_match = self.coverage_feature(theme)
         #get field index of bookmark field
         field_idx = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
         layer.startEditing()
-        #change geometry extents if theme already existing
-        if first_match:
-            
+        
+        try:
+            #get first matching feature with theme name
+            first_match = self.coverage_feature(theme)
+            #change geometry extents if theme already existing   
             # Apply the value change directly to the data provider
             layer.changeAttributeValue(first_match.id(), field_idx, bookmark_match.name())
             layer.changeGeometry(first_match.id(),geom)
             print(f"Feature '{first_match[LAYER_THEME_FIELD_NAME]}' updated successfully.")
         
         #add new theme feature with selectected bookmark geometry             
-        else:
+        except:
             print("start edit")
             fet = QgsFeature(layer.fields())
             print("create fet")
-            fet[LAYER_THEME_FIELD_NAME] = theme
             fet.setGeometry(geom)
-            print("set value")
+            fet[LAYER_THEME_FIELD_NAME] = theme
+            print("set value and geom")
             layer.addFeature(fet)                
             print(f"Successfully added '{theme}' to COVERAGE layer")
-        
-        print(layer.commitErrors())    
-        layer.commitChanges()           
-        # Force QGIS to redraw the screen to show changes
-        layer.triggerRepaint()
+
+        finally:
+            print(layer.commitErrors())    
+            layer.commitChanges()           
+            # Force QGIS to redraw the screen to show changes
+            layer.triggerRepaint()
        
 
     def coverage_feature(self,theme):
