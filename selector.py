@@ -441,6 +441,8 @@ class Selector:
         layer.commitChanges()
     
     def bookmark_updates(self,id):
+
+        pass  # Function logic to be added later
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
