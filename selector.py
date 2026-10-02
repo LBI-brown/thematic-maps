@@ -269,7 +269,7 @@ class Selector:
 
         #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
-        QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
+        #QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
         
 
