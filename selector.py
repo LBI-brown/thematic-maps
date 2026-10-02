@@ -171,11 +171,11 @@ class Selector:
 
         return layer
 
-    def update_coverage_layer_extents(self,new_theme):
+    def update_coverage_layer_extents(self):
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
         manager = QgsProject.instance().bookmarkManager()
-        theme = new_theme or self.get_current_theme()
+        theme = self.get_current_theme()
         print(f"current theme: '{theme}'")
         bookmark = self.get_current_bookmark()
         print(f"current bookmark: '{bookmark}'")
@@ -366,10 +366,10 @@ class Selector:
             map_collection.insert(new_theme, rec)
             map_collection.applyTheme(new_theme, root, model) 
             print (f"added '{new_theme}' to theme collection")
-                             
-            self.update_coverage_layer_extents(new_theme)
+                                        
             self.populate() 
             self.set_combo_text(new_theme)
+            self.update_coverage_layer_extents()
             
     def set_combo_text(self, new_theme):
         """Set combobox to the newly created theme."""
