@@ -184,7 +184,7 @@ class Selector:
 
         # Find bookmark matching the name or return first bookmark
         bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) or manager.bookmarks()[0]
-
+        print (f"bookmark match:{bookmark_match}")
         geom = QgsGeometry.fromRect(bookmark_match.extent())
         print(f"Found geometry for '{bookmark}':")
         #reproject bookmark geometry if different crs to coverge layer
