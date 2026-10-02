@@ -153,7 +153,7 @@ class Selector:
             layer_node.setItemVisibilityChecked(True)
             layer.triggerRepaint()
             
-
+            #add existing themes as features
             # Start editing session
             layer.startEditing()
             themes = self.dockwidget.getAvailableThemes()
@@ -242,32 +242,14 @@ class Selector:
         first_match = next(features) or None
         return first_match
     
-    def unload(self):
-        """Removes the plugin menu item and icon from QGIS GUI."""
-        self.iface.removeToolBarIcon(self.action)
-        self.iface.removeDockWidget(self.dockwidget)
-
-        # Save the size of the dock widget
-        settings = QSettings()
-        QSettings.setDefaultFormat(QSettings.IniFormat)
-        saved_size = settings.value("ThemeSelector/size", QSize(300, 200))
-        if isinstance(saved_size, QSize):
-            self.dockwidget.resize(saved_size)
-        elif isinstance(saved_size, str):  # Handle improperly serialized values
-            try:
-                width, height = map(int, saved_size.strip("()").split(","))
-                self.dockwidget.resize(QSize(width, height))
-            except ValueError:
-                self.dockwidget.resize(QSize(300, 200))  # Default size
-        settings = QSettings()
-        settings.setValue("ThemeSelector/size", self.dockwidget.size())
+    
 
     def connect_signals(self):
         """Connect various signals and slots."""
         QgsProject.instance().cleared.connect(self.clear)
         QgsProject.instance().readProject.connect(self.populate)
 
-        self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
+        #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
@@ -466,10 +448,10 @@ class Selector:
 
         # Create an in-memory key-value dictionary {lookup_value: target_value}
         # This loops through the features once and indexes them
-        bookmark_lookup = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
+        bookmark_lookup_dict = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
         #finds bookmark corresponding to theme
-        assoc_bmk = bookmark_lookup.get(theme, None)  
-        print(f"from fnc lookup bookmark dict:{bookmark_lookup} returning '{assoc_bmk}' ")
+        assoc_bmk = bookmark_lookup_dict.get(theme, None)  
+        print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning '{assoc_bmk}' ")
         return assoc_bmk  
 
     def get_current_theme(self):
@@ -479,6 +461,26 @@ class Selector:
     def get_current_bookmark(self):
         """Retrieve the currently selected theme by name."""
         return self.dockwidget.BookmarkComboBox.currentText()    
+
+    def unload(self):
+        """Removes the plugin menu item and icon from QGIS GUI."""
+        self.iface.removeToolBarIcon(self.action)
+        self.iface.removeDockWidget(self.dockwidget)
+
+        # Save the size of the dock widget
+        settings = QSettings()
+        QSettings.setDefaultFormat(QSettings.IniFormat)
+        saved_size = settings.value("ThemeSelector/size", QSize(300, 200))
+        if isinstance(saved_size, QSize):
+            self.dockwidget.resize(saved_size)
+        elif isinstance(saved_size, str):  # Handle improperly serialized values
+            try:
+                width, height = map(int, saved_size.strip("()").split(","))
+                self.dockwidget.resize(QSize(width, height))
+            except ValueError:
+                self.dockwidget.resize(QSize(300, 200))  # Default size
+        settings = QSettings()
+        settings.setValue("ThemeSelector/size", self.dockwidget.size())
     
     def disable_buttons(self):
         """Disable theme buttons."""
