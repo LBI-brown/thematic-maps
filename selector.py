@@ -400,7 +400,8 @@ class Selector:
                             item.refresh()
                             print(f"Refreshed map item in layout '{layout.name()}' for map item.")
 
-                # Repopulate the combobox and set the selected theme
+                # upate coverage layer theme, repopulate the combobox and set the selected theme
+                self.update_theme_name_in_layer(theme,name)
                 self.populate()
                 self.set_combo_text(name)
             else:
@@ -413,6 +414,26 @@ class Selector:
         if index >= 0:
             self.dockwidget.PresetComboBox.setCurrentIndex(index)
             print(f"set theme combo text to '{new_theme}'")
+
+    def update_theme_name_in_layer(self, old_theme,new_theme):
+        layer=self.coverage_layer()
+        #get field index of theme field
+        field_idx = layer.fields().lookupField(LAYER_THEME_FIELD_NAME)
+        layer.startEditing()
+        
+        try:
+            #get first matching feature with theme name
+            first_match = self.coverage_feature(old_theme)
+            #change theme name  
+            # Apply the value change directly to the data provider
+            layer.changeAttributeValue(first_match.id(), field_idx, new_theme)
+            print(f"'{old_theme}' renamed '{new_theme}'")
+        
+        #add new theme feature with selectected bookmark geometry             
+        except:
+            print(f"Could not update '{old_theme}'")
+       
+        layer.commitChanges()
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
