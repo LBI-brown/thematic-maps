@@ -46,6 +46,7 @@ GEOMETRY_TYPE = "Polygon"  # Options: 'Point', 'LineString', 'Polygon', 'None'
 CRS = "EPSG:4326"
 LAYER_THEME_FIELD_NAME = "theme_name"
 LAYER_BOOKMARK_FIELD_NAME = "bookmark_name"
+LAYER_BOOKMARK_FIELD_ID = "bookmark_id"
 
 class Selector:
     """QGIS Plugin Implementation.
@@ -125,7 +126,8 @@ class Selector:
             provider = layer.dataProvider()
             theme_name_field = QgsField(LAYER_THEME_FIELD_NAME, QVariant.String, len=200)
             bookmark_name_field = QgsField(LAYER_BOOKMARK_FIELD_NAME, QVariant.String, len=200)
-            provider.addAttributes([theme_name_field,bookmark_name_field])
+            bookmark_id_field = QgsField(LAYER_BOOKMARK_FIELD_ID, QVariant.Int)
+            provider.addAttributes([theme_name_field,bookmark_name_field,bookmark_id_field])
             
             # Update the layer layout to recognize the new field structure
             layer.updateFields()
@@ -199,7 +201,8 @@ class Selector:
             print(f"Matching bookmark and coverage layer crs")
         
         #get field index of bookmark field
-        field_idx = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
+        field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
+        field_idx2 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_ID)
         layer.startEditing()
         
         try:
@@ -207,11 +210,12 @@ class Selector:
             first_match = self.coverage_feature(theme)
             #change geometry extents if theme already existing   
             # Apply the value change directly to the data provider
-            layer.changeAttributeValue(first_match.id(), field_idx, bookmark_match.name())
+            layer.changeAttributeValue(first_match.id(), field_idx1, bookmark_match.name())
+            layer.changeAttributeValue(first_match.id(), field_idx2, bookmark_match.id())
             layer.changeGeometry(first_match.id(),geom)
             print(f"Feature '{first_match[LAYER_THEME_FIELD_NAME]}' updated successfully.")
         
-        #add new theme feature with selectected bookmark geometry             
+        #add new theme feature with selected bookmark geometry             
         except:
             print("start edit")
             fet = QgsFeature(layer.fields())
@@ -266,7 +270,8 @@ class Selector:
         self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
-        QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.populate)
+        QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
+        
 
         self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
         self.dockwidget.BookmarkComboBox.currentIndexChanged.connect(self.update_coverage_layer_extents)
@@ -434,6 +439,8 @@ class Selector:
             print(f"Could not update '{old_theme}'")
        
         layer.commitChanges()
+    
+    def bookmark_updates(self,id):
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
