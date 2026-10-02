@@ -171,11 +171,11 @@ class Selector:
 
         return layer
 
-    def update_coverage_layer_extents(self):
+    def update_coverage_layer_extents(self,new_theme):
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
         manager = QgsProject.instance().bookmarkManager()
-        theme = self.get_current_theme()
+        theme = new_theme or self.get_current_theme()
         print(f"current theme: '{theme}'")
         bookmark = self.get_current_bookmark()
         print(f"current bookmark: '{bookmark}'")
@@ -288,7 +288,7 @@ class Selector:
         self.disable_buttons()
 
     def populate(self):
-        """Populate comboboxes with available themes and bookmarks and update changes to coverage layer"""
+        """Populate comboboxes with available themes and bookmarks"""
         self.clear()
         themes = self.dockwidget.getAvailableThemes()
         bookmarks = self.dockwidget.getAvailableBookmarks()
@@ -322,13 +322,7 @@ class Selector:
         model = iface.layerTreeView().layerTreeModel()
         QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
         #update bookmark combo to bookmark associated with theme
-        self.set_combo_theme()
-    
-    def set_combo_text(self, name):
-        """Set combobox to the newly created theme."""
-        index = self.dockwidget.PresetComboBox.findText(name, Qt.MatchFixedString)
-        if index >= 0:
-            self.dockwidget.PresetComboBox.setCurrentIndex(index)
+        self.set_combo_theme()    
 
     def remove_maptheme(self):
         """Remove the selected theme."""
@@ -375,10 +369,17 @@ class Selector:
             map_collection.applyTheme(new_theme, root, model) 
             print (f"added '{new_theme}' to theme collection")
                              
-            self.set_combo_text(new_theme)
-            self.update_coverage_layer_extents()
+            self.update_coverage_layer_extents(new_theme)
             self.populate() 
+            self.set_combo_text(new_theme)
             
+    def set_combo_text(self, new_theme):
+        """Set combobox to the newly created theme."""
+        index = self.dockwidget.PresetComboBox.findText(new_theme, Qt.MatchFixedString)
+        if index >= 0:
+            self.dockwidget.PresetComboBox.setCurrentIndex(index)
+            print(f"set theme combo text to '{new_theme}'")
+    
     
     def rename_maptheme(self):
         """Rename the selected theme and update map layouts."""
