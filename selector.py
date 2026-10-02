@@ -450,9 +450,9 @@ class Selector:
 
         # Create a feature request with a filter expression
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
-       
+        features = layer.getFeatures(request)
         #change extents and name of existing bookmarks
-        if features = layer.getFeatures(request):
+        if next(features):
             layer.startEditing()
             for feature in features:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark.name())
