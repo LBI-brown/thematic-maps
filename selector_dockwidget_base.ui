@@ -18,35 +18,36 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="1">
-    <widget class="QLabel" name="theme_combo">
-    <property name="text">
-       <string>Theme</string>
-      </property>
-    </widget>
-    </item>
-    <item row="0" column="1" colspan="4">
-     <widget class="QComboBox" name="PresetComboBox">
-      <property name="toolTip">
-       <string>Theme for map</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="1">
+    
+    <item row="0" column="0" colspan="5">
     <widget class="QLabel" name="coverage_combo">
     <property name="text">
-       <string>Coverage</string>
+       <string>Map Coverage</string>
       </property>
     </widget>
     </item>
-    <item row="1" column="1" colspan="4">
+    <item row="1" column="0" colspan="5">
      <widget class="QComboBox" name="BookmarkComboBox">
       <property name="toolTip">
        <string>Bookmark coverage</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="1" colspan="2">
+    <item row="2" column="0" colspan="5">
+    <widget class="QLabel" name="theme_combo">
+    <property name="text">
+       <string>Map Theme</string>
+      </property>
+    </widget>
+    </item>
+    <item row="3" column="0" colspan="5">
+     <widget class="QComboBox" name="PresetComboBox">
+      <property name="toolTip">
+       <string>Theme for map</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
      <widget class="QPushButton" name="pushButton_rename">
       <property name="toolTip">
        <string>Rename theme</string>
@@ -56,7 +57,7 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="3" colspan="2">
+    <item row="4" column="2" colspan="3">
      <widget class="QPushButton" name="pushButton_remove">
       <property name="toolTip">
        <string>Remove theme</string>
@@ -72,7 +73,7 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="1" colspan="2">
+    <item row="5" column="0" colspan="2">
       <widget class="QPushButton" name="pushButton_replace">
       <property name="toolTip">
        <string>Replace theme in dropdown box with what is actually on map</string>
@@ -82,7 +83,7 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="3" colspan="2">
+    <item row="5" column="2" colspan="3">
      <widget class="QPushButton" name="pushButton_add">
       <property name="toolTip">
        <string>Add shown map layers as new theme</string>
