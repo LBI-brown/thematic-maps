@@ -126,7 +126,7 @@ class Selector:
             provider = layer.dataProvider()
             theme_name_field = QgsField(LAYER_THEME_FIELD_NAME, QVariant.String, len=200)
             bookmark_name_field = QgsField(LAYER_BOOKMARK_FIELD_NAME, QVariant.String, len=200)
-            bookmark_id_field = QgsField(LAYER_BOOKMARK_FIELD_ID, QVariant.Int)
+            bookmark_id_field = QgsField(LAYER_BOOKMARK_FIELD_ID, QVariant.String, len=200)
             provider.addAttributes([theme_name_field,bookmark_name_field,bookmark_id_field])
             
             # Update the layer layout to recognize the new field structure
