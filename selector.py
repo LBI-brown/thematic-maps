@@ -291,12 +291,16 @@ class Selector:
         """Set combo box to the current theme and bookmark."""
         theme = self.get_current_theme()
         bookmark_for_theme = self.bookmark_lookup(theme)
-        if theme is not None:
+        try:
             theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
             self.dockwidget.PresetComboBox.setCurrentIndex(theme_index)
-        if bookmark_for_theme is not None:
+        except:
+            print(f"no matching theme")
+        try:
             bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
             self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
+        except:
+            print(f"no matching bookmark")
         
 
     def apply_selected_theme(self):
