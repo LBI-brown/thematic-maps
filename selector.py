@@ -310,8 +310,7 @@ class Selector:
         if bookmark_for_theme is not None:
             bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
             self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
-        else:
-            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)   
+        
 
     def apply_selected_theme(self):
         """Apply the selected theme based on the current combobox selection."""
@@ -370,14 +369,7 @@ class Selector:
             self.populate() 
             self.set_combo_text(new_theme)
             self.update_coverage_layer_extents()
-            
-    def set_combo_text(self, new_theme):
-        """Set combobox to the newly created theme."""
-        index = self.dockwidget.PresetComboBox.findText(new_theme, Qt.MatchFixedString)
-        if index >= 0:
-            self.dockwidget.PresetComboBox.setCurrentIndex(index)
-            print(f"set theme combo text to '{new_theme}'")
-    
+                
     
     def rename_maptheme(self):
         """Rename the selected theme and update map layouts."""
@@ -415,6 +407,13 @@ class Selector:
                 QMessageBox.warning(None, self.tr("Theme Not Found"),
                                     self.tr(f"The theme '{theme}' was not found in the map theme collection."))
 
+    def set_combo_text(self, new_theme):
+        """Set combobox to the newly created theme."""
+        index = self.dockwidget.PresetComboBox.findText(new_theme, Qt.MatchFixedString)
+        if index >= 0:
+            self.dockwidget.PresetComboBox.setCurrentIndex(index)
+            print(f"set theme combo text to '{new_theme}'")
+    
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
         lookup_field = LAYER_THEME_FIELD_NAME
