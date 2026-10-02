@@ -267,9 +267,9 @@ class Selector:
         QgsProject.instance().cleared.connect(self.clear)
         QgsProject.instance().readProject.connect(self.populate)
 
-        #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
+        self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
-        #QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
+        QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
         
 
@@ -442,7 +442,7 @@ class Selector:
     
     #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
-
+        print(f"bookmark updates fnc called")
         layer=self.coverage_layer()
         manager = QgsApplication.bookmarkManager()
         bookmark = manager.bookmarkById(id)
