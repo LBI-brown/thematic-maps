@@ -426,7 +426,7 @@ class Selector:
     def bookmark_updates(self,id):
         print(f"bookmark updates fnc called for bookmark id {id}")
         layer=self.coverage_layer()
-        manager = QgsApplication.bookmarkManager()
+        manager = QgsProject.instance().bookmarkManager()
         bookmark = manager.bookmarkById(id)
         field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
 
