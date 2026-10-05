@@ -425,7 +425,7 @@ class Selector:
     
     #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
-        print(f"bookmark updates fnc called")
+        print(f"bookmark updates fnc called for bookmark id {id}")
         layer=self.coverage_layer()
         manager = QgsApplication.bookmarkManager()
         bookmark = manager.bookmarkById(id)
@@ -440,9 +440,11 @@ class Selector:
             for feature in features:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark.name())
                 layer.changeGeometry(feature.id(),bookmark.extent())
+                print(f"feature id {feature.id()} updated")
             layer.commitChanges()
+            print(layer.commitErrors()) 
         except: 
-            print(f"changes to bookmark not made")
+            print(f"updates to bookmark not passed to coverage layer")
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
