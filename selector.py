@@ -434,7 +434,7 @@ class Selector:
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
         features = layer.getFeatures(request)
         #change extents and name of existing bookmark in layer
-        print(f" feature(s) found: {nextFeature(features)}")
+        print(f" feature(s) found: {next(features) or None}")
         try:
             layer.startEditing()
             for feature in features:
