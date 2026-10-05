@@ -270,6 +270,7 @@ class Selector:
 
     def populate(self):
         """Populate comboboxes with available themes and bookmarks"""
+        print(f"populate fnc called")
         self.clear()
         themes = self.dockwidget.getAvailableThemes()
         bookmarks = self.dockwidget.getAvailableBookmarks()
@@ -428,6 +429,7 @@ class Selector:
         layer=self.coverage_layer()
         manager = QgsProject.instance().bookmarkManager()
         bookmark = manager.bookmarkById(id)
+        print(f"from bookmark_update fnc: {bookmark}")
         bookmark_name = bookmark.name()
         geom = QgsGeometry.fromRect(bookmark.extent())
         field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
