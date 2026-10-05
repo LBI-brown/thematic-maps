@@ -248,10 +248,9 @@ class Selector:
 
         #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
-        QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
+        QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         
-
         self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
         self.dockwidget.BookmarkComboBox.currentIndexChanged.connect(self.update_coverage_layer_extents)
         self.dockwidget.pushButton_replace.clicked.connect(self.replace_maptheme)
@@ -435,12 +434,13 @@ class Selector:
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
         features = layer.getFeatures(request)
         #change extents and name of existing bookmark in layer
+        print(f" feature(s) found: {nextFeature(features)}")
         try:
             layer.startEditing()
             for feature in features:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark.name())
                 layer.changeGeometry(feature.id(),bookmark.extent())
-                print(f"feature id {feature.id()} updated")
+                print(f"feature id {feature.id()} updated bookmark name and geometry")
             layer.commitChanges()
             print(layer.commitErrors()) 
         except: 
