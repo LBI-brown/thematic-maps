@@ -428,6 +428,8 @@ class Selector:
         layer=self.coverage_layer()
         manager = QgsProject.instance().bookmarkManager()
         bookmark = manager.bookmarkById(id)
+        bookmark_name = bookmark.name()
+        geom = QgsGeometry.fromRect(bookmark.extent())
         field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
 
         # Create a feature request with a filter expression
@@ -435,17 +437,16 @@ class Selector:
         features = layer.getFeatures(request)
         #change extents and name of existing bookmark in layer
         print(f" feature(s) found: {next(features) or None}")
-        try:
-            layer.startEditing()
-            for feature in features:
-                layer.changeAttributeValue(feature.id(), field_idx1, bookmark.name())
-                layer.changeGeometry(feature.id(),bookmark.extent())
-                print(f"feature id {feature.id()} updated bookmark name and geometry")
-            layer.commitChanges()
-            print(layer.commitErrors()) 
-        except: 
-            print(f"updates to bookmark not passed to coverage layer")
-    
+        
+        layer.startEditing()
+        for feature in features:
+            layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
+            layer.changeGeometry(feature.id(),geom)
+            print(f"feature id {feature.id()} updated bookmark name and geometry")
+        layer.commitChanges()
+        print(layer.commitErrors()) 
+        
+            
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
         lookup_field = LAYER_THEME_FIELD_NAME
