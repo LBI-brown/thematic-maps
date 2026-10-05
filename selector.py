@@ -186,12 +186,9 @@ class Selector:
         bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) or manager.bookmarks()[0]
         print (f"bookmark match:{bookmark_match}")
         geom = QgsGeometry.fromRect(bookmark_match.extent())
-        print(f"Found geometry for '{bookmark}':")
         #reproject bookmark geometry if different crs to coverge layer
-        # Retrieve the referenced rectangle extent
-        referenced_extent = bookmark_match.extent()
-        #Extract the CRS object from the referenced extent
-        bookmark_crs = referenced_extent.crs()
+        #Extract the CRS object from the extent
+        bookmark_crs = bookmark_match.extent().crs()
         layer_crs = layer.crs()
         if bookmark_crs != layer_crs:
             transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
@@ -227,8 +224,8 @@ class Selector:
             print(f"Successfully added '{theme}' to COVERAGE layer")
 
         finally:
-            print(layer.commitErrors())    
-            layer.commitChanges()           
+            layer.commitChanges()   
+            print(layer.commitErrors())   
             # Force QGIS to redraw the screen to show changes
             layer.triggerRepaint()
        
