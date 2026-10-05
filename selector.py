@@ -107,7 +107,7 @@ class Selector:
         layer = project.mapLayer(TARGET_LAYER_ID)
 
         if layer:
-            print(f"Coverage Layer found: {layer.name()} (ID: {layer.id()})")
+            print(f"COVERAGE Layer called and found")
         else:
             print(f"Coverage Layer with ID '{TARGET_LAYER_ID}' not found. Creating a new one...")
             
@@ -438,12 +438,14 @@ class Selector:
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
         features = layer.getFeatures(request)
         #change extents and name of existing bookmark in layer
-        if next(features):
+        try:
             layer.startEditing()
             for feature in features:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark.name())
                 layer.changeGeometry(feature.id(),bookmark.extent())
             layer.commitChanges()
+        except: 
+            print(f"changes to bookmark not made")
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
