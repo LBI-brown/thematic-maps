@@ -192,6 +192,11 @@ class Selector:
         # 3. Check if we actually have a valid bookmark object before getting the extent
         if bookmark_match is not None:
             geom = QgsGeometry.fromRect(bookmark_match.extent())
+
+            #set canvas extent to bookmark extent
+            canvas = iface.mapCanvas()
+            canvas.setExtent(geom)
+            
             #reproject bookmark geometry if different crs to coverge layer
             #Extract the CRS object from the extent
             bookmark_crs = bookmark_match.extent().crs()
