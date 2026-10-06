@@ -183,19 +183,28 @@ class Selector:
         print(f"current bookmark: '{bookmark}'")
 
         # Find bookmark matching the name or return first bookmark
-        bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) or manager.bookmarks()[0]
-        print (f"bookmark match:{bookmark_match}")
-        geom = QgsGeometry.fromRect(bookmark_match.extent())
-        #reproject bookmark geometry if different crs to coverge layer
-        #Extract the CRS object from the extent
-        bookmark_crs = bookmark_match.extent().crs()
-        layer_crs = layer.crs()
-        if bookmark_crs != layer_crs:
-            transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
-            geom.transform(transform)
-            print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
+        bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) 
+        # 2. Fallback to the first bookmark if the specific one isn't found
+        if bookmark_match is None and manager.bookmarks():
+            bookmark_match = manager.bookmarks()[0]
+            print(f"bookmark match: {bookmark_match}")
+
+        # 3. Check if we actually have a valid bookmark object before getting the extent
+        if bookmark_match is not None:
+            geom = QgsGeometry.fromRect(bookmark_match.extent())
+            #reproject bookmark geometry if different crs to coverge layer
+            #Extract the CRS object from the extent
+            bookmark_crs = bookmark_match.extent().crs()
+            layer_crs = layer.crs()
+            if bookmark_crs != layer_crs:
+                transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
+                geom.transform(transform)
+                print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
+            else:
+                print(f"Matching bookmark and coverage layer crs")
         else:
-            print(f"Matching bookmark and coverage layer crs")
+            print("Error: No bookmarks found in the manager at all.")
+            geom = None      
         
         #get field index of bookmark field
         field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
