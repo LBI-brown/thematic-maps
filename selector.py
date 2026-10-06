@@ -288,7 +288,7 @@ class Selector:
             self.dockwidget.PresetComboBox.addItem(setting)
 
         for bmk in bookmarks:
-            self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}" )
+            self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}", bmk.id() )
         
         self.set_combo_theme()
         self.enable_buttons()
@@ -435,20 +435,25 @@ class Selector:
     #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
         print(f"bookmark updates fnc called for bookmark id {id}")
+
+        
         layer=self.coverage_layer()
         manager = QgsProject.instance().bookmarkManager()
         bookmark = manager.bookmarkById(id)
         print(f"from bookmark_update fnc: {bookmark}")
         bookmark_name = bookmark.name()
         geom = QgsGeometry.fromRect(bookmark.extent())
-        field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
 
+        #update combo box name
+        index = self.dockwidget.BookmarkComboBox.findData(id)
+        self.dockwidget.BookmarkComboBox.setItemText(index, bookmark_name)
+        
         # Create a feature request with a filter expression
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
         features = layer.getFeatures(request)
-        #change extents and name of existing bookmark in layer
         
-        
+        #change extents and name of existing bookmark in layer        
+        field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
         layer.startEditing()
         for feature in features:
             layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
