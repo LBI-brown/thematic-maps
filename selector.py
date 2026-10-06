@@ -107,7 +107,7 @@ class Selector:
         layer = project.mapLayer(TARGET_LAYER_ID)
 
         if layer:
-            print(f"Coverage Layer found: {layer.name()} (ID: {layer.id()})")
+            print(f"COVERAGE Layer called and found")
         else:
             print(f"Coverage Layer with ID '{TARGET_LAYER_ID}' not found. Creating a new one...")
             
@@ -153,7 +153,7 @@ class Selector:
             layer_node.setItemVisibilityChecked(True)
             layer.triggerRepaint()
             
-
+            #add existing themes as features
             # Start editing session
             layer.startEditing()
             themes = self.dockwidget.getAvailableThemes()
@@ -183,22 +183,28 @@ class Selector:
         print(f"current bookmark: '{bookmark}'")
 
         # Find bookmark matching the name or return first bookmark
-        bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) or manager.bookmarks()[0]
+        bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) 
+        # 2. Fallback to the first bookmark if the specific one isn't found
+        if bookmark_match is None and manager.bookmarks():
+            bookmark_match = manager.bookmarks()[0]
+            print(f"bookmark match: {bookmark_match}")
 
-        geom = QgsGeometry.fromRect(bookmark_match.extent())
-        print(f"Found geometry for '{bookmark}':")
-        #reproject bookmark geometry if different crs to coverge layer
-        # Retrieve the referenced rectangle extent
-        referenced_extent = bookmark_match.extent()
-        #Extract the CRS object from the referenced extent
-        bookmark_crs = referenced_extent.crs()
-        layer_crs = layer.crs()
-        if bookmark_crs != layer_crs:
-            transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
-            geom.transform(transform)
-            print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
+        # 3. Check if we actually have a valid bookmark object before getting the extent
+        if bookmark_match is not None:
+            geom = QgsGeometry.fromRect(bookmark_match.extent())
+            #reproject bookmark geometry if different crs to coverge layer
+            #Extract the CRS object from the extent
+            bookmark_crs = bookmark_match.extent().crs()
+            layer_crs = layer.crs()
+            if bookmark_crs != layer_crs:
+                transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
+                geom.transform(transform)
+                print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
+            else:
+                print(f"Matching bookmark and coverage layer crs")
         else:
-            print(f"Matching bookmark and coverage layer crs")
+            print("Error: No bookmarks found in the manager at all.")
+            geom = None      
         
         #get field index of bookmark field
         field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
@@ -227,8 +233,8 @@ class Selector:
             print(f"Successfully added '{theme}' to COVERAGE layer")
 
         finally:
-            print(layer.commitErrors())    
-            layer.commitChanges()           
+            layer.commitChanges()   
+            print(layer.commitErrors())   
             # Force QGIS to redraw the screen to show changes
             layer.triggerRepaint()
        
@@ -242,37 +248,18 @@ class Selector:
         first_match = next(features) or None
         return first_match
     
-    def unload(self):
-        """Removes the plugin menu item and icon from QGIS GUI."""
-        self.iface.removeToolBarIcon(self.action)
-        self.iface.removeDockWidget(self.dockwidget)
-
-        # Save the size of the dock widget
-        settings = QSettings()
-        QSettings.setDefaultFormat(QSettings.IniFormat)
-        saved_size = settings.value("ThemeSelector/size", QSize(300, 200))
-        if isinstance(saved_size, QSize):
-            self.dockwidget.resize(saved_size)
-        elif isinstance(saved_size, str):  # Handle improperly serialized values
-            try:
-                width, height = map(int, saved_size.strip("()").split(","))
-                self.dockwidget.resize(QSize(width, height))
-            except ValueError:
-                self.dockwidget.resize(QSize(300, 200))  # Default size
-        settings = QSettings()
-        settings.setValue("ThemeSelector/size", self.dockwidget.size())
+    
 
     def connect_signals(self):
         """Connect various signals and slots."""
         QgsProject.instance().cleared.connect(self.clear)
         QgsProject.instance().readProject.connect(self.populate)
 
-        self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
+        #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
-        QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
+        QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         
-
         self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
         self.dockwidget.BookmarkComboBox.currentIndexChanged.connect(self.update_coverage_layer_extents)
         self.dockwidget.pushButton_replace.clicked.connect(self.replace_maptheme)
@@ -292,6 +279,7 @@ class Selector:
 
     def populate(self):
         """Populate comboboxes with available themes and bookmarks"""
+        print(f"populate fnc called")
         self.clear()
         themes = self.dockwidget.getAvailableThemes()
         bookmarks = self.dockwidget.getAvailableBookmarks()
@@ -300,7 +288,7 @@ class Selector:
             self.dockwidget.PresetComboBox.addItem(setting)
 
         for bmk in bookmarks:
-            self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}" )
+            self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}", bmk.id() )
         
         self.set_combo_theme()
         self.enable_buttons()
@@ -309,12 +297,16 @@ class Selector:
         """Set combo box to the current theme and bookmark."""
         theme = self.get_current_theme()
         bookmark_for_theme = self.bookmark_lookup(theme)
-        if theme is not None:
+        try:
             theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
             self.dockwidget.PresetComboBox.setCurrentIndex(theme_index)
-        if bookmark_for_theme is not None:
+        except:
+            print(f"no matching theme")
+        try:
             bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
             self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
+        except:
+            print(f"no matching bookmark")
         
 
     def apply_selected_theme(self):
@@ -440,10 +432,37 @@ class Selector:
        
         layer.commitChanges()
     
+    #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
+        print(f"bookmark updates fnc called for bookmark id {id}")
 
-        pass  # Function logic to be added later
-    
+        
+        layer=self.coverage_layer()
+        manager = QgsProject.instance().bookmarkManager()
+        bookmark = manager.bookmarkById(id)
+        print(f"from bookmark_update fnc: {bookmark}")
+        bookmark_name = bookmark.name()
+        geom = QgsGeometry.fromRect(bookmark.extent())
+
+        #update combo box name
+        index = self.dockwidget.BookmarkComboBox.findData(id)
+        self.dockwidget.BookmarkComboBox.setItemText(index, bookmark_name)
+        
+        # Create a feature request with a filter expression
+        request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
+        features = layer.getFeatures(request)
+        
+        #change extents and name of existing bookmark in layer        
+        field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
+        layer.startEditing()
+        for feature in features:
+            layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
+            layer.changeGeometry(feature.id(),geom)
+            print(f"feature id {feature.id()} updated bookmark name and geometry")
+        layer.commitChanges()
+        print(layer.commitErrors()) 
+        
+            
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
         lookup_field = LAYER_THEME_FIELD_NAME
@@ -451,10 +470,10 @@ class Selector:
 
         # Create an in-memory key-value dictionary {lookup_value: target_value}
         # This loops through the features once and indexes them
-        bookmark_lookup = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
+        bookmark_lookup_dict = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
         #finds bookmark corresponding to theme
-        assoc_bmk = bookmark_lookup.get(theme, None)  
-        print(f"from fnc lookup bookmark dict:{bookmark_lookup} returning '{assoc_bmk}' ")
+        assoc_bmk = bookmark_lookup_dict.get(theme, None)  
+        print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning '{assoc_bmk}' ")
         return assoc_bmk  
 
     def get_current_theme(self):
@@ -464,6 +483,26 @@ class Selector:
     def get_current_bookmark(self):
         """Retrieve the currently selected theme by name."""
         return self.dockwidget.BookmarkComboBox.currentText()    
+
+    def unload(self):
+        """Removes the plugin menu item and icon from QGIS GUI."""
+        self.iface.removeToolBarIcon(self.action)
+        self.iface.removeDockWidget(self.dockwidget)
+
+        # Save the size of the dock widget
+        settings = QSettings()
+        QSettings.setDefaultFormat(QSettings.IniFormat)
+        saved_size = settings.value("ThemeSelector/size", QSize(300, 200))
+        if isinstance(saved_size, QSize):
+            self.dockwidget.resize(saved_size)
+        elif isinstance(saved_size, str):  # Handle improperly serialized values
+            try:
+                width, height = map(int, saved_size.strip("()").split(","))
+                self.dockwidget.resize(QSize(width, height))
+            except ValueError:
+                self.dockwidget.resize(QSize(300, 200))  # Default size
+        settings = QSettings()
+        settings.setValue("ThemeSelector/size", self.dockwidget.size())
     
     def disable_buttons(self):
         """Disable theme buttons."""
