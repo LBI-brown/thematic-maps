@@ -195,7 +195,8 @@ class Selector:
 
             #set canvas extent to bookmark extent
             canvas = iface.mapCanvas()
-            canvas.setExtent(geom)
+            canvas.setExtent(geom.boundingBox())
+            canvas.refresh()
             
             #reproject bookmark geometry if different crs to coverge layer
             #Extract the CRS object from the extent
