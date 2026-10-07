@@ -407,18 +407,7 @@ class Selector:
                             item.refresh()
                             print(f"Refreshed map item in layout '{layout.name()}' for map item.")
 
-                # upate coverage layer theme, repopulate the combobox and set the selected theme
-                layer=self.coverage_layer()
-                field_idx1 = layer.fields().lookupField(LAYER_THEME_FIELD_ID)
-                layer.startEditing()
-                #get first matching feature with old theme name
-                first_match = self.coverage_feature(theme)
-                # Apply the value change directly to the data provider
-                if first_match:
-                    layer.changeAttributeValue(first_match.id(), field_idx1, name)
-                    print(f"Feature '{theme}' updated successfully to '{name}'")
-                layer.commitChanges()
-                
+                self.update_theme_name_in_layer(theme,name)
                 self.populate()
                 self.set_combo_text(name)
             else:
