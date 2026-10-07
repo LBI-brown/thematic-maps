@@ -370,7 +370,7 @@ class Selector:
             layer=self.coverage_layer()
             layer.startEditing()
             fet = QgsFeature(layer.fields())
-            fet.setGeometry(geom)
+            #fet.setGeometry(geom)
             fet[LAYER_THEME_FIELD_NAME] = new_theme
             layer.addFeature(fet) 
             layer.commitChanges()
