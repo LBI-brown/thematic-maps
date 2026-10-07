@@ -172,71 +172,49 @@ class Selector:
             print(f"Successfully created, added and populated COVERAGE layer: {layer.name()} with ID: {layer.id()}") 
 
         return layer
-
+        
+    #when bookmark changed in combo box update corresponding theme feature in layer
     def update_coverage_layer_extents(self):
-        #set geometries of all feature polygons to extents from extentsWidget
+        
         layer=self.coverage_layer()
         manager = QgsProject.instance().bookmarkManager()
         theme = self.dockwidget.PresetComboBox.currentText()    
         print(f"current theme: '{theme}'")
-        bookmark = self.get_current_bookmark()
+        bookmark = self.dockwidget.BookmarkComboBox.currentText()  
         print(f"current bookmark: '{bookmark}'")
 
-        # Find bookmark matching the name or return first bookmark
+        # Find bookmark matching the name 
         bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) 
-        # 2. Fallback to the first bookmark if the specific one isn't found
-        if bookmark_match is None and manager.bookmarks():
-            bookmark_match = manager.bookmarks()[0]
-            print(f"bookmark match: {bookmark_match}")
 
-        # 3. Check if we actually have a valid bookmark object before getting the extent
+        # Check if we actually have a valid bookmark object before getting the extent
         if bookmark_match is not None:
             geom = QgsGeometry.fromRect(bookmark_match.extent())
-
             #set canvas extent to bookmark extent
             canvas = iface.mapCanvas()
             canvas.setExtent(geom.boundingBox())
-            canvas.refresh()
-            
-            #reproject bookmark geometry if different crs to coverge layer
-            #Extract the CRS object from the extent
-            bookmark_crs = bookmark_match.extent().crs()
-            layer_crs = layer.crs()
-            if bookmark_crs != layer_crs:
-                transform = QgsCoordinateTransform(bookmark_crs, layer_crs, QgsProject.instance())
-                geom.transform(transform)
-                print(f"Reprojected geometry from {bookmark_crs.authid()} to {layer_crs.authid()}")
-            else:
-                print(f"Matching bookmark and coverage layer crs")
+            canvas.refresh() 
+
+             #get field index of bookmark field
+            field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
+            field_idx2 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_ID)
+            layer.startEditing()
+        
+            try:
+                #get first matching feature with theme name
+                first_match = self.coverage_feature(theme)
+                #change geometry extents if theme already existing   
+                layer.changeAttributeValue(first_match.id(), field_idx1, bookmark_match.name())
+                layer.changeAttributeValue(first_match.id(), field_idx2, bookmark_match.id())
+                layer.changeGeometry(first_match.id(),geom)
+                print(f"Feature '{first_match[LAYER_THEME_FIELD_NAME]}' updated successfully.")     
+            except:
+                print(f"No matching theme found")
+            finally:
+                layer.commitChanges() 
         else:
             print("Error: No bookmarks found in the manager at all.")
-            geom = None      
-        
-        #get field index of bookmark field
-        field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
-        field_idx2 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_ID)
-        layer.startEditing()
-        
-        try:
-            #get first matching feature with theme name
-            first_match = self.coverage_feature(theme)
-            #change geometry extents if theme already existing   
-            # Apply the value change directly to the data provider
-            layer.changeAttributeValue(first_match.id(), field_idx1, bookmark_match.name())
-            layer.changeAttributeValue(first_match.id(), field_idx2, bookmark_match.id())
-            layer.changeGeometry(first_match.id(),geom)
-            print(f"Feature '{first_match[LAYER_THEME_FIELD_NAME]}' updated successfully.")
-        
-        #add new theme feature with selected bookmark geometry             
-        except:
-            print(f"No matching theme found")
-        finally:
-            layer.commitChanges()   
-            print(layer.commitErrors())   
-            # Force QGIS to redraw the screen to show changes
-            layer.triggerRepaint()
-       
 
+    #return layer feature from theme name
     def coverage_feature(self,theme):
         layer=self.coverage_layer()
         # Create a feature request with a filter expression
@@ -291,23 +269,20 @@ class Selector:
         self.set_combo_theme()
         self.enable_buttons()
 
+    #set combobox theme to match theme showing or blank
     def set_combo_theme(self):
-        """Set combo box to the current theme and bookmark."""
         theme = self.get_current_theme()
         bookmark_for_theme = self.bookmark_lookup(theme)
         try:
             theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
             self.dockwidget.PresetComboBox.setCurrentIndex(theme_index)
-        except:
-            print(f"no matching theme")
-            self.dockwidget.PresetComboBox.setCurrentIndex(-1)
-        try:
             bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
             self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
         except:
-            print(f"no matching bookmark")
+            print(f"no matching theme")
+            self.dockwidget.PresetComboBox.setCurrentIndex(-1)
             self.dockwidget.BookamarkComboBox.setCurrentIndex(-1)
-        
+           
 
     def apply_selected_theme(self):
         """Apply the selected theme based on the current combobox selection."""
