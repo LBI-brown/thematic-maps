@@ -308,11 +308,13 @@ class Selector:
             self.dockwidget.PresetComboBox.setCurrentIndex(theme_index)
         except:
             print(f"no matching theme")
+            self.dockwidget.PresetComboBox.setCurrentIndex(-1)
         try:
             bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
             self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
         except:
             print(f"no matching bookmark")
+            self.dockwidget.BookamarkComboBox.setCurrentIndex(-1)
         
 
     def apply_selected_theme(self):
@@ -483,8 +485,21 @@ class Selector:
         return assoc_bmk  
 
     def get_current_theme(self):
-        """Retrieve the currently selected theme by name."""
-        return self.dockwidget.PresetComboBox.currentText()
+        """Retrieve the theme that matches current visibility map states ie active theme"""
+        
+        project = QgsProject.instance()
+        theme_collection = project.mapThemeCollection()
+        
+        # 1. Capture the current layer tree layout state
+        root = project.layerTreeRoot()
+        model = iface.layerTreeView().layerTreeModel()
+        current_state = theme_collection.createThemeFromCurrentState(root, model)
+        
+        # 2. Loop through saved themes and check for a match
+        for theme_name in theme_collection.mapThemes():
+            if theme_collection.mapThemeState(theme_name) == current_state:
+                return theme_name               
+        return None
 
     def get_current_bookmark(self):
         """Retrieve the currently selected theme by name."""
