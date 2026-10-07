@@ -365,11 +365,13 @@ class Selector:
                                         
             self.populate() 
             self.set_combo_text(new_theme)
+            
             #add theme to COVERAGE layer
+            layer=self.coverage_layer()
+            layer.startEditing()
             fet = QgsFeature(layer.fields())
             fet.setGeometry(geom)
             fet[LAYER_THEME_FIELD_NAME] = new_theme
-            print("set value and geom")
             layer.addFeature(fet) 
             layer.commitChanges()
             print(f"Successfully added '{theme}' to COVERAGE layer")
