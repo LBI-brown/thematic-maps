@@ -365,7 +365,7 @@ class Selector:
                                         
             self.populate() 
             self.set_combo_text(new_theme)
-            self.dockwidget.PresetComboBox.setCurrentIndex(-1)
+            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)
             
             #add theme to COVERAGE layer
             layer=self.coverage_layer()
