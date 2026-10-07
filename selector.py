@@ -177,7 +177,7 @@ class Selector:
         #set geometries of all feature polygons to extents from extentsWidget
         layer=self.coverage_layer()
         manager = QgsProject.instance().bookmarkManager()
-        theme = self.get_current_theme()
+        theme = self.dockwidget.PresetComboBox.currentText()    
         print(f"current theme: '{theme}'")
         bookmark = self.get_current_bookmark()
         print(f"current bookmark: '{bookmark}'")
@@ -229,15 +229,7 @@ class Selector:
         
         #add new theme feature with selected bookmark geometry             
         except:
-            print("start edit")
-            fet = QgsFeature(layer.fields())
-            print("create fet")
-            fet.setGeometry(geom)
-            fet[LAYER_THEME_FIELD_NAME] = theme
-            print("set value and geom")
-            layer.addFeature(fet)                
-            print(f"Successfully added '{theme}' to COVERAGE layer")
-
+            print(f"No matching theme found")
         finally:
             layer.commitChanges()   
             print(layer.commitErrors())   
@@ -373,7 +365,14 @@ class Selector:
                                         
             self.populate() 
             self.set_combo_text(new_theme)
-            self.update_coverage_layer_extents()
+            #add theme to COVERAGE layer
+            fet = QgsFeature(layer.fields())
+            fet.setGeometry(geom)
+            fet[LAYER_THEME_FIELD_NAME] = new_theme
+            print("set value and geom")
+            layer.addFeature(fet) 
+            layer.commitChanges()
+            print(f"Successfully added '{theme}' to COVERAGE layer")
                 
     
     def rename_maptheme(self):
