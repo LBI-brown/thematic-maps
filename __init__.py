@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- ThemeSelector
+ ThematicMaps
                                  A QGIS plugin
- This plugin brings the layer theme settings directly to the desktop
+ This plugin maintains a thematic coverage layer for use in print layout
                              -------------------
-        begin                : 2017-07-13
-        copyright            : (C) 2017 by Werner Macho
-        email                : werner.macho@gmail.com
+        begin                : 2026-09-01
+        copyright            : (C) 2026 by Nick Brown
+        email                : nick@browndesign.co.uk
         git sha              : $Format:%H$
  ***************************************************************************/
 
@@ -25,5 +25,5 @@
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
-    from .selector import Selector
-    return Selector(iface)
+    from .thematic_maps import ThematicMaps
+    return ThematicMaps(iface)
