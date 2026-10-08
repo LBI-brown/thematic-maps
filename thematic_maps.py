@@ -452,9 +452,9 @@ class ThematicMaps:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
                 layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
                 if geom:
-                    feature.changeGeometry(geom) 
+                    layer.changeGeometry(feature.id(),geom) 
                 else:
-                    feature.clearGeometry()
+                    layer.changeGeometryValues({feature.id(): QgsGeometry()})
                 layer.updateFeature(feature)
                 print(f"feature id {feature.id()} updated bookmark name and geometry")
         
