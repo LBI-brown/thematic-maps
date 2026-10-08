@@ -434,9 +434,7 @@ class ThematicMaps:
             geom = QgsGeometry.fromRect(bookmark.extent()) 
             print(f"bookmark geometry found")
         else:
-            geom = QgsGeometry()
-            print(f"bookmark geometry set to empty")
-
+            geom = None
         
         #index = self.dockwidget.BookmarkComboBox.findData(id)
         #self.dockwidget.BookmarkComboBox.setItemText(index, bookmark_name)
@@ -453,7 +451,10 @@ class ThematicMaps:
             for feature in features:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
                 layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
-                layer.changeGeometryValues({feature.id(): geom}) 
+                if geom:
+                    feature.changeGeometry(geom) 
+                else:
+                    feature.clearGeometry()
                 layer.updateFeature(feature)
                 print(f"feature id {feature.id()} updated bookmark name and geometry")
         
