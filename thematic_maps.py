@@ -234,7 +234,7 @@ class ThematicMaps:
         #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
-        QgsProject.instance().bookmarkManager().bookmarkRemoved.connect(self.bookmark_remove)
+        QgsProject.instance().bookmarkManager().bookmarkRemoved.connect(self.bookmark_updates)
         QgsProject.instance().bookmarkManager().bookmarkAdded.connect(self.populate)
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         
