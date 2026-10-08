@@ -234,7 +234,7 @@ class ThematicMaps:
         #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
-        QgsProject.instance().bookmarkManager().bookmarkRemoved.connect(self.bookmark_updates)
+        QgsProject.instance().bookmarkManager().bookmarkRemoved.connect(self.bookmark_remove)
         QgsProject.instance().bookmarkManager().bookmarkAdded.connect(self.populate)
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         
@@ -446,9 +446,9 @@ class ThematicMaps:
             for feature in features:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
                 layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
-                try:
+                if geom is not None:
                     layer.changeGeometry(feature.id(),geom) 
-                except TypeError:
+                else:
                     layer.changeGeometryValues({feature.id(): QgsGeometry()})
                 layer.updateFeature(feature)
                 print(f"feature id {feature.id()} updated bookmark name and geometry")
