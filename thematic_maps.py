@@ -458,6 +458,7 @@ class ThematicMaps:
             else:
                 feature.clearGeometry()
                 print(f"bookmark geom cleared from feature")
+            layer.updateFeature(feature)
             print(f"feature id {feature.id()} updated bookmark name and geometry")
         layer.commitChanges()
         iface.mapCanvas().refresh()
