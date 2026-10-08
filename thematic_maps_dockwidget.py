@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
- SelectorDockWidget
+ ThematicMapsDockWidget
 
  A QGIS plugin for managing layer theme settings from the desktop.
  
@@ -23,11 +23,11 @@ from qgis.utils import iface
 
 # Load the UI file dynamically using uic
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__),
-                                            'selector_dockwidget_base.ui'))
+                                            'thematic_maps_dockwidget_base.ui'))
 
 
-class SelectorDockWidget(QDockWidget, FORM_CLASS):
-    """Main class for the Theme Selector dock widget."""
+class ThematicMapsDockWidget(QDockWidget, FORM_CLASS):
+    """Main class for the Thematic maps dock widget."""
     
     def __init__(self, parent=None):
         """Constructor: Set up the UI and initialize attributes."""
