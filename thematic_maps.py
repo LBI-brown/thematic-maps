@@ -234,6 +234,8 @@ class ThematicMaps:
         #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
+        QgsProject.instance().bookmarkManager().bookmarkRemoved.connect(self.bookmark_removed)
+        QgsProject.instance().bookmarkManager().bookmarkAdded.connect(self.populate)
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         
         self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
@@ -445,7 +447,11 @@ class ThematicMaps:
             print(f"feature id {feature.id()} updated bookmark name and geometry")
         layer.commitChanges()
         print(layer.commitErrors()) 
-        
+
+    def bookmark_removed(self,id):
+        pass
+
+
             
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
