@@ -421,8 +421,6 @@ class ThematicMaps:
     #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
         print(f"bookmark updates fnc called for bookmark id {id}")
-        #update combo box name
-        self.populate()
         
         #get values for bookmark or sets to None if removed
         manager = QgsProject.instance().bookmarkManager()
@@ -452,6 +450,9 @@ class ThematicMaps:
             print(f"feature id {feature.id()} updated bookmark name and geometry")
         layer.commitChanges()
         print(layer.commitErrors()) 
+
+        #update combo box name
+        self.populate()
 
     
     def bookmark_lookup(self,theme):
