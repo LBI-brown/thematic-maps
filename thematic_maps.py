@@ -429,7 +429,7 @@ class ThematicMaps:
         print(f"from bookmark_update fnc: {bookmark}")
         bookmark_name = bookmark.name() or None
         bookmark_id = bookmark.id() or None  
-        geom = QgsGeometry.fromRect(bookmark.extent()) or None
+        geom = QgsGeometry.fromRect(bookmark.extent()) or QgsGeometry()
         print(f"bookmark geometry: {geom}")
                 
         #index = self.dockwidget.BookmarkComboBox.findData(id)
@@ -447,10 +447,10 @@ class ThematicMaps:
             for feature in features:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
                 layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
-                if geom is not None:
+                if not geom.isNull():
                     layer.changeGeometry(feature.id(),geom) 
                 else:
-                    layer.changeGeometryValues({feature.id(): QgsGeometry()})
+                    layer.changeGeometryValues({feature.id(): geom})
                 layer.updateFeature(feature)
                 print(f"feature id {feature.id()} updated bookmark name and geometry")
         
