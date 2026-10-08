@@ -447,7 +447,7 @@ class ThematicMaps:
             for feature in features:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
                 layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
-                if geom and not geom.isEmpty()::
+                if geom and not geom.isEmpty():
                     print(f"running if block. geometry is empty: {geom.isEmpty()}")
                     layer.changeGeometry(feature.id(),geom) 
                 else:
