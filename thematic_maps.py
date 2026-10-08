@@ -346,13 +346,12 @@ class ThematicMaps:
             
             #add theme to COVERAGE layer
             layer=self.coverage_layer()
-            layer.startEditing()
-            fet = QgsFeature(layer.fields())
-            #fet.setGeometry(geom)
-            fet[LAYER_THEME_FIELD_NAME] = new_theme
-            layer.addFeature(fet) 
-            layer.commitChanges()
-            print(f"Successfully added '{new_theme}' to COVERAGE layer")
+            with edit(layer):
+                fet = QgsFeature(layer.fields())
+                fet[LAYER_THEME_FIELD_NAME] = new_theme
+                layer.addFeature(fet) 
+                print(f"Successfully added '{new_theme}' to COVERAGE layer")
+            
                 
     
     def rename_maptheme(self):
@@ -402,21 +401,22 @@ class ThematicMaps:
         layer=self.coverage_layer()
         #get field index of theme field
         field_idx = layer.fields().lookupField(LAYER_THEME_FIELD_NAME)
-        layer.startEditing()
+        with edit(layer):
         
-        try:
-            #get first matching feature with theme name
-            first_match = self.coverage_feature(old_theme)
-            #change theme name  
-            # Apply the value change directly to the data provider
-            layer.changeAttributeValue(first_match.id(), field_idx, new_theme)
-            print(f"'{old_theme}' renamed '{new_theme}'")
-        
-        #add new theme feature with selectected bookmark geometry             
-        except:
-            print(f"Could not update '{old_theme}'")
+            try:
+                #get first matching feature with theme name
+                first_match = self.coverage_feature(old_theme)
+                #change theme name  
+                # Apply the value change directly to the data provider
+                layer.changeAttributeValue(first_match.id(), field_idx, new_theme)
+                layer.updateFeature(first_match)
+                print(f"'{old_theme}' renamed '{new_theme}'")
+            
+            #add new theme feature with selectected bookmark geometry             
+            except:
+                print(f"Could not update '{old_theme}'")
        
-        layer.commitChanges()
+        
     
     #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
@@ -433,8 +433,8 @@ class ThematicMaps:
             geom = QgsGeometry.fromRect(bookmark.extent()) 
             print(f"bookmark geometry found")
         else:
-            geom = None
-            print(f"bookmark geometry set to None")
+            geom = QgsGeometry()
+            print(f"bookmark geometry set to empty")
 
         
         #index = self.dockwidget.BookmarkComboBox.findData(id)
@@ -448,19 +448,14 @@ class ThematicMaps:
         #update extents and name of existing bookmark in layer or set to None if removed        
         field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
         field_idx2 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_ID)
-        layer.startEditing()
-        for feature in features:
-            layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
-            layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
-            if bookmark_name is not None:
-                layer.changeGeometry(feature.id(),geom) 
-                print(f"bookmark geom updated for feature")
-            else:
-                feature.clearGeometry()
-                print(f"bookmark geom cleared from feature")
-            layer.updateFeature(feature)
-            print(f"feature id {feature.id()} updated bookmark name and geometry")
-        layer.commitChanges()
+        with edit(layer)
+            for feature in features:
+                layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
+                layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
+                layer.changeGeometryValues({feature.id(): geom}) 
+                layer.updateFeature(feature)
+                print(f"feature id {feature.id()} updated bookmark name and geometry")
+        
         iface.mapCanvas().refresh()
         print(layer.commitErrors()) 
 
