@@ -452,7 +452,7 @@ class ThematicMaps:
         for feature in features:
             layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
             layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
-            if bookmark_id is not None:
+            if bookmark_name is not None:
                 layer.changeGeometry(feature.id(),geom) 
                 print(f"bookmark geom updated for feature")
             else:
