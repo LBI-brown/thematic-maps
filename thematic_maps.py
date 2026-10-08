@@ -283,7 +283,7 @@ class ThematicMaps:
         except:
             print(f"no matching theme")
             self.dockwidget.PresetComboBox.setCurrentIndex(-1)
-            self.dockwidget.BookamarkComboBox.setCurrentIndex(-1)
+            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)
            
 
     def apply_selected_theme(self):
@@ -293,7 +293,12 @@ class ThematicMaps:
         model = iface.layerTreeView().layerTreeModel()
         QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
         #update bookmark combo to bookmark associated with theme
-        self.set_combo_theme()    
+        bookmark_for_theme = self.bookmark_lookup(theme_name) 
+        if bookmark_for_theme is not Null:
+            bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
+            self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
+        else:
+            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)
 
     def remove_maptheme(self):
         """Remove the selected theme."""
@@ -433,18 +438,13 @@ class ThematicMaps:
         print(f"bookmark id: {bookmark_id}")
         geom = QgsGeometry.fromRect(bookmark.extent()) or QgsGeometry()
         print(f"bookmark geometry: {geom}")
-                
-        #index = self.dockwidget.BookmarkComboBox.findData(id)
-        #self.dockwidget.BookmarkComboBox.setItemText(index, bookmark_name)
-        
+       
         # filter features to those with matching bookmark ids
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
         layer=self.coverage_layer()
         features = layer.getFeatures(request)
         
-        #update extents and name of existing bookmark in layer or set to None if removed        
-        field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
-        field_idx2 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_ID)
+        #update extents and name of existing bookmark in layer or set to None if removed               
         with edit(layer):
             for feature in features:
                 feature[LAYER_BOOKMARK_FIELD_NAME] = bookmark_name
@@ -474,8 +474,8 @@ class ThematicMaps:
         # This loops through the features once and indexes them
         bookmark_lookup_dict = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
         #finds bookmark corresponding to theme
-        assoc_bmk = bookmark_lookup_dict.get(theme, None)  
-        print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning '{assoc_bmk}' ")
+        assoc_bmk = bookmark_lookup_dict.get(theme, NULL)  
+        print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning bookmark '{assoc_bmk}' ")
         return assoc_bmk  
 
     def get_current_theme(self):
