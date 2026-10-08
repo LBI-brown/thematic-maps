@@ -5,10 +5,10 @@ ThematicMaps
 A QGIS plugin
 This plugin maintains themeatic maps in a layout Atlas from layer theme settings
 
-    begin                : 2026-09-14
+    begin                : 2026-09-01
     git sha              : $Format:%H$
-    copyright            : (C) 2016 by Nicholas Brown
-    email                : nicholas.brown@islington.gov.uk
+    copyright            : (C) 2026 by Nicholas Brown
+    email                : nick@browndesign.co.uk
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
