@@ -447,8 +447,8 @@ class ThematicMaps:
         field_idx2 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_ID)
         with edit(layer):
             for feature in features:
-                layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
-                layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
+                feature[LAYER_BOOKMARK_FIELD_NAME] = bookmark_name
+                feature[LAYER_BOOKMARK_FIELD_ID] = bookmark_id
                 if geom and not geom.isEmpty():
                     print(f"running if block. geometry is empty: {geom.isEmpty()}")
                     layer.changeGeometry(feature.id(),geom) 
