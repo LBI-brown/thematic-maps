@@ -428,7 +428,9 @@ class ThematicMaps:
         bookmark = manager.bookmarkById(id)
         print(f"from bookmark_update fnc: {bookmark}")
         bookmark_name = bookmark.name() or None
-        bookmark_id = bookmark.id() or None  
+        print(f"bookmark name: {bookmark_name}")
+        bookmark_id = bookmark.id() or None 
+        print(f"bookmark id: {bookmark_id}")
         geom = QgsGeometry.fromRect(bookmark.extent()) or QgsGeometry()
         print(f"bookmark geometry: {geom}")
                 
