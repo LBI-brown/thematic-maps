@@ -452,7 +452,7 @@ class ThematicMaps:
                     layer.changeGeometry(feature.id(),geom) 
                 else:
                     print(f"running else block: geometry is empty: {geom.isEmpty()}")
-                    layer.changeGeometryValues({feature.id(): geom})
+                    feature.clearGeometry()
                 layer.updateFeature(feature)
                 print(f"feature id {feature.id()} updated bookmark name and geometry")
         
