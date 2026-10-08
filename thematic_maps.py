@@ -33,7 +33,7 @@ from qgis.PyQt.QtWidgets import (
     QMessageBox
 )
 from qgis.PyQt.QtGui import QIcon, QColor
-from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField, QgsGeometry, QgsFeature, QgsFeatureRequest, edit
+from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField, QgsGeometry, QgsFeature, QgsFeatureRequest, edit, NULL
 
 
 # Import the code for the DockWidget
@@ -427,9 +427,9 @@ class ThematicMaps:
         manager = QgsProject.instance().bookmarkManager()
         bookmark = manager.bookmarkById(id)
         print(f"from bookmark_update fnc: {bookmark}")
-        bookmark_name = bookmark.name() or None
+        bookmark_name = bookmark.name() or NULL
         print(f"bookmark name: {bookmark_name}")
-        bookmark_id = bookmark.id() or None 
+        bookmark_id = bookmark.id() or NULL 
         print(f"bookmark id: {bookmark_id}")
         geom = QgsGeometry.fromRect(bookmark.extent()) or QgsGeometry()
         print(f"bookmark geometry: {geom}")
