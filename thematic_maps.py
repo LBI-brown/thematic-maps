@@ -448,7 +448,7 @@ class ThematicMaps:
                 layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
                 try:
                     layer.changeGeometry(feature.id(),geom) 
-                except:
+                except TypeError:
                     layer.changeGeometryValues({feature.id(): QgsGeometry()})
                 layer.updateFeature(feature)
                 print(f"feature id {feature.id()} updated bookmark name and geometry")
