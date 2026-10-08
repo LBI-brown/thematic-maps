@@ -234,7 +234,7 @@ class ThematicMaps:
         #self.iface.mapCanvas().layersChanged.connect(self.set_combo_theme)
         # Connect to map theme collection changes
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
-        QgsProject.instance().bookmarkManager().bookmarkRemoved.connect(self.bookmark_removed)
+        QgsProject.instance().bookmarkManager().bookmarkRemoved.connect(self.bookmark_updates)
         QgsProject.instance().bookmarkManager().bookmarkAdded.connect(self.populate)
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         
@@ -421,38 +421,39 @@ class ThematicMaps:
     #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
         print(f"bookmark updates fnc called for bookmark id {id}")
-
+        #update combo box name
+        self.populate()
         
-        layer=self.coverage_layer()
+        #get values for bookmark or sets to None if removed
         manager = QgsProject.instance().bookmarkManager()
         bookmark = manager.bookmarkById(id)
         print(f"from bookmark_update fnc: {bookmark}")
-        bookmark_name = bookmark.name()
-        geom = QgsGeometry.fromRect(bookmark.extent())
+        bookmark_name = bookmark.name() or None
+        bookmark_id = bookmark.id() or None
+        geom = QgsGeometry.fromRect(bookmark.extent()) or None
 
-        #update combo box name
-        index = self.dockwidget.BookmarkComboBox.findData(id)
-        self.dockwidget.BookmarkComboBox.setItemText(index, bookmark_name)
         
-        # Create a feature request with a filter expression
+        #index = self.dockwidget.BookmarkComboBox.findData(id)
+        #self.dockwidget.BookmarkComboBox.setItemText(index, bookmark_name)
+        
+        # filter features to those with matching bookmark ids
         request = QgsFeatureRequest().setFilterExpression(f'"{LAYER_BOOKMARK_FIELD_ID}" = \'{id}\'')
+        layer=self.coverage_layer()
         features = layer.getFeatures(request)
         
-        #change extents and name of existing bookmark in layer        
+        #update extents and name of existing bookmark in layer or set to None if removed        
         field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
+        field_idx2 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_ID)
         layer.startEditing()
         for feature in features:
             layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
+            layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
             layer.changeGeometry(feature.id(),geom)
             print(f"feature id {feature.id()} updated bookmark name and geometry")
         layer.commitChanges()
         print(layer.commitErrors()) 
 
-    def bookmark_removed(self,id):
-        pass
-
-
-            
+    
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
         lookup_field = LAYER_THEME_FIELD_NAME
