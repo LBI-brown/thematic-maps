@@ -37,7 +37,7 @@ from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVe
 
 
 # Import the code for the DockWidget
-from .selector_dockwidget import SelectorDockWidget
+from .thematic_maps_dockwidget import ThematicMapsDockWidget
 
 # Define your target layer configuration
 TARGET_LAYER_ID = "coverage_id_001"
@@ -48,7 +48,7 @@ LAYER_THEME_FIELD_NAME = "theme_name"
 LAYER_BOOKMARK_FIELD_NAME = "bookmark_name"
 LAYER_BOOKMARK_FIELD_ID = "bookmark_id"
 
-class Selector:
+class ThematicMaps:
     """QGIS Plugin Implementation.
     """
 
@@ -74,17 +74,17 @@ class Selector:
             self.translator.load(locale_path)
             QCoreApplication.installTranslator(self.translator)
 
-        self.dockwidget = SelectorDockWidget()
+        self.dockwidget = ThematicMapsDockWidget()
         self.action = self.dockwidget.toggleViewAction()
 
         # Remember size of the dockwidget
         settings = QSettings()
-        self.dockwidget.resize(settings.value("ThemeSelector/size",
+        self.dockwidget.resize(settings.value("ThematicMaps/size",
                                               QSize(300, 200)))
 
     def tr(self, message):
         """Get the translation for a string using Qt translation API."""
-        return QCoreApplication.translate('Selector', message)
+        return QCoreApplication.translate('ThematicMaps', message)
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
