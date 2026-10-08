@@ -401,6 +401,7 @@ class ThematicMaps:
         layer=self.coverage_layer()
         #get field index of theme field
         field_idx = layer.fields().lookupField(LAYER_THEME_FIELD_NAME)
+        
         with edit(layer):
         
             try:
@@ -448,7 +449,7 @@ class ThematicMaps:
         #update extents and name of existing bookmark in layer or set to None if removed        
         field_idx1 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_NAME)
         field_idx2 = layer.fields().lookupField(LAYER_BOOKMARK_FIELD_ID)
-        with edit(layer)
+        with edit(layer):
             for feature in features:
                 layer.changeAttributeValue(feature.id(), field_idx1, bookmark_name)
                 layer.changeAttributeValue(feature.id(), field_idx2, bookmark_id)
