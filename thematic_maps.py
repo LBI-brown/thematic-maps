@@ -430,7 +430,7 @@ class ThematicMaps:
         print(f"from bookmark_update fnc: {bookmark}")
         bookmark_name = bookmark.name() or None
         bookmark_id = bookmark.id() or None
-        geom = QgsGeometry.fromRect(bookmark.extent()) or None
+        geom = QgsGeometry.fromRect(bookmark.extent()) or QgsGeometry()
 
         
         #index = self.dockwidget.BookmarkComboBox.findData(id)
