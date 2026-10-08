@@ -40,15 +40,15 @@ SOURCES = \
 	__init__.py \
 	selector.py selector_dockwidget.py
 
-PLUGINNAME = ThemeSelector
+PLUGINNAME = ThematicMaps
 
 PY_FILES = \
 	__init__.py \
-	selector.py selector_dockwidget.py
+	thematic_maps.py thematic_maps_dockwidget.py
 
-UI_FILES = selector_dockwidget_base.ui
+UI_FILES = thematic_maps_dockwidget_base.ui
 
-EXTRAS = metadata.txt img/selector.png img/selector.svg
+EXTRAS = metadata.txt img/thematic_maps.png img/thematic_maps.svg
 
 EXTRA_DIRS =
 
