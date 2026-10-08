@@ -430,6 +430,7 @@ class ThematicMaps:
         bookmark_name = bookmark.name() or None
         bookmark_id = bookmark.id() or None  
         geom = QgsGeometry.fromRect(bookmark.extent()) or None
+        print(f"bookmark geometry: {geom}")
                 
         #index = self.dockwidget.BookmarkComboBox.findData(id)
         #self.dockwidget.BookmarkComboBox.setItemText(index, bookmark_name)
