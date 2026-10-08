@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SelectorDockWidgetBase</class>
- <widget class="QDockWidget" name="SelectorDockWidgetBase">
+ <class>ThematicMapsDockWidgetBase</class>
+ <widget class="QDockWidget" name="ThematicMapsDockWidgetBase">
   <property name="geometry">
    <rect>
     <x>0</x>
