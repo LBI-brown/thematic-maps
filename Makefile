@@ -38,7 +38,7 @@ LRELEASE = lrelease
 # translation
 SOURCES = \
 	__init__.py \
-	selector.py selector_dockwidget.py
+	thematic_maps.py thematic_maps_dockwidget.py
 
 PLUGINNAME = ThematicMaps
 
