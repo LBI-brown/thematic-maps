@@ -278,7 +278,7 @@ class ThematicMaps:
         theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
         theme_result_index = theme_index if type(theme_index) == int else -1
         self.dockwidget.PresetComboBox.setCurrentIndex(theme_result_index)
-        bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme), Qt.MatchFixedString)
+        bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme))
         bmk_result_index = bmk_index if type(bmk_index) == int else -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
            
@@ -292,8 +292,7 @@ class ThematicMaps:
         #update bookmark combo to bookmark associated with theme
         bookmark_for_theme = self.bookmark_lookup(theme_name) 
         print(type(bookmark_for_theme))
-        print("Method source details:", inspect.getfile(self.dockwidget.BookmarkComboBox.findText))
-        bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme), Qt.MatchFixedString)
+        bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme))
         print(type(bmk_index))
         result = bmk_index if type(bmk_index) == int else -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(result)
