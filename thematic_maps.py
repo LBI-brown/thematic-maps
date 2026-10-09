@@ -235,7 +235,7 @@ class ThematicMaps:
         # Connect to map theme collection changes
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
         QgsProject.instance().bookmarkManager().bookmarkRemoved.connect(self.bookmark_updates)
-        QgsProject.instance().bookmarkManager().bookmarkAdded.connect(self.populate)
+        QgsProject.instance().bookmarkManager().bookmarkAdded.connect(self.bookmark_added)
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         
         self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
@@ -302,7 +302,12 @@ class ThematicMaps:
             bmk_result_index = -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
 
-
+    def bookmark_added(self,id)
+        manager = QgsProject.instance().bookmarkManager()
+        bmk = manager.bookmarkById(id)
+        self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}", bmk.id() )
+        
+    
     def remove_maptheme(self):
         """Remove the selected theme."""
         theme = self.dockwidget.PresetComboBox.currentText()
