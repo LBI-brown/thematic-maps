@@ -294,11 +294,10 @@ class ThematicMaps:
         QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
         #update bookmark combo to bookmark associated with theme
         bookmark_for_theme = self.bookmark_lookup(theme_name) 
-        if bookmark_for_theme is not None or bookmark_for_theme is not NULL:
-            bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
-            self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
-        else:
-            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)
+        bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme), Qt.MatchFixedString)
+        bmk_index = bmk_index or -1
+        self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
+
 
     def remove_maptheme(self):
         """Remove the selected theme."""
