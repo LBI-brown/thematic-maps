@@ -238,8 +238,8 @@ class ThematicMaps:
         QgsProject.instance().bookmarkManager().bookmarkAdded.connect(self.bookmark_added)
         QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         
-        self.dockwidget.PresetComboBox.currentIndexChanged.connect(self.apply_selected_theme)
-        self.dockwidget.BookmarkComboBox.currentIndexChanged.connect(self.update_coverage_layer_extents)
+        self.dockwidget.PresetComboBox.activated.connect(self.apply_selected_theme)
+        self.dockwidget.BookmarkComboBox.activated.connect(self.update_coverage_layer_extents)
         self.dockwidget.pushButton_replace.clicked.connect(self.replace_maptheme)
         self.dockwidget.pushButton_add.clicked.connect(self.add_maptheme)
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
