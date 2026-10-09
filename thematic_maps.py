@@ -236,7 +236,7 @@ class ThematicMaps:
         QgsProject.instance().bookmarkManager().bookmarkChanged.connect(self.bookmark_updates)
         QgsProject.instance().bookmarkManager().bookmarkRemoved.connect(self.bookmark_updates)
         QgsProject.instance().bookmarkManager().bookmarkAdded.connect(self.bookmark_added)
-        QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
+        #QgsProject.instance().mapThemeCollection().projectChanged.connect(self.populate)
         
         self.dockwidget.PresetComboBox.activated.connect(self.apply_selected_theme)
         self.dockwidget.BookmarkComboBox.activated.connect(self.update_coverage_layer_extents)
