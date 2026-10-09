@@ -306,7 +306,7 @@ class ThematicMaps:
         manager = QgsProject.instance().bookmarkManager()
         bmk = manager.bookmarkById(id)
         self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}", bmk.id() )
-        
+        print(f"'{bmk.name()}' added to bookmark combo")
     
     def remove_maptheme(self):
         """Remove the selected theme."""
@@ -420,28 +420,6 @@ class ThematicMaps:
         if index >= 0:
             self.dockwidget.PresetComboBox.setCurrentIndex(index)
             print(f"set theme combo text to '{new_theme}'")
-
-    """def update_theme_name_in_layer(self, old_theme,new_theme):
-        layer=self.coverage_layer()
-        #get field index of theme field
-        field_idx = layer.fields().lookupField(LAYER_THEME_FIELD_NAME)
-        
-        with edit(layer):
-        
-            try:
-                #get first matching feature with theme name
-                first_match = self.coverage_feature(old_theme)
-                #change theme name  
-                # Apply the value change directly to the data provider
-                layer.changeAttributeValue(first_match.id(), field_idx, new_theme)
-                layer.updateFeature(first_match)
-                print(f"'{old_theme}' renamed '{new_theme}'")
-            
-            #add new theme feature with selectected bookmark geometry             
-            except:
-                print(f"Could not update '{old_theme}'")"""
-       
-        
     
     #update layer when changes to bookmarks made
     def bookmark_updates(self,id):
