@@ -276,7 +276,7 @@ class ThematicMaps:
         theme = self.get_current_theme()
         bookmark_for_theme = self.bookmark_lookup(theme)
         theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
-        theme_result_index = theme_index if theme_index >-1 else -1
+        theme_result_index = theme_index if type(theme_index) == int else -1
         self.dockwidget.PresetComboBox.setCurrentIndex(theme_result_index)
         bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
         bmk_result_index = bmk_index if type(bmk_index) == int else -1
@@ -489,7 +489,7 @@ class ThematicMaps:
         for theme_name in theme_collection.mapThemes():
             if theme_collection.mapThemeState(theme_name) == current_state:
                 return theme_name               
-        return None
+        return "No current theme"
 
     def get_current_bookmark(self):
         """Retrieve the currently selected theme by name."""
