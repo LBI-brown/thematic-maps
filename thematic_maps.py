@@ -275,15 +275,12 @@ class ThematicMaps:
     def set_combo_theme(self):
         theme = self.get_current_theme()
         bookmark_for_theme = self.bookmark_lookup(theme)
-        try:
-            theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
-            self.dockwidget.PresetComboBox.setCurrentIndex(theme_index)
-            bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
-            self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
-        except:
-            print(f"no matching theme")
-            self.dockwidget.PresetComboBox.setCurrentIndex(-1)
-            self.dockwidget.BookmarkComboBox.setCurrentIndex(-1)
+        theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
+        theme_result_index = theme_index if theme_index >-1 else -1
+        self.dockwidget.PresetComboBox.setCurrentIndex(theme_result_index)
+        bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
+        bmk_result_index = bmk_index if bmk_index >-1 else -1
+        self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
            
 
     def apply_selected_theme(self):
@@ -294,7 +291,7 @@ class ThematicMaps:
         QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
         #update bookmark combo to bookmark associated with theme
         bookmark_for_theme = self.bookmark_lookup(theme_name) 
-        bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme.toString()), Qt.MatchFixedString)
+        bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
         result = bmk_index if bmk_index >-1 else -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(result)
 
@@ -430,11 +427,8 @@ class ThematicMaps:
         #get values for bookmark or sets to None if removed
         manager = QgsProject.instance().bookmarkManager()
         bookmark = manager.bookmarkById(id)
-        print(f"from bookmark_update fnc: {bookmark}")
         bookmark_name = bookmark.name() or NULL
-        print(f"bookmark name: {bookmark_name}")
         bookmark_id = bookmark.id() or NULL 
-        print(f"bookmark id: {bookmark_id}")
         geom = QgsGeometry.fromRect(bookmark.extent()) or QgsGeometry()
         print(f"bookmark geometry: {geom}")
        
@@ -473,7 +467,7 @@ class ThematicMaps:
         # This loops through the features once and indexes them
         bookmark_lookup_dict = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
         #finds bookmark corresponding to theme
-        assoc_bmk = bookmark_lookup_dict.get(theme, None)  
+        assoc_bmk = bookmark_lookup_dict.get(theme, "Bookmark not found")  
         print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning bookmark '{assoc_bmk}' ")
         return assoc_bmk  
 
