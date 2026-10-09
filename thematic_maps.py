@@ -279,7 +279,7 @@ class ThematicMaps:
         theme_result_index = theme_index if theme_index >-1 else -1
         self.dockwidget.PresetComboBox.setCurrentIndex(theme_result_index)
         bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
-        bmk_result_index = bmk_index if bmk_index >-1 else -1
+        bmk_result_index = bmk_index if type(bmk_index) == int else -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
            
 
@@ -293,7 +293,8 @@ class ThematicMaps:
         bookmark_for_theme = self.bookmark_lookup(theme_name) 
         print(type(bookmark_for_theme))
         bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
-        result = bmk_index if bmk_index >-1 else -1
+        print(type(bmk_index))
+        result = bmk_index if type(bmk_index) == int else -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(result)
 
 
