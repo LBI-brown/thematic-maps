@@ -377,7 +377,7 @@ class ThematicMaps:
         if ok and name != "":
             # Access the map theme collection via QgsProject instance
             map_collection = QgsProject.instance().mapThemeCollection()
-
+ 
             # Ensure the theme exists in the collection before renaming
             if theme in map_collection.mapThemes():
                 # Rename the theme in the map theme collection
@@ -395,13 +395,24 @@ class ThematicMaps:
                             # Refresh the map item
                             item.refresh()
                             print(f"Refreshed map item in layout '{layout.name()}' for map item.")
-
-                self.update_theme_name_in_layer(theme,name)
-                self.populate()
-                self.set_combo_text(name)
+                
+                #change theme name in coverage layer
+                layer=self.coverage_layer()
+                with edit(layer):
+                    #get first matching feature with theme name
+                    try:
+                        first_match = self.coverage_feature(theme)
+                        first_match[LAYER_THEME_FIELD_NAME] = name 
+                        layer.updateFeature(first_match)
+                        self.populate()
+                        self.set_combo_text(name)
+                    except:
+                        print(f"no matching feature with old theme '{theme}'")
+                      
             else:
                 QMessageBox.warning(None, self.tr("Theme Not Found"),
-                                    self.tr(f"The theme '{theme}' was not found in the map theme collection."))
+                self.tr(f"The theme '{theme}' was not found in the map theme collection."))
+        
 
     def set_combo_text(self, new_theme):
         """Set combobox to the newly created theme."""
@@ -410,7 +421,7 @@ class ThematicMaps:
             self.dockwidget.PresetComboBox.setCurrentIndex(index)
             print(f"set theme combo text to '{new_theme}'")
 
-    def update_theme_name_in_layer(self, old_theme,new_theme):
+    """def update_theme_name_in_layer(self, old_theme,new_theme):
         layer=self.coverage_layer()
         #get field index of theme field
         field_idx = layer.fields().lookupField(LAYER_THEME_FIELD_NAME)
@@ -428,7 +439,7 @@ class ThematicMaps:
             
             #add new theme feature with selectected bookmark geometry             
             except:
-                print(f"Could not update '{old_theme}'")
+                print(f"Could not update '{old_theme}'")"""
        
         
     
