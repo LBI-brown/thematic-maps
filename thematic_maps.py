@@ -275,8 +275,12 @@ class ThematicMaps:
     def set_combo_theme(self):
         theme = self.get_current_theme()
         bookmark_for_theme = self.bookmark_lookup(theme)
-        theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
-        theme_result_index = theme_index if type(theme_index) == int else -1
+        try:
+            theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
+            theme_result_index = theme_index if type(theme_index) == int else -1
+        except:
+            theme_result_index = -1
+            print(f"no matching theme")
         self.dockwidget.PresetComboBox.setCurrentIndex(theme_result_index)
         print(type(bookmark_for_theme))
         self.set_bookmark(bookmark_for_theme)
