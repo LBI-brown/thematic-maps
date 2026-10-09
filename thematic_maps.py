@@ -470,7 +470,7 @@ class ThematicMaps:
         #finds bookmark corresponding to theme
         assoc_bmk = bookmark_lookup_dict.get(theme, "Theme not found")  
         print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning bookmark '{assoc_bmk}' ")
-        bmk_string_name = "Blank bookmark" if assoc_bmk is NULL else assoc_bmk
+        bmk_string_name = assoc_bmk if type(assoc_bmk) == str else "No associated bookmark"
         return bmk_string_name 
 
     def get_current_theme(self):
