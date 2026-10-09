@@ -292,7 +292,8 @@ class ThematicMaps:
         #update bookmark combo to bookmark associated with theme
         bookmark_for_theme = self.bookmark_lookup(theme_name) 
         print(type(bookmark_for_theme))
-        bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
+        bookmark_for_theme_result = "" if bookmark_for_theme is None else bookmark_for_theme
+        bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme_result, Qt.MatchFixedString)
         result = bmk_index if bmk_index >-1 else -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(result)
 
@@ -468,7 +469,7 @@ class ThematicMaps:
         # This loops through the features once and indexes them
         bookmark_lookup_dict = {feat[lookup_field]: feat[target_field] for feat in layer.getFeatures()}
         #finds bookmark corresponding to theme
-        assoc_bmk = bookmark_lookup_dict.get(theme, "Bookmark not found")  
+        assoc_bmk = bookmark_lookup_dict.get(theme, "Theme not found")  
         print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning bookmark '{assoc_bmk}' ")
         return assoc_bmk  
 
