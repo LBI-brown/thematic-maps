@@ -278,8 +278,12 @@ class ThematicMaps:
         theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
         theme_result_index = theme_index if type(theme_index) == int else -1
         self.dockwidget.PresetComboBox.setCurrentIndex(theme_result_index)
-        bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme))
-        bmk_result_index = bmk_index if type(bmk_index) == int else -1
+        print(type(bookmark_for_theme))
+        if bookmark_for_theme is not None:
+            bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme),Qt.MatchFixedString)
+            bmk_result_index = bmk_index if type(bmk_index) == int else -1
+        else:
+            bmk_result_index = -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
            
 
@@ -292,10 +296,13 @@ class ThematicMaps:
         #update bookmark combo to bookmark associated with theme
         bookmark_for_theme = self.bookmark_lookup(theme_name) 
         print(type(bookmark_for_theme))
-        bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme))
-        print(type(bmk_index))
-        result = bmk_index if type(bmk_index) == int else -1
-        self.dockwidget.BookmarkComboBox.setCurrentIndex(result)
+        if bookmark_for_theme is not None:
+            bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme),Qt.MatchFixedString)
+            print(type(bmk_index))
+            bmk_result_index = bmk_index if type(bmk_index) == int else -1
+        else:
+            bmk_result_index = -1
+        self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
 
 
     def remove_maptheme(self):
@@ -471,7 +478,7 @@ class ThematicMaps:
         #finds bookmark corresponding to theme
         assoc_bmk = bookmark_lookup_dict.get(theme, "Theme not found")  
         print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning bookmark '{assoc_bmk}' ")
-        bmk_string_name = assoc_bmk if type(assoc_bmk) == str else "No associated bookmark"
+        bmk_string_name = assoc_bmk if type(assoc_bmk) == str else None
         return str(bmk_string_name) 
 
     def get_current_theme(self):
