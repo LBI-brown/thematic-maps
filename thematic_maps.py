@@ -294,7 +294,7 @@ class ThematicMaps:
         QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
         #update bookmark combo to bookmark associated with theme
         bookmark_for_theme = self.bookmark_lookup(theme_name) 
-        if bookmark_for_theme is not None:
+        if bookmark_for_theme is not None or bookmark_for_theme is not NULL:
             bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
             self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
         else:
