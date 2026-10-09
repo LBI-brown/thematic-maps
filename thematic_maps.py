@@ -302,7 +302,7 @@ class ThematicMaps:
             bmk_result_index = -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
 
-    def bookmark_added(self,id)
+    def bookmark_added(self,id):
         manager = QgsProject.instance().bookmarkManager()
         bmk = manager.bookmarkById(id)
         self.dockwidget.BookmarkComboBox.addItem(f"{bmk.name()}", bmk.id() )
