@@ -477,7 +477,7 @@ class ThematicMaps:
         assoc_bmk = bookmark_lookup_dict.get(theme, "Theme not found")  
         print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning bookmark '{assoc_bmk}' ")
         bmk_string_name = assoc_bmk if type(assoc_bmk) == str else None
-        return str(bmk_string_name) 
+        return bmk_string_name 
 
     def get_current_theme(self):
         """Retrieve the theme that matches current visibility map states ie active theme"""
