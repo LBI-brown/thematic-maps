@@ -279,14 +279,8 @@ class ThematicMaps:
         theme_result_index = theme_index if type(theme_index) == int else -1
         self.dockwidget.PresetComboBox.setCurrentIndex(theme_result_index)
         print(type(bookmark_for_theme))
-        if bookmark_for_theme is not None:
-            bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme),Qt.MatchFixedString)
-            bmk_result_index = bmk_index if type(bmk_index) == int else -1
-        else:
-            bmk_result_index = -1
-        self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
-           
-
+        self.set_bookmark(bookmark_for_theme)
+        
     def apply_selected_theme(self):
         """Apply the selected theme based on the current combobox selection."""
         theme_name = self.dockwidget.PresetComboBox.currentText()
@@ -294,13 +288,17 @@ class ThematicMaps:
         model = iface.layerTreeView().layerTreeModel()
         QgsProject.instance().mapThemeCollection().applyTheme(theme_name, root, model)
         #update bookmark combo to bookmark associated with theme
-        bookmark_for_theme = self.bookmark_lookup(theme_name) 
+        bookmark_for_theme = self.bookmark_lookup(theme_name)
         print(type(bookmark_for_theme))
-        if bookmark_for_theme is not None:
-            bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme),Qt.MatchFixedString)
+        self.set_bookmark(bookmark_for_theme)
+
+    def set_bookmark(self,bookmark_for_theme):
+       
+        try:
+            bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme,Qt.MatchFixedString)
             print(type(bmk_index))
             bmk_result_index = bmk_index if type(bmk_index) == int else -1
-        else:
+        except:
             bmk_result_index = -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
 
