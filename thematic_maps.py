@@ -488,7 +488,7 @@ class ThematicMaps:
         # 2. Loop through saved themes and check for a match
         for theme_name in theme_collection.mapThemes():
             if theme_collection.mapThemeState(theme_name) == current_state:
-                return theme_name               
+                return str(theme_name)               
         return "No current theme"
 
     def get_current_bookmark(self):
