@@ -187,7 +187,7 @@ class ThematicMaps:
         bookmark_match = next((b for b in manager.bookmarks() if b.name() == bookmark), None) 
 
         # Check if we actually have a valid bookmark object before getting the extent
-        if bookmark_match is not None:
+        if bookmark_match is not None and theme is not None:
             geom = QgsGeometry.fromRect(bookmark_match.extent())
             #set canvas extent to bookmark extent
             canvas = iface.mapCanvas()
