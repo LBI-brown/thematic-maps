@@ -295,8 +295,9 @@ class ThematicMaps:
         #update bookmark combo to bookmark associated with theme
         bookmark_for_theme = self.bookmark_lookup(theme_name) 
         bmk_index = self.dockwidget.BookmarkComboBox.findText(str(bookmark_for_theme), Qt.MatchFixedString)
-        bmk_index = bmk_index or -1
-        self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_index)
+        print(f"bookmark index found at: {bmk_index}")
+        result = bmk_index if bmk_index >-1 else -1
+        self.dockwidget.BookmarkComboBox.setCurrentIndex(result)
 
 
     def remove_maptheme(self):
