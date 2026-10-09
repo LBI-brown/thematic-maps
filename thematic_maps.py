@@ -292,8 +292,7 @@ class ThematicMaps:
         #update bookmark combo to bookmark associated with theme
         bookmark_for_theme = self.bookmark_lookup(theme_name) 
         print(type(bookmark_for_theme))
-        bookmark_for_theme_result = "" if bookmark_for_theme is None else bookmark_for_theme
-        bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme_result, Qt.MatchFixedString)
+        bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme, Qt.MatchFixedString)
         result = bmk_index if bmk_index >-1 else -1
         self.dockwidget.BookmarkComboBox.setCurrentIndex(result)
 
@@ -471,7 +470,8 @@ class ThematicMaps:
         #finds bookmark corresponding to theme
         assoc_bmk = bookmark_lookup_dict.get(theme, "Theme not found")  
         print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning bookmark '{assoc_bmk}' ")
-        return assoc_bmk  
+        bmk_string_name = "Blank bookmark" if assoc_bmk None else assoc_bmk
+        return bmk_string_name 
 
     def get_current_theme(self):
         """Retrieve the theme that matches current visibility map states ie active theme"""
