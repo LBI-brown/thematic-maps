@@ -53,7 +53,7 @@ from qgis.core import (
 from .thematic_maps_dockwidget import ThematicMapsDockWidget
 
 #import the processing script class
-from .processing_scripts.layout_script import layoutScript
+from .processing_scripts.provider import CustomProcessingProvider
 
 #import for using layour process
 from qgis import processing
@@ -67,22 +67,6 @@ LAYER_THEME_FIELD_NAME = "theme_name"
 LAYER_BOOKMARK_FIELD_NAME = "bookmark_name"
 LAYER_BOOKMARK_FIELD_ID = "bookmark_id"
 
-class ExampleProvider(QgsProcessingProvider):
-    def __init__(self):
-        super().__init__()
-
-    def loadAlgorithms(self):
-        # Instantiate and add your custom algorithm to the provider
-        self.addAlgorithm(layoutScript())
-
-    def id(self):
-        return "layout_script"
-
-    def name(self):
-        return "Layout script"
-
-    def icon(self):
-        return QIcon()
 
 class ThematicMaps:
     """QGIS Plugin Implementation.
@@ -92,6 +76,7 @@ class ThematicMaps:
         """Constructor."""
         # Save reference to the QGIS interface
         self.iface = iface
+        self.provider = None
 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
@@ -122,6 +107,11 @@ class ThematicMaps:
         """Get the translation for a string using Qt translation API."""
         return QCoreApplication.translate('ThematicMaps', message)
 
+    def initProcessing(self):
+        """Initialises and registers the Processing provider."""
+        self.provider = CustomProcessingProvider()
+        QgsApplication.processingRegistry().addProvider(self.provider)
+    
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
         # Add the dock widget to QGIS interface
@@ -140,10 +130,13 @@ class ThematicMaps:
         self.populate()
         self.connect_signals()
 
+        # Initialise processing algorithm
+        self.initProcessing()
+
     def unload(self):
-        # Clean up and remove layout process script when the plugin is turned off
+        # Safely remove the provider to prevent QGIS from crashing on close
         if self.provider:
-            QgsApplication.processingRegistry().removeProvider(self.provider)   
+            QgsApplication.processingRegistry().removeProvider(self.provider)
 
     def coverage_layer(self):
 
