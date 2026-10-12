@@ -141,6 +141,7 @@ class ThematicMaps:
         # Safely remove the provider to prevent QGIS from crashing on close
         if self.provider:
             QgsApplication.processingRegistry().removeProvider(self.provider)
+            self.provider = None  # Explicitly clear the variable reference
 
     def coverage_layer(self):
 
