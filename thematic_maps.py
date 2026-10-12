@@ -114,7 +114,7 @@ class ThematicMaps:
         #instantiate layout process from file
         self.algo = layoutScript()
         #register it directly to the native/default registry
-        QgsApplication.processingRegistry().addAlgorithm(self.algo)
+        QgsApplication.processingRegistry().addProvider(self.algo)
 
         #create layer if not existing
         self.coverage_layer()
