@@ -244,6 +244,7 @@ class ThematicMaps:
         self.dockwidget.pushButton_add.clicked.connect(self.add_maptheme)
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
+        self.dockwidget.pushButton_layout.clicked.connect(self.run_layout_process)
         
         # Disable buttons if no layers present
         if len(QgsProject.instance().mapLayers()) == 0:
@@ -462,6 +463,12 @@ class ThematicMaps:
         #update combo box name
         self.populate()
 
+    def run_layout_process(self):
+
+        parameters = {}
+
+        processing.execAlgorithmDialog("generate_theme_atlas_layer2", parameters)
+
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
@@ -524,6 +531,7 @@ class ThematicMaps:
         self.dockwidget.pushButton_replace.setEnabled(False)
         self.dockwidget.pushButton_add.setEnabled(False)
         self.dockwidget.pushButton_rename.setEnabled(False)
+        self.dockwidget.pushButton_layout.setEnabled(False)
        
     def enable_buttons(self):
         """Enable theme buttons."""
@@ -531,4 +539,5 @@ class ThematicMaps:
         self.dockwidget.pushButton_replace.setEnabled(True)
         self.dockwidget.pushButton_add.setEnabled(True)
         self.dockwidget.pushButton_rename.setEnabled(True)
+        self.dockwidget.pushButton_layout.setEnabled(True)
         
