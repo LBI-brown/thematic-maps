@@ -33,7 +33,19 @@ from qgis.PyQt.QtWidgets import (
     QMessageBox
 )
 from qgis.PyQt.QtGui import QIcon, QColor
-from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVectorLayer, QgsField, QgsGeometry, QgsFeature, QgsApplication, QgsFeatureRequest, edit, NULL 
+from qgis.core import (
+    QgsProject, 
+    QgsMapThemeCollection, 
+    QgsLayoutItemMap, 
+    QgsVectorLayer, 
+    QgsField, 
+    QgsGeometry, 
+    QgsFeature, 
+    QgsApplication, 
+    QgsFeatureRequest, 
+    edit, 
+    NULL
+)
 
 
 # Import the code for the DockWidget
