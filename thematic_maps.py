@@ -39,6 +39,9 @@ from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVe
 # Import the code for the DockWidget
 from .thematic_maps_dockwidget import ThematicMapsDockWidget
 
+#import for using layour process
+from qgis import processing
+
 # Define your target layer configuration
 TARGET_LAYER_ID = "coverage_id_001"
 LAYER_NAME = "COVERAGE"
