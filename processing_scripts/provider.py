@@ -16,5 +16,18 @@ class CustomProcessingProvider(QgsProcessingProvider):
         return 'Thematic maps scripts'
 
     def icon(self):
-        """Optional: Return a QIcon object for your toolbox folder."""
+        """Dynamically loads and returns the custom icon from a subfolder."""
+        # 1. Get the directory path of the current provider.py file
+        current_dir = os.path.dirname(__file__)
+        
+        # 2. Navigate up one level to the main plugin root directory
+        plugin_root = os.path.dirname(current_dir)
+        
+        # 3. Join paths: plugin root -> your subfolder -> your icon file name
+        icon_path = os.path.join(plugin_root, 'img', 'thematic_maps.svg') 
+        
+        # 4. Return the QIcon object if the path is valid
+        if os.path.exists(icon_path):
+            return QIcon(icon_path)
+        
         return QIcon()
