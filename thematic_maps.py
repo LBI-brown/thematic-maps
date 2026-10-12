@@ -42,7 +42,8 @@ from qgis.core import (
     QgsGeometry, 
     QgsFeature, 
     QgsApplication, 
-    QgsFeatureRequest, 
+    QgsFeatureRequest,
+    QgsProcessingProvider
     edit, 
     NULL
 )
@@ -66,6 +67,23 @@ LAYER_THEME_FIELD_NAME = "theme_name"
 LAYER_BOOKMARK_FIELD_NAME = "bookmark_name"
 LAYER_BOOKMARK_FIELD_ID = "bookmark_id"
 
+class ExampleProvider(QgsProcessingProvider):
+    def __init__(self):
+        super().__init__()
+
+    def loadAlgorithms(self):
+        # Instantiate and add your custom algorithm to the provider
+        self.addAlgorithm(layoutScript())
+
+    def id(self):
+        return "layout_script"
+
+    def name(self):
+        return "Layout script"
+
+    def icon(self):
+        return QIcon()
+
 class ThematicMaps:
     """QGIS Plugin Implementation.
     """
@@ -74,7 +92,6 @@ class ThematicMaps:
         """Constructor."""
         # Save reference to the QGIS interface
         self.iface = iface
-        self.algo = None
 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
@@ -112,9 +129,9 @@ class ThematicMaps:
         self.dockwidget.show()
 
         #instantiate layout process from file
-        self.algo = layoutScript()
+        self.provider = ExampleProvider()
         #register it directly to the native/default registry
-        QgsApplication.processingRegistry().addProvider(self.algo)
+        QgsApplication.processingRegistry().addProvider(self.provider)
 
         #create layer if not existing
         self.coverage_layer()
@@ -125,8 +142,8 @@ class ThematicMaps:
 
     def unload(self):
         # Clean up and remove layout process script when the plugin is turned off
-        if self.algo:
-            QgsApplication.processingRegistry().removeAlgorithm(self.algo)   
+        if self.provider:
+            QgsApplication.processingRegistry().removeProvider(self.provider)   
 
     def coverage_layer(self):
 
