@@ -39,6 +39,9 @@ from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVe
 # Import the code for the DockWidget
 from .thematic_maps_dockwidget import ThematicMapsDockWidget
 
+#import the processing script class
+from .processing_scripts.layout_script import layoutScript
+
 #import for using layour process
 from qgis import processing
 
@@ -59,6 +62,7 @@ class ThematicMaps:
         """Constructor."""
         # Save reference to the QGIS interface
         self.iface = iface
+        self.algo = None
 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
@@ -95,6 +99,11 @@ class ThematicMaps:
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
         self.dockwidget.show()
 
+        #instantiate layout process from file
+        self.algo = layoutScript()
+        #register it directly to the native/default registry
+        QgsApplication.processingRegistry().addAlgorithm(self.algo)
+
         #create layer if not existing
         self.coverage_layer()
             
@@ -102,7 +111,10 @@ class ThematicMaps:
         self.populate()
         self.connect_signals()
 
-       
+    def unload(self):
+        # Clean up and remove layout process script when the plugin is turned off
+        if self.algo:
+            QgsApplication.processingRegistry().removeAlgorithm(self.algo)   
 
     def coverage_layer(self):
 
