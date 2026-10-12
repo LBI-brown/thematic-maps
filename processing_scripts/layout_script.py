@@ -51,10 +51,12 @@ class layoutScript(QgsProcessingAlgorithm):
         return self.tr('Atlas driven layout setup')
 
     def group(self):
-        return self.tr('Thematic maps')
+        #return self.tr('Thematic maps')
+        return ''
 
     def groupId(self):
-        return 'thematicMaps'
+        #return 'thematicMaps'
+        return ''
 
     def shortHelpString(self):
         return self.tr(
