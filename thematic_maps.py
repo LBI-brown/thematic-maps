@@ -507,13 +507,9 @@ class ThematicMaps:
 
     def run_layout_process(self):
         print("layout process called")
-        layer=self.coverage_layer()
-
-        params = {
-            'COVERAGE_LAYER': layer              # Passing the QgsVectorLayer object
-        }
+        
         try:
-            processing.execAlgorithmDialog("thematic_map_tools:layout_script", params)
+            processing.execAlgorithmDialog("thematic_map_tools:layout_script")
         except Exception as e:
             # Push the python error directly into the QGIS Message Bar at the top of the map
             self.iface.messageBar().pushMessage("Plugin Error", str(e), level=Qgis.Critical)
