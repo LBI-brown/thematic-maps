@@ -481,7 +481,7 @@ class ThematicMaps:
     def run_layout_process(self):
         print("layout process called")
         try:
-            processing.execAlgorithmDialog("script:layoutScript")
+            processing.execAlgorithmDialog("script:layout_script")
         except Exception as e:
             # Push the python error directly into the QGIS Message Bar at the top of the map
             self.iface.messageBar().pushMessage("Plugin Error", str(e), level=Qgis.Critical)
