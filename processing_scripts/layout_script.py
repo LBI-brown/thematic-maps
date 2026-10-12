@@ -32,6 +32,7 @@ from PyQt5.QtCore import Qt
 
 class layoutScript(QgsProcessingAlgorithm):
 
+    COVERAGE_LAYER = 'coverage layer'
     EXISTING_LAYOUT = 'EXISTING_LAYOUT'
     NEW_LAYOUT_NAME = 'NEW_LAYOUT_NAME'
     EXISTING_LAYER = 'EXISTING_LAYER'
@@ -153,7 +154,7 @@ class layoutScript(QgsProcessingAlgorithm):
         feedback.pushInfo(f"Found {len(theme_names)} map themes.")
 
         coverage_extent = self.parameterAsExtent(parameters, self.EXTENT, context)
-        coverage_layer = self.parameterAsLayer(parameters, self.EXISTING_LAYER, context)
+        coverage_layer = self.parameterAsLayer(parameters, self.COVERAGE_LAYER, context)
         
         # --------------------------------------------------------------
         # Use existing coverage layer
