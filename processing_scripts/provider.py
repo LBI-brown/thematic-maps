@@ -9,7 +9,7 @@ class CustomProcessingProvider(QgsProcessingProvider):
 
     def id(self):
         """Unique ID for your provider (no spaces, lowercase)."""
-        return 'layout_script_provider'
+        return 'thematic_map_tools'
 
     def name(self):
         """The display name seen in the Processing Toolbox."""
