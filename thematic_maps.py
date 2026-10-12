@@ -118,11 +118,6 @@ class ThematicMaps:
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
         self.dockwidget.show()
 
-        #instantiate layout process from file
-        self.provider = ExampleProvider()
-        #register it directly to the native/default registry
-        QgsApplication.processingRegistry().addProvider(self.provider)
-
         #create layer if not existing
         self.coverage_layer()
             
