@@ -467,8 +467,8 @@ class ThematicMaps:
         self.populate()
 
     def run_layout_process(self):
-
-       processing.execAlgorithmDialog("provider:generate_theme_atlas_layer2")
+        print("layout process called")
+        processing.execAlgorithmDialog("provider:generate_theme_atlas_layer2")
 
     
     def bookmark_lookup(self,theme):
