@@ -507,6 +507,8 @@ class ThematicMaps:
 
     def run_layout_process(self):
         print("layout process called")
+        layer=self.coverage_layer()
+        
         try:
             processing.execAlgorithmDialog("thematic_map_tools:layout_script")
         except Exception as e:
