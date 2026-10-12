@@ -13,7 +13,7 @@ class CustomProcessingProvider(QgsProcessingProvider):
 
     def name(self):
         """The display name seen in the Processing Toolbox."""
-        return 'Atlas driven layout setup'
+        return 'Thematic maps scripts'
 
     def icon(self):
         """Optional: Return a QIcon object for your toolbox folder."""
