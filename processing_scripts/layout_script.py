@@ -44,24 +44,23 @@ class layoutScript(QgsProcessingAlgorithm):
         return string
 
     def createInstance(self):
-        return ThemeAtlasGeneratorAlgorithm()
+        return layoutScript()
 
     def name(self):
         return 'layout_script'
 
     def displayName(self):
-        return self.tr('Generate/ Update Theme-Driven Atlas Layout v2')
+        return self.tr('Atals driven layout setup')
 
     def group(self):
-        return self.tr('LBI processes')
+        return self.tr('Thematic maps')
 
     def groupId(self):
-        return 'lbi'
+        return 'thematicMaps'
 
     def shortHelpString(self):
         return self.tr(
-            "Creates a coverage layer with polygons the size of the canvas extent and named after each theme." 
-            " Then configures a new or existing layout to generate Atlas of thematic maps."
+            " Configures a new or existing layout to generate Atlas of thematic maps."
             " Existing map and legend items are reused if found."
         )
 
