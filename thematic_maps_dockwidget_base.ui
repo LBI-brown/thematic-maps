@@ -93,7 +93,7 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="4" colspan="2">
+    <item row="4" column="4" rowspan="2">
      <widget class="QPushButton" name="pushButton_layout">
       <property name="toolTip">
        <string>Create and configure print layout</string>
