@@ -50,7 +50,7 @@ class layoutScript(QgsProcessingAlgorithm):
         return 'layout_script'
 
     def displayName(self):
-        return self.tr('Atals driven layout setup')
+        return self.tr('Atlas driven layout setup')
 
     def group(self):
         return self.tr('Thematic maps')
