@@ -43,7 +43,7 @@ from qgis.core import (
     QgsFeature, 
     QgsApplication, 
     QgsFeatureRequest,
-    QgsProcessingProvider
+    QgsProcessingProvider,
     edit, 
     NULL
 )
