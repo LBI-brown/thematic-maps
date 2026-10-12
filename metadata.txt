@@ -26,3 +26,5 @@ icon=img/selector.png
 experimental=True
 deprecated=False
 
+hasProcessingProvider=yes
+
