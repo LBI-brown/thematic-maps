@@ -468,7 +468,11 @@ class ThematicMaps:
 
     def run_layout_process(self):
         print("layout process called")
-        processing.execAlgorithmDialog("provider:generate_theme_atlas_layer2")
+        try:
+            processing.execAlgorithmDialog("provider:generate_theme_atlas_layer2")
+        except Exception as e:
+            # Push the python error directly into the QGIS Message Bar at the top of the map
+            self.iface.messageBar().pushMessage("Plugin Error", str(e), level=Qgis.Critical)
 
     
     def bookmark_lookup(self,theme):
