@@ -57,13 +57,13 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="2" colspan="3">
+    <item row="4" column="2" >
      <widget class="QPushButton" name="pushButton_remove">
       <property name="toolTip">
        <string>Remove theme</string>
       </property>
       <property name="text">
-       <string>Remove</string>
+       <string>-</string>
       </property>
       <property name="checkable">
        <bool>false</bool>
@@ -83,13 +83,23 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="2" colspan="3">
+    <item row="5" column="2" >
      <widget class="QPushButton" name="pushButton_add">
       <property name="toolTip">
        <string>Add shown map layers as new theme</string>
       </property>
       <property name="text">
-       <string>Add</string>
+       <string>+</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="4" rowspan="2">
+     <widget class="QPushButton" name="pushButton_layout">
+      <property name="toolTip">
+       <string>Create and configure print layout</string>
+      </property>
+      <property name="text">
+       <string>Layout</string>
       </property>
      </widget>
     </item>

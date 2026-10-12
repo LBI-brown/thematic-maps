@@ -39,6 +39,12 @@ from qgis.core import QgsProject, QgsMapThemeCollection, QgsLayoutItemMap, QgsVe
 # Import the code for the DockWidget
 from .thematic_maps_dockwidget import ThematicMapsDockWidget
 
+#import the processing script class
+from .processing_scripts.layout_script import layoutScript
+
+#import for using layour process
+from qgis import processing
+
 # Define your target layer configuration
 TARGET_LAYER_ID = "coverage_id_001"
 LAYER_NAME = "COVERAGE"
@@ -56,6 +62,7 @@ class ThematicMaps:
         """Constructor."""
         # Save reference to the QGIS interface
         self.iface = iface
+        self.algo = None
 
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
@@ -92,6 +99,11 @@ class ThematicMaps:
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
         self.dockwidget.show()
 
+        #instantiate layout process from file
+        self.algo = layoutScript()
+        #register it directly to the native/default registry
+        QgsApplication.processingRegistry().addAlgorithm(self.algo)
+
         #create layer if not existing
         self.coverage_layer()
             
@@ -99,7 +111,10 @@ class ThematicMaps:
         self.populate()
         self.connect_signals()
 
-       
+    def unload(self):
+        # Clean up and remove layout process script when the plugin is turned off
+        if self.algo:
+            QgsApplication.processingRegistry().removeAlgorithm(self.algo)   
 
     def coverage_layer(self):
 
@@ -244,6 +259,7 @@ class ThematicMaps:
         self.dockwidget.pushButton_add.clicked.connect(self.add_maptheme)
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
+        self.dockwidget.pushButton_layout.clicked.connect(self.run_layout_process)
         
         # Disable buttons if no layers present
         if len(QgsProject.instance().mapLayers()) == 0:
@@ -462,6 +478,14 @@ class ThematicMaps:
         #update combo box name
         self.populate()
 
+    def run_layout_process(self):
+        print("layout process called")
+        try:
+            processing.execAlgorithmDialog("script:layout_script")
+        except Exception as e:
+            # Push the python error directly into the QGIS Message Bar at the top of the map
+            self.iface.messageBar().pushMessage("Plugin Error", str(e), level=Qgis.Critical)
+
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
@@ -524,6 +548,7 @@ class ThematicMaps:
         self.dockwidget.pushButton_replace.setEnabled(False)
         self.dockwidget.pushButton_add.setEnabled(False)
         self.dockwidget.pushButton_rename.setEnabled(False)
+        self.dockwidget.pushButton_layout.setEnabled(False)
        
     def enable_buttons(self):
         """Enable theme buttons."""
@@ -531,4 +556,5 @@ class ThematicMaps:
         self.dockwidget.pushButton_replace.setEnabled(True)
         self.dockwidget.pushButton_add.setEnabled(True)
         self.dockwidget.pushButton_rename.setEnabled(True)
+        self.dockwidget.pushButton_layout.setEnabled(True)
         
