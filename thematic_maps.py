@@ -470,7 +470,7 @@ class ThematicMaps:
 
         parameters = {}
 
-        processing.execAlgorithmDialog("generate_theme_atlas_layer2", parameters)
+        processing.execAlgorithmDialog(native:"generate_theme_atlas_layer2", parameters)
 
     
     def bookmark_lookup(self,theme):
