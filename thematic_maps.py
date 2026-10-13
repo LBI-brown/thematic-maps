@@ -289,7 +289,8 @@ class ThematicMaps:
         self.dockwidget.pushButton_add.clicked.connect(self.add_maptheme)
         self.dockwidget.pushButton_remove.clicked.connect(self.remove_maptheme)
         self.dockwidget.pushButton_rename.clicked.connect(self.rename_maptheme)
-        self.dockwidget.pushButton_layout.clicked.connect(self.run_layout_process)
+        self.dockwidget.pushButton_layout.clicked.connect(self.open_layout_dialog)
+        
         
         # Disable buttons if no layers present
         if len(QgsProject.instance().mapLayers()) == 0:
@@ -573,6 +574,17 @@ class ThematicMaps:
                 self.dockwidget.resize(QSize(300, 200))  # Default size
         settings = QSettings()
         settings.setValue("ThemeSelector/size", self.dockwidget.size())
+
+    def open_layout_dialog(self):
+        """
+        Instantiates and shows the LayoutRunnerDialog as a modal window.
+        """
+        # Instantiate the dialog, passing the QGIS main window as its parent
+        # This keeps the dialog on top of QGIS and manages its memory lifecycle correctly
+        self.dialog = LayoutRunnerDialog(parent=iface.mainWindow())
+        
+        # Open the dialog modally (blocks interaction with the main window until closed)
+        self.dialog.exec_()
     
     def disable_buttons(self):
         """Disable theme buttons."""
