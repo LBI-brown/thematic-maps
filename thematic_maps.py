@@ -52,6 +52,9 @@ from qgis.core import (
 # Import the code for the DockWidget
 from .thematic_maps_dockwidget import ThematicMapsDockWidget
 
+#import the code for the layout setup dialogue
+from .layout_setup_widget import LayoutRunnerDialog
+
 #import the processing script class
 from .processing_scripts.provider import CustomProcessingProvider
 
