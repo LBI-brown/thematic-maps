@@ -33,7 +33,7 @@ from PyQt5.QtCore import Qt
 class layoutSetup:
 
     COVERAGE_LAYER = 'coverage layer'
-    
+    LAYER_THEME_FIELD_NAME = "theme_name"
 
     def __init__(self, coverage_layer, layout):
         self.coverage_layer = coverage_layer
@@ -55,12 +55,7 @@ class layoutSetup:
     def configureAtlas(self, parameters, context, feedback):
         # Always use the execution context project instance for thread safety
         project = context.project() if context.project() else QgsProject.instance()
-        
-        # --------------------------------------------------------------
-        # Map settings
-        # --------------------------------------------------------------
-        map_item.setFollowVisibilityPreset(True)
-        map_item.setFollowVisibilityPresetName(theme_name)
+
         # --------------------------------------------------------------
         # Atlas
         # --------------------------------------------------------------
@@ -68,7 +63,15 @@ class layoutSetup:
         atlas.setEnabled(True)
         atlas.setCoverageLayer(coverage_layer)
         atlas.setHideCoverage(True)
-        atlas.setPageNameExpression('"theme_name"')
+        atlas.setPageNameExpression('LAYER_THEME_FIELD_NAME')
+        # --------------------------------------------------------------
+        # Map settings
+        # --------------------------------------------------------------
+        feature = atlas.currentFeature()
+        feature_name = feature[LAYER_THEME_FIELD_NAME]
+        map_item.setFollowVisibilityPreset(True)
+        map_item.setFollowVisibilityPresetName(feature_name)
+        
 
         
         
