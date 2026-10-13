@@ -1,34 +1,15 @@
 from qgis.core import (
-    QgsProcessing,
-    QgsProcessingAlgorithm,
-    QgsProcessingParameterString,
     QgsProject,
     QgsVectorLayer,
     QgsFeature,
-    QgsFeatureRequest,
-    QgsGeometry,
-    QgsLayoutItemLabel,
     QgsPrintLayout,
     QgsLayoutItemLegend,
     QgsLayoutItemMap,
-    QgsLayoutPoint,
-    QgsLayoutSize,
-    QgsUnitTypes,
-    QgsProperty,
     QgsLayoutObject,
-    Qgis,
-    QgsFillSymbol,
-    QgsSingleSymbolRenderer,
-    QgsProcessingParameterMapLayer,
-    QgsProcessingParameterLayout,
-    QgsProcessingParameterExtent,
-    QgsProcessingFeedback, 
-    QgsRectangle,
+    QgsProperty
+    Qgis
 )
-
-from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import Qt
-
 
 class layoutSetup:
 
@@ -51,27 +32,33 @@ class layoutSetup:
                 return item
         return None
 
-    # ------------------------------------------------------------------
-    def configureAtlas(self, parameters, context, feedback):
+    def configureAtlas(self, layout, coverage_layer, context, feedback):
         # Always use the execution context project instance for thread safety
-        project = context.project() if context.project() else QgsProject.instance()
+        project = context.project() if (context and context.project()) else QgsProject.instance()
 
-        # --------------------------------------------------------------
-        # Atlas
-        # --------------------------------------------------------------
+        # 1. Initialize Atlas
         atlas = layout.atlas()
         atlas.setEnabled(True)
         atlas.setCoverageLayer(coverage_layer)
         atlas.setHideCoverage(True)
-        atlas.setPageNameExpression('LAYER_THEME_FIELD_NAME')
-        # --------------------------------------------------------------
-        # Map settings
-        # --------------------------------------------------------------
-        feature = atlas.currentFeature()
-        feature_name = feature[LAYER_THEME_FIELD_NAME]
-        map_item.setFollowVisibilityPreset(True)
-        map_item.setFollowVisibilityPresetName(feature_name)
         
+        # Format field name properly inside the expression quotes
+        atlas.setPageNameExpression(f'"{self.LAYER_THEME_FIELD_NAME}"')
+        
+        # 2. Safely retrieve the map item using the helper method
+        map_item = self.mapItem(layout)
+        if not map_item:
+            if feedback:
+                feedback.reportError("Could not find a QgsLayoutItemMap in the layout.")
+            return
 
-        
+        # 3. Boot up the atlas preview to load the first feature into memory
+        atlas.first()
+        expression_string = f"attribute(@atlas_feature, '{self.LAYER_THEME_FIELD_NAME}')"
+        map_item.dataDefinedProperties().setProperty(
+        QgsLayoutObject.MapFollowVisibilityPresetName, 
+        QgsProperty.fromExpression(expression_string)
+        )
+        map_item.setFollowVisibilityPreset(True)
+        map_item.refresh()
         
