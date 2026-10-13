@@ -48,6 +48,9 @@ from qgis.core import (
     NULL
 )
 
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QDialog, QMessageBox
+
 
 # Import the code for the DockWidget
 from .thematic_maps_dockwidget import ThematicMapsDockWidget
