@@ -587,10 +587,10 @@ class ThematicMaps:
         """
         # Instantiate the dialog, passing the QGIS main window as its parent
         # This keeps the dialog on top of QGIS and manages its memory lifecycle correctly
-        self.dialog = LayoutRunnerDialog(parent=iface.mainWindow())
-        self.dialog.show()
-        self.dialog.raise_()
-        self.dialog.activateWindow()
+        dialog = LayoutRunnerDialog(parent=iface.mainWindow())
+        dialog.show()
+        dialog.raise_()
+        dialog.activateWindow()
     
     def disable_buttons(self):
         """Disable theme buttons."""
