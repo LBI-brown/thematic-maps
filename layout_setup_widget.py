@@ -44,7 +44,4 @@ class LayoutRunnerDialog(QDialog):
         
         QMessageBox.information(self, "Success", f"Successfully processed layout: {layout_name}")
 
-# --- Testing inside the QGIS Python Console ---
-# Instantiate and display the dialog
-dialog = LayoutRunnerDialog()
-dialog.show()
+
