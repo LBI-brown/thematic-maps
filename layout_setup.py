@@ -6,7 +6,7 @@ from qgis.core import (
     QgsLayoutItemLegend,
     QgsLayoutItemMap,
     QgsLayoutObject,
-    QgsProperty
+    QgsProperty,
     Qgis
 )
 from PyQt5.QtCore import Qt
