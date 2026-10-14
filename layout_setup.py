@@ -65,6 +65,19 @@ class layoutSetup:
         QgsLayoutObject.DataDefinedProperty.MapStylePreset, 
         QgsProperty.fromExpression(expression_string)
         )
+        # control by atlas
+        map_item.dataDefinedProperties().setProperty(
+        QgsLayoutObject.DataDefinedProperty.AtlasDriven,
+        QgsProperty.fromExpression("True")
+        )
+
+        # 2. (Optional) Set the margin around the feature (e.g., 5% margin)
+        # This mimics checking the "Margin around feature" option in the QGIS UI
+        map_item.setAtlasMargin(0.05)
+
+        # 3. (Optional) Set the scaling mode
+        # Options: Auto (0), FixedScale (1), PredefinedScale (2)
+        map_item.setAtlasScalingMode(QgsLayoutItemMap.AtlasScalingMode.Auto)
 
         map_item.setFollowVisibilityPreset(True)
         map_item.refresh()
