@@ -4,7 +4,7 @@ from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 from qgis.core import QgsProject
 
 # Get the path to the UI file (assumes it is in the same directory as this script)
-UI_PATH = os.path.join(os.path.dirname(__file__), 'dialog.ui')
+UI_PATH = os.path.join(os.path.dirname(__file__), 'layout_setup.ui')
 
 class LayoutRunnerDialog(QDialog):
     def __init__(self, parent=None):
