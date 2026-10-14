@@ -28,11 +28,8 @@
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Setup will apply these settings to the selected layout:</string>
-       <string>* Activate the Atlas</string>
-       <string>* Set the coverage layer</string>
-       <string>* Set the first map item to be controlled by the Atlas</string>
-       <string>* Set the map layer to follow themes in the coverage layer</string>
-      <string>These settings will allow output of themed maps from the Atlas</string>
+       <string>* Activate the Atlas&#10;* Set the coverage layer&#10;* Set the first map item to be controlled by the Atlas&#10;* Set the map layer to follow themes in the coverage layer&#10;
+       These settings will allow output of themed maps from the Atlas</string>
      </property>
     </widget>
    </item>
