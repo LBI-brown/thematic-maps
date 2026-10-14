@@ -13,10 +13,9 @@ from PyQt5.QtCore import Qt
 
 class layoutSetup:
 
-    COVERAGE_LAYER = 'coverage layer'
     LAYER_THEME_FIELD_NAME = "theme_name"
 
-    def __init__(self, coverage_layer, layout):
+    def __init__(self, layout, coverage_layer):
         self.coverage_layer = coverage_layer
         self.layout = layout
         self.configureAtlas()
@@ -42,7 +41,7 @@ class layoutSetup:
         # 1. Initialize Atlas
         atlas = layout.atlas()
         atlas.setEnabled(True)
-        atlas.setCoverageLayer(coverage_layer)
+        atlas.setCoverageLayer(self.coverage_layer)
         atlas.setHideCoverage(True)
         
         # Format field name properly inside the expression quotes
