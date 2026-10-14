@@ -56,11 +56,13 @@ class layoutSetup:
 
         # 3. Boot up the atlas preview to load the first feature into memory
         atlas.first()
+        # assign theme
         expression_string = f"attribute(@atlas_feature, '{self.LAYER_THEME_FIELD_NAME}')"
         map_item.dataDefinedProperties().setProperty(
-        QgsLayoutObject.MapFollowVisibilityPresetName, 
+        QgsLayoutObject.DataDefinedProperty.MapFollowVisibilityPresetName, 
         QgsProperty.fromExpression(expression_string)
         )
+
         map_item.setFollowVisibilityPreset(True)
         map_item.refresh()
         
