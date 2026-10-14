@@ -582,12 +582,14 @@ class ThematicMaps:
         settings.setValue("ThemeSelector/size", self.dockwidget.size())
 
     def open_layout_dialog(self):
+        #layer to pass on to layout setup script
+        coverage_layer=self.coverage_layer()
         """
         Instantiates and shows the LayoutRunnerDialog as a modal window.
         """
         # Instantiate the dialog, passing the QGIS main window as its parent
         # This keeps the dialog on top of QGIS and manages its memory lifecycle correctly
-        dialog = LayoutRunnerDialog(parent=iface.mainWindow())
+        dialog = LayoutRunnerDialog(coverage_layer, parent=iface.mainWindow())
         dialog.show()
         dialog.raise_()
         dialog.activateWindow()
