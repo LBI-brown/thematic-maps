@@ -3,6 +3,8 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 from qgis.core import QgsProject
 
+from .layout_setup import layout_setup
+
 # Get the path to the UI file (assumes it is in the same directory as this script)
 UI_PATH = os.path.join(os.path.dirname(__file__), 'layout_setup.ui')
 
@@ -28,20 +30,8 @@ class LayoutRunnerDialog(QDialog):
             return
             
         # 3. Pass the selected layout into your target script or function
-        self.my_custom_processing_logic(selected_layout)
+        self.layout_setup(selected_layout)
 
-    def my_custom_processing_logic(self, layout):
-        """
-        Place your custom script execution logic inside this method.
-        """
-        layout_name = layout.name()
-        
-        # Example processing task: Print the layout name
-        print(f"Executing script using layout: {layout_name}")
-        
-        # Example modification: Find a map item inside the layout
-        # map_item = layout.itemByById("Map 1")
-        
-        QMessageBox.information(self, "Success", f"Successfully processed layout: {layout_name}")
+    
 
 
