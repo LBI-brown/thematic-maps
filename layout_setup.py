@@ -23,6 +23,7 @@ class layoutSetup:
     LAYER_THEME_FIELD_NAME = "theme_name"
 
     def __init__(self, layout, coverage_layer):
+        print(f"layoutsetup script called")
         self.coverage_layer = coverage_layer
         self.layout = layout
         self.configureAtlas(self.layout, self.coverage_layer)
