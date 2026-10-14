@@ -83,8 +83,8 @@ class layoutSetup:
         print(f"Executing script using layout: {layout_name}")
                 
         QMessageBox.information(
-        iface.mainWindow(), 
-        "Success", 
-        f"Successfully setup layout: {layout_name}"
+            iface.mainWindow(), 
+            "Success", 
+            f"Successfully setup layout: {layout_name}"
         )
         
