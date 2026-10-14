@@ -7,6 +7,9 @@ from qgis.core import (
     QgsLayoutItemMap,
     QgsLayoutObject,
     QgsProperty,
+    QgsLayoutPoint, 
+    QgsLayoutSize, 
+    QgsUnitTypes,
     Qgis
 )
 from PyQt5.QtCore import Qt
@@ -51,13 +54,9 @@ class layoutSetup:
         # Format field name properly inside the expression quotes
         atlas.setPageNameExpression(f'"{self.LAYER_THEME_FIELD_NAME}"')
         
-        # 2. Safely retrieve the map item using the helper method
-        map_item = self.mapItem(layout)
-        if not map_item:
-            if feedback:
-                feedback.reportError("Could not find a QgsLayoutItemMap in the layout.")
-            return
-
+        # 2. Safely retrieve the map item using the helper method or create new map
+        map_item = self.mapItem(layout) or self.add_map_to_layout(layout)
+        
         # 3. Boot up the atlas preview to load the first feature into memory
         atlas.first()
         # assign theme
@@ -88,4 +87,26 @@ class layoutSetup:
             "Success", 
             f"Successfully setup layout: {layout_name}"
         )
+
+    #create map if none found in layout
+    def add_map_to_layout(self,layout):
+        # 1. Instantiate the map item linked to your layout
+        map_item = QgsLayoutItemMap(layout)
+        
+        # 2. Set the map's default background canvas and extents
+        map_item.setToCanvasExtent()
+        
+        # 3. Position the map on the page (X, Y coordinates from top-left)
+        # Places the map 20mm from the left edge and 20mm from the top edge
+        map_item.attemptMove(QgsLayoutPoint(20, 20, QgsUnitTypes.LayoutMillimeters))
+        
+        # 4. Set the map's width and height (e.g., 200mm wide by 150mm high)
+        map_item.attemptResize(QgsLayoutSize(200, 150, QgsUnitTypes.LayoutMillimeters))
+        
+        # 5. Add the item to the layout's item manager
+        layout.addLayoutItem(map_item)
+
+        print(f"map item added to layout")
+        
+        return map_item
         
