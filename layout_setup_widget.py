@@ -3,7 +3,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 from qgis.core import QgsProject
 
-from .layout_setup import layout_setup
+from .layout_setup import layoutSetup
 
 # Get the path to the UI file (assumes it is in the same directory as this script)
 UI_PATH = os.path.join(os.path.dirname(__file__), 'layout_setup.ui')
@@ -30,7 +30,7 @@ class LayoutRunnerDialog(QDialog):
             return
             
         # 3. Pass the selected layout into your target script or function
-        self.layout_setup(selected_layout)
+        self.layoutSetup(selected_layout)
 
     
 
