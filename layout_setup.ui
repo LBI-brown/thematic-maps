@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Layout Runner</string>
+   <string>Thematic maps layout setup</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -25,9 +25,21 @@
     <widget class="QgsLayoutComboBox" name="layoutComboBox"/>
    </item>
    <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Setup will apply these settings to the selected layout:</string>
+      &#x2022 <string> Activate the Atlas</string>
+      &#x2022 <string> Set the coverage layer</string>
+      &#x2022 <string> Set the first map item to be controlled by the Atlas</string>
+      &#x2022 <string> Set the map layer to follow themes in the coverage layer</string>
+      <string>These settings will allow output of themed maps from the Atlas</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="runButton">
      <property name="text">
-      <string>Run Script</string>
+      <string>Run Setup</string>
      </property>
     </widget>
    </item>
