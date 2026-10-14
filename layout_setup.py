@@ -59,7 +59,7 @@ class layoutSetup:
         # assign theme
         expression_string = f"attribute(@atlas_feature, '{self.LAYER_THEME_FIELD_NAME}')"
         map_item.dataDefinedProperties().setProperty(
-        QgsLayoutObject.DataDefinedProperty.MapFollowVisibilityPresetName, 
+        QgsLayoutObject.DataDefinedProperty.MapStylePreset, 
         QgsProperty.fromExpression(expression_string)
         )
 
