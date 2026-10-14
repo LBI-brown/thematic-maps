@@ -19,6 +19,7 @@ class layoutSetup:
     def __init__(self, coverage_layer, layout):
         self.coverage_layer = coverage_layer
         self.layout = layout
+        self.configureAtlas()
 
     def mapItem(self, layout):
         for item in layout.items():
@@ -35,6 +36,8 @@ class layoutSetup:
     def configureAtlas(self, layout, coverage_layer, context, feedback):
         # Always use the execution context project instance for thread safety
         project = context.project() if (context and context.project()) else QgsProject.instance()
+
+        layout_name = layout.name()
 
         # 1. Initialize Atlas
         atlas = layout.atlas()
@@ -61,18 +64,9 @@ class layoutSetup:
         )
         map_item.setFollowVisibilityPreset(True)
         map_item.refresh()
-
-    def my_custom_processing_logic(self, layout):
-        """
-        Place your custom script execution logic inside this method.
-        """
-        layout_name = layout.name()
         
         # Example processing task: Print the layout name
         print(f"Executing script using layout: {layout_name}")
-        
-        # Example modification: Find a map item inside the layout
-        # map_item = layout.itemByById("Map 1")
-        
+                
         QMessageBox.information(self, "Success", f"Successfully processed layout: {layout_name}")
         
