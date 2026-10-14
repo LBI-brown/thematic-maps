@@ -32,7 +32,7 @@ class layoutSetup:
                 return item
         return None
 
-    def configureAtlas(self, layout, coverage_layer, context, feedback):
+    def configureAtlas(self, layout, coverage_layer):
         # Always use the execution context project instance for thread safety
         project = QgsProject.instance()
 
