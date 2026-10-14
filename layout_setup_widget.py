@@ -30,7 +30,17 @@ class LayoutRunnerDialog(QDialog):
             QMessageBox.warning(self, "Warning", "No layout selected or available.")
             return
             
-        # 3. Pass the selected layout into your target script or function
+        # 3. Ensure the layout is a Print Layout (and not a Report) 
+        # because reports do not share the exact same .atlas() configurations
+        if not isinstance(selected_layout, QgsPrintLayout):
+            QMessageBox.critical(
+                self, 
+                "Invalid Layout Type", 
+                "The chosen layout is not a standard Print Layout. Maps cannot be managed via Atlas rules here."
+            )
+            return 
+            
+        # 4. Pass the selected layout into your target script or function
         layoutSetup(selected_layout, self.coverage_layer)
 
     
