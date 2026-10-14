@@ -61,4 +61,18 @@ class layoutSetup:
         )
         map_item.setFollowVisibilityPreset(True)
         map_item.refresh()
+
+    def my_custom_processing_logic(self, layout):
+        """
+        Place your custom script execution logic inside this method.
+        """
+        layout_name = layout.name()
+        
+        # Example processing task: Print the layout name
+        print(f"Executing script using layout: {layout_name}")
+        
+        # Example modification: Find a map item inside the layout
+        # map_item = layout.itemByById("Map 1")
+        
+        QMessageBox.information(self, "Success", f"Successfully processed layout: {layout_name}")
         
