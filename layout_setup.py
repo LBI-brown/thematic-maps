@@ -10,6 +10,9 @@ from qgis.core import (
     Qgis
 )
 from PyQt5.QtCore import Qt
+from qgis.PyQt.QtWidgets import (
+    QMessageBox
+)
 
 class layoutSetup:
 
@@ -69,5 +72,5 @@ class layoutSetup:
         # Example processing task: Print the layout name
         print(f"Executing script using layout: {layout_name}")
                 
-        QMessageBox.information(self, "Success", f"Successfully processed layout: {layout_name}")
+        QMessageBox.information(self, "Success", f"Successfully setup layout: {layout_name}")
         
