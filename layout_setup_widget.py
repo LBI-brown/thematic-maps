@@ -1,7 +1,7 @@
 import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog, QMessageBox
-from qgis.core import QgsProject
+from qgis.core import QgsProject, QgsPrintLayout
 
 from .layout_setup import layoutSetup
 
