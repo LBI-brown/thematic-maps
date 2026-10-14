@@ -66,12 +66,9 @@ class layoutSetup:
         QgsProperty.fromExpression(expression_string)
         )
         # control by atlas
-        map_item.dataDefinedProperties().setProperty(
-        QgsLayoutObject.DataDefinedProperty.AtlasDriven,
-        QgsProperty.fromExpression("True")
-        )
+        map_item.setAtlasDriven(True)
 
-        # 2. (Optional) Set the margin around the feature (e.g., 5% margin)
+        # (Optional) Set the margin around the feature (e.g., 5% margin)
         # This mimics checking the "Margin around feature" option in the QGIS UI
         map_item.setAtlasMargin(0.05)
 
