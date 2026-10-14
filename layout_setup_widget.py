@@ -9,10 +9,11 @@ from .layout_setup import layoutSetup
 UI_PATH = os.path.join(os.path.dirname(__file__), 'layout_setup.ui')
 
 class LayoutRunnerDialog(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, coverage_layer, parent=None):
         super().__init__(parent)
         # Load the UI file dynamically
         uic.loadUi(UI_PATH, self)
+        self.coverage_layer = coverage_layer
         
         # Connect the QgsLayoutComboBox to the active QGIS project
         self.layoutComboBox.setLayoutManager(QgsProject.instance().layoutManager())
@@ -30,7 +31,7 @@ class LayoutRunnerDialog(QDialog):
             return
             
         # 3. Pass the selected layout into your target script or function
-        layoutSetup(selected_layout)
+        layoutSetup(selected_layout, coverage_layer)
 
     
 
