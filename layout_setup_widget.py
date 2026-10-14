@@ -30,7 +30,7 @@ class LayoutRunnerDialog(QDialog):
             return
             
         # 3. Pass the selected layout into your target script or function
-        self.layoutSetup(selected_layout)
+        layoutSetup(selected_layout)
 
     
 
