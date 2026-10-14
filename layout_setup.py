@@ -18,7 +18,7 @@ class layoutSetup:
     def __init__(self, layout, coverage_layer):
         self.coverage_layer = coverage_layer
         self.layout = layout
-        self.configureAtlas()
+        self.configureAtlas(self.layout, self.coverage_layer)
 
     def mapItem(self, layout):
         for item in layout.items():
@@ -34,7 +34,7 @@ class layoutSetup:
 
     def configureAtlas(self, layout, coverage_layer, context, feedback):
         # Always use the execution context project instance for thread safety
-        project = context.project() if (context and context.project()) else QgsProject.instance()
+        project = QgsProject.instance()
 
         layout_name = layout.name()
 
