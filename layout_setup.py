@@ -13,6 +13,7 @@ from PyQt5.QtCore import Qt
 from qgis.PyQt.QtWidgets import (
     QMessageBox
 )
+from qgis.utils import iface
 
 class layoutSetup:
 
