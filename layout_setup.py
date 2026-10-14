@@ -60,24 +60,27 @@ class layoutSetup:
         
         # 3. Boot up the atlas preview to load the first feature into memory
         atlas.first()
-        # assign theme
+        
+        # Assign dynamic map theme based on the current feature attribute
         expression_string = f"attribute(@atlas_feature, '{self.LAYER_THEME_FIELD_NAME}')"
         map_item.dataDefinedProperties().setProperty(
-        QgsLayoutObject.DataDefinedProperty.MapStylePreset, 
-        QgsProperty.fromExpression(expression_string)
+            QgsLayoutObject.DataDefinedProperty.MapStylePreset, 
+            QgsProperty.fromExpression(expression_string)
         )
-        # control by atlas
+        
+        # Control map extents by atlas
         map_item.setAtlasDriven(True)
 
-        # (Optional) Set the margin around the feature (e.g., 5% margin)
-        # This mimics checking the "Margin around feature" option in the QGIS UI
+        # Set the margin around the feature (e.g., 5% margin)
         map_item.setAtlasMargin(0.05)
 
-        # 3. (Optional) Set the scaling mode
-        # Options: Auto (0), FixedScale (1), PredefinedScale (2)
-        map_item.setAtlasScalingMode(QgsLayoutItemMap.AtlasScalingMode.Auto)
+        # 4. Set the scaling mode (FIXED: Corrected enum path)
+        map_item.setAtlasScalingMode(QgsLayoutItemMap.Auto)
 
-        map_item.setFollowVisibilityPreset(True)
+        # FIXED: Removed map_item.setFollowVisibilityPreset(True) 
+        # because it conflicts with the dynamic DataDefinedProperty MapStylePreset
+        
+        # Commit layout map parameters and refresh bounding dimensions
         map_item.refresh()
         
         # Example processing task: Print the layout name
@@ -89,8 +92,8 @@ class layoutSetup:
             f"Successfully setup layout: {layout_name}"
         )
 
-    #create map if none found in layout
-    def add_map_to_layout(self,layout):
+    # Create map if none found in layout
+    def add_map_to_layout(self, layout):
         # 1. Instantiate the map item linked to your layout
         map_item = QgsLayoutItemMap(layout)
         
@@ -98,7 +101,6 @@ class layoutSetup:
         map_item.setToCanvasExtent()
         
         # 3. Position the map on the page (X, Y coordinates from top-left)
-        # Places the map 20mm from the left edge and 20mm from the top edge
         map_item.attemptMove(QgsLayoutPoint(20, 20, QgsUnitTypes.LayoutMillimeters))
         
         # 4. Set the map's width and height (e.g., 200mm wide by 150mm high)
@@ -110,4 +112,3 @@ class layoutSetup:
         print(f"map item added to layout")
         
         return map_item
-        
