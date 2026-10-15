@@ -84,6 +84,7 @@ class layoutSetup:
         
         # Commit layout map parameters and refresh bounding dimensions
         map_item.refresh()
+        layout.refresh()
         
         # Example processing task: Print the layout name
         print(f"Executing script using layout: {layout_name}")
@@ -103,7 +104,7 @@ class layoutSetup:
         canvas_extent = canvas.extent()
         
         # 2. Set the map's default background canvas and extents
-        map_item.setExtent(canvas_extent)
+        map_item.zoomToExtent(canvas_extent)
         
         # 3. Position the map on the page (X, Y coordinates from top-left)
         map_item.attemptMove(QgsLayoutPoint(20, 20, QgsUnitTypes.LayoutMillimeters))
