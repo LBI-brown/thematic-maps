@@ -22,27 +22,38 @@ class LayoutRunnerDialog(QDialog):
         self.runButton.clicked.connect(self.run_my_script)
 
     def run_my_script(self):
-        # 1. Grab the actual QgsPrintLayout object selected by the user
-        selected_layout = self.layoutComboBox.currentLayout()
-        
-        # 2. Check if a layout is actually selected (handles empty project scenarios)
-        if not selected_layout:
-            QMessageBox.warning(self, "Warning", "No layout selected or available.")
-            return
-            
-        # 3. Ensure the layout is a Print Layout (and not a Report) 
-        # because reports do not share the exact same .atlas() configurations
-        if not isinstance(selected_layout, QgsPrintLayout):
-            QMessageBox.critical(
-                self, 
-                "Invalid Layout Type", 
-                "The chosen layout is not a standard Print Layout. Maps cannot be managed via Atlas rules here."
-            )
-            return 
-            
-        # 4. Pass the selected layout into your target script or function
-        layoutSetup(selected_layout, self.coverage_layer)
-
+    # 1. Grab the actual QgsPrintLayout object selected by the user
+    selected_layout = self.layoutComboBox.currentLayout()
     
+    # 2. Check if a layout is actually selected
+    if not selected_layout:
+        QMessageBox.warning(self, "Warning", "No layout selected or available.")
+        return
+        
+    # 3. Ensure the layout is a Print Layout
+    if not isinstance(selected_layout, QgsPrintLayout):
+        QMessageBox.critical(
+            self, 
+            "Invalid Layout Type", 
+            "The chosen layout is not a standard Print Layout."
+        )
+        return 
+        
+    # 4. Safely execute the external script/class
+    try:
+        my_runner = layoutSetup(selected_layout, self.coverage_layer)
+        
+        QMessageBox.information(self, "Success", "Layout configuration completed successfully!")
+        self.accept() # Automatically closes the dialog window on success
+        
+    except Exception as e:
+        QMessageBox.critical(
+            self, 
+            "Execution Error", 
+            f"An error occurred while setting up the layout:\n\n{str(e)}"
+        )
+
+
+
 
 
