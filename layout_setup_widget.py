@@ -22,11 +22,7 @@ class LayoutRunnerDialog(QDialog):
         self.runButton.clicked.connect(self.run_my_script)
 
     def run_my_script(self):
-    
-        # DIAGNOSTIC 1: Force a pop-up to prove the button click is working
-        QMessageBox.information(self, "Debug", "The runButton click signal was successfully received!")
-        
-        # 1. Grab the layout
+       
         selected_layout = self.layoutComboBox.currentLayout()
         
         # DIAGNOSTIC 2: Print what was grabbed to the QGIS Python Console
