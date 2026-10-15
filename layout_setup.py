@@ -28,6 +28,9 @@ class layoutSetup:
         print("layoutsetup script called")
         self.coverage_layer = coverage_layer
         self.layout = layout
+
+        designer = iface.openLayoutDesigner(layout)
+        
         self.configureAtlas(layout, coverage_layer)
 
     def mapItem(self, layout):
@@ -98,24 +101,27 @@ class layoutSetup:
     # Create map if none found in layout
     def add_map_to_layout(self, layout):
         
-        # 1. Instantiate the map item linked to your layout
+        # 2. Instantiate and INITIALISE defaults
         map_item = QgsLayoutItemMap(layout)
+        map_item.initializeDefaults() 
+        
+        # 3. Commit it to the layout tree before setting coordinates
         layout.addLayoutItem(map_item)
-
-        canvas = iface.mapCanvas()
-        canvas_extent = canvas.extent()
         
-        # 2. Set the map's default background canvas and extents
-        map_item.zoomToExtent(canvas_extent)
-        
-        # 3. Position the map on the page (X, Y coordinates from top-left)
-        map_item.attemptMove(QgsLayoutPoint(20, 20, QgsUnitTypes.LayoutMillimeters))
-        
-        # 4. Set the map's width and height (e.g., 200mm wide by 150mm high)
+        # 4. Set sizing coordinates
+        map_item.attemptMove(QgsLayoutPoint(10, 10, QgsUnitTypes.LayoutMillimeters))
         map_item.attemptResize(QgsLayoutSize(200, 150, QgsUnitTypes.LayoutMillimeters))
         
+        # 5. Force geographic scope alignment
+        map_item.zoomToExtent(iface.mapCanvas().extent())
+        
+        # 6. Select the item to populate the Properties Panel
+        layout.setSelectedItem(map_item)
+        
+        # 7. Force a rendering refresh cycle across both systems
         map_item.refresh()
-        layout.refresh()
+        if designer:
+            designer.view().addRefreshRegion(map_item.rect()) # Direct view update
 
         print(f"map item added to layout")
         
