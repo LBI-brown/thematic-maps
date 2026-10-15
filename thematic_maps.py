@@ -385,6 +385,18 @@ class ThematicMaps:
         rec = QgsProject.instance().mapThemeCollection().createThemeFromCurrentState(root, model)
         QgsProject.instance().mapThemeCollection().update(theme, rec)
 
+        # Initialize the message box
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Thematic maps")
+        msg_box.setText("Map theme '{theme}' updated successfully.")
+        
+        # Set the standard Close button
+        msg_box.setStandardButtons(QMessageBox.Close)
+        
+        # Execute the message box
+        msg_box.exec_()
+
     def add_maptheme(self):
         """Add a new theme."""
         map_collection = QgsProject.instance().mapThemeCollection()
