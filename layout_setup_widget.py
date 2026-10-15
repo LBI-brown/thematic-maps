@@ -41,8 +41,6 @@ class LayoutRunnerDialog(QDialog):
         # 4. Safely execute the external script/class
         try:
             my_runner = layoutSetup(selected_layout, self.coverage_layer)
-            
-            QMessageBox.information(self, "Success", "Layout configuration completed successfully!")
             self.accept() # Automatically closes the dialog window on success
             
         except Exception as e:
