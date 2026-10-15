@@ -22,23 +22,38 @@ class LayoutRunnerDialog(QDialog):
         self.runButton.clicked.connect(self.run_my_script)
 
     def run_my_script(self):
-        print("run_my_script called")
-        # 1. Grab the actual QgsPrintLayout object selected by the user
+    
+        # DIAGNOSTIC 1: Force a pop-up to prove the button click is working
+        QMessageBox.information(self, "Debug", "The runButton click signal was successfully received!")
+        
+        # 1. Grab the layout
         selected_layout = self.layoutComboBox.currentLayout()
         
-        # 2. Check if a layout is actually selected
+        # DIAGNOSTIC 2: Print what was grabbed to the QGIS Python Console
+        print(f"DEBUG: Selected layout is: {selected_layout}")
+        print(f"DEBUG: Coverage layer is: {self.coverage_layer}")
+        
         if not selected_layout:
             QMessageBox.warning(self, "Warning", "No layout selected or available.")
             return
             
-        # 3. Ensure the layout is a Print Layout
         if not isinstance(selected_layout, QgsPrintLayout):
-            QMessageBox.critical(
-                self, 
-                "Invalid Layout Type", 
-                "The chosen layout is not a standard Print Layout."
-            )
+            QMessageBox.critical(self, "Invalid Layout Type", "Not a standard Print Layout.")
             return 
+            
+        try:
+            print("DEBUG: Attempting to call layoutSetup...")
+            layoutSetup(selected_layout, self.coverage_layer)
+            print("DEBUG: layoutSetup execution finished without raising Python errors.")
+            
+            QMessageBox.information(self, "Success", "Layout configuration completed successfully!")
+            self.accept() 
+            
+        except Exception as e:
+            # Force a critical popup if anything inside layoutSetup crashes
+            QMessageBox.critical(self, "Execution Error", f"Error inside layoutSetup:\n\n{str(e)}")
+
+
             
         # 4. Safely execute the external script/class
         try:
