@@ -71,7 +71,7 @@ class layoutSetup:
         
         # Assign dynamic map theme based on the current feature attribute
         #expression_string = f"attribute(@atlas_feature, '{self.LAYER_THEME_FIELD_NAME}')"
-        expression_string = LAYER_THEME_FIELD_NAME
+        expression_string = self.LAYER_THEME_FIELD_NAME
         map_item.dataDefinedProperties().setProperty(
             QgsLayoutObject.DataDefinedProperty.MapStylePreset, 
             QgsProperty.fromExpression(expression_string)
