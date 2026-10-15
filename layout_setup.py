@@ -119,9 +119,6 @@ class layoutSetup:
         
         # 8. Cleanly cycle the redraw and update engines
         map_item.refresh()
-        
-        if designer:
-            designer.view().addRefreshRegion(map_item.rect())
 
         print(f"map item added to layout")
         
