@@ -76,10 +76,10 @@
     <item row="5" column="0" colspan="2">
       <widget class="QPushButton" name="pushButton_replace">
       <property name="toolTip">
-       <string>Replace theme in dropdown box with what is actually on map</string>
+       <string>Update theme in dropdown box with what is actually on map</string>
       </property>
       <property name="text">
-       <string>Replace</string>
+       <string>Update</string>
       </property>
      </widget>
     </item>
