@@ -102,26 +102,29 @@ class layoutSetup:
     def add_map_to_layout(self, layout):
         
         # 2. Instantiate and INITIALISE defaults
-        map_item = QgsLayoutItemMap(layout)
-        map_item.initializeDefaults() 
-        
-        # 3. Commit it to the layout tree before setting coordinates
+        map_item = QgsLayoutItemMap.create(layout)
+
+        # 3. Add it to the layout tree BEFORE configuring coordinates
         layout.addLayoutItem(map_item)
         
-        # 4. Set sizing coordinates
+        # 4. Finalise the item registration (fixes the blank/hidden UI panel properties)
+        map_item.finalizeRestoreFromTemplate()
+        
+        # 5. Move and resize your map item safely
         map_item.attemptMove(QgsLayoutPoint(10, 10, QgsUnitTypes.LayoutMillimeters))
         map_item.attemptResize(QgsLayoutSize(200, 150, QgsUnitTypes.LayoutMillimeters))
         
-        # 5. Force geographic scope alignment
+        # 6. Bind geographic focus 
         map_item.zoomToExtent(iface.mapCanvas().extent())
         
-        # 6. Select the item to populate the Properties Panel
+        # 7. CRITICAL UI FOCUS FIX: Select it programmatically to activate Item Properties panel
         layout.setSelectedItem(map_item)
         
-        # 7. Force a rendering refresh cycle across both systems
+        # 8. Trigger render refreshes on the UI thread
         map_item.refresh()
+        
         if designer:
-            designer.view().addRefreshRegion(map_item.rect()) # Direct view update
+            designer.view().addRefreshRegion(map_item.rect())
 
         print(f"map item added to layout")
         
