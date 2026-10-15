@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Select Layout:</string>
+      <string>Select existing layout:</string>
      </property>
     </widget>
    </item>
