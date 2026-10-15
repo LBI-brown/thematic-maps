@@ -62,9 +62,12 @@ class layoutSetup:
         
         # 2. Safely retrieve the map item using the helper method or create new map
         map_item = self.mapItem(layout) or self.add_map_to_layout(layout)
+        map_item.setFollowVisibilityPreset(True)
         
         # 3. Boot up the atlas preview to load the first feature into memory
         atlas.first()
+
+        
         
         # Assign dynamic map theme based on the current feature attribute
         expression_string = f"attribute(@atlas_feature, '{self.LAYER_THEME_FIELD_NAME}')"
