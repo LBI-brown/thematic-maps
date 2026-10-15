@@ -103,10 +103,6 @@ class layoutSetup:
         
         # 2. Instantiate and INITIALISE defaults
         map_item = QgsLayoutItemMap.create(layout)
-
-        # 3. CRITICAL GEOMETRY FIX: Define a base bounding shape (QRectF parameters)
-        # This allocates the physical pixels so the layout canvas can track and render it
-        map_item.setRect(0, 0, 100, 100) # <--- THIS FIXES THE RENDER & PROPERTIES PANEL
         
         # 4. Add the map frame to the layout registry tree
         layout.addLayoutItem(map_item)
