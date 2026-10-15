@@ -22,6 +22,7 @@ class LayoutRunnerDialog(QDialog):
         self.runButton.clicked.connect(self.run_my_script)
 
     def run_my_script(self):
+        print("run_my_script called")
         # 1. Grab the actual QgsPrintLayout object selected by the user
         selected_layout = self.layoutComboBox.currentLayout()
         
