@@ -63,7 +63,7 @@
        <string>Remove theme</string>
       </property>
       <property name="text">
-       <string>-</string>
+       <string>Remove</string>
       </property>
       <property name="checkable">
        <bool>false</bool>
@@ -89,7 +89,7 @@
        <string>Add shown map layers as new theme</string>
       </property>
       <property name="text">
-       <string>+</string>
+       <string>Add</string>
       </property>
      </widget>
     </item>
