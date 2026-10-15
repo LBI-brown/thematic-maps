@@ -41,19 +41,6 @@ class LayoutRunnerDialog(QDialog):
             QMessageBox.critical(self, "Invalid Layout Type", "Not a standard Print Layout.")
             return 
             
-        try:
-            print("DEBUG: Attempting to call layoutSetup...")
-            layoutSetup(selected_layout, self.coverage_layer)
-            print("DEBUG: layoutSetup execution finished without raising Python errors.")
-            
-            QMessageBox.information(self, "Success", "Layout configuration completed successfully!")
-            self.accept() 
-            
-        except Exception as e:
-            # Force a critical popup if anything inside layoutSetup crashes
-            QMessageBox.critical(self, "Execution Error", f"Error inside layoutSetup:\n\n{str(e)}")
-
-
             
         # 4. Safely execute the external script/class
         try:
