@@ -18,9 +18,11 @@ from qgis.PyQt.QtWidgets import (
 )
 from qgis.utils import iface
 
-LAYER_THEME_FIELD_NAME = "theme_name"
+
 
 class layoutSetup:
+
+    LAYER_THEME_FIELD_NAME = "theme_name"
 
     def __init__(self, layout, coverage_layer):
         print("layoutsetup script called")
