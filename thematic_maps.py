@@ -377,6 +377,13 @@ class ThematicMaps:
         layer.triggerRepaint()
         self.populate()
 
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("Thematic maps")
+        msg_box.setText(f"Map theme '{theme}' removed successfully.")
+        msg_box.setStandardButtons(QMessageBox.Close)
+        msg_box.exec_()
+
     def replace_maptheme(self):
         """Replace the current theme with a new one."""
         theme = self.dockwidget.PresetComboBox.currentText()
@@ -385,16 +392,11 @@ class ThematicMaps:
         rec = QgsProject.instance().mapThemeCollection().createThemeFromCurrentState(root, model)
         QgsProject.instance().mapThemeCollection().update(theme, rec)
 
-        # Initialize the message box
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Information)
         msg_box.setWindowTitle("Thematic maps")
         msg_box.setText(f"Map theme '{theme}' updated successfully.")
-        
-        # Set the standard Close button
         msg_box.setStandardButtons(QMessageBox.Close)
-        
-        # Execute the message box
         msg_box.exec_()
 
     def add_maptheme(self):
