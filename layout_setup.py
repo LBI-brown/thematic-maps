@@ -18,15 +18,15 @@ from qgis.PyQt.QtWidgets import (
 )
 from qgis.utils import iface
 
+LAYER_THEME_FIELD_NAME = "theme_name"
+
 class layoutSetup:
 
-    LAYER_THEME_FIELD_NAME = "theme_name"
-
     def __init__(self, layout, coverage_layer):
-        print(f"layoutsetup script called")
+        print("layoutsetup script called")
         self.coverage_layer = coverage_layer
         self.layout = layout
-        self.configureAtlas(self.layout, self.coverage_layer)
+        self.configureAtlas(layout, coverage_layer)
 
     def mapItem(self, layout):
         for item in layout.items():
