@@ -389,7 +389,7 @@ class ThematicMaps:
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Information)
         msg_box.setWindowTitle("Thematic maps")
-        msg_box.setText("Map theme '{theme}' updated successfully.")
+        msg_box.setText(f"Map theme '{theme}' updated successfully.")
         
         # Set the standard Close button
         msg_box.setStandardButtons(QMessageBox.Close)
