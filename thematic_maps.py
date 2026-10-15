@@ -43,7 +43,6 @@ from qgis.core import (
     QgsFeature, 
     QgsApplication, 
     QgsFeatureRequest,
-    QgsProcessingProvider,
     edit, 
     NULL
 )
@@ -57,9 +56,6 @@ from .thematic_maps_dockwidget import ThematicMapsDockWidget
 
 #import the code for the layout setup dialogue
 from .layout_setup_widget import LayoutRunnerDialog
-
-#import the processing script class
-from .processing_scripts.provider import CustomProcessingProvider
 
 #import the layout setup class
 from .layout_setup import layoutSetup
@@ -528,17 +524,6 @@ class ThematicMaps:
 
         #update combo box name
         self.populate()
-
-    def run_layout_process(self):
-        print("layout process called")
-        layer=self.coverage_layer()
-        
-        try:
-            processing.execAlgorithmDialog("thematic_map_tools:layout_script")
-        except Exception as e:
-            # Push the python error directly into the QGIS Message Bar at the top of the map
-            self.iface.messageBar().pushMessage("Plugin Error", str(e), level=Qgis.Critical)
-
     
     def bookmark_lookup(self,theme):
         layer=self.coverage_layer()
