@@ -104,23 +104,24 @@ class layoutSetup:
         # 2. Instantiate and INITIALISE defaults
         map_item = QgsLayoutItemMap.create(layout)
 
-        # 3. Add it to the layout tree BEFORE configuring coordinates
+        # 3. CRITICAL GEOMETRY FIX: Define a base bounding shape (QRectF parameters)
+        # This allocates the physical pixels so the layout canvas can track and render it
+        map_item.setRect(0, 0, 100, 100) # <--- THIS FIXES THE RENDER & PROPERTIES PANEL
+        
+        # 4. Add the map frame to the layout registry tree
         layout.addLayoutItem(map_item)
         
-        # 4. Finalise the item registration (fixes the blank/hidden UI panel properties)
-        map_item.finalizeRestoreFromTemplate()
-        
-        # 5. Move and resize your map item safely
+        # 5. Position and resize to your final specifications safely
         map_item.attemptMove(QgsLayoutPoint(10, 10, QgsUnitTypes.LayoutMillimeters))
         map_item.attemptResize(QgsLayoutSize(200, 150, QgsUnitTypes.LayoutMillimeters))
         
-        # 6. Bind geographic focus 
+        # 6. Capture the main user window view focus bounds
         map_item.zoomToExtent(iface.mapCanvas().extent())
         
-        # 7. CRITICAL UI FOCUS FIX: Select it programmatically to activate Item Properties panel
+        # 7. CRITICAL UI FIX: Force focus on the item so the panel populates
         layout.setSelectedItem(map_item)
         
-        # 8. Trigger render refreshes on the UI thread
+        # 8. Cleanly cycle the redraw and update engines
         map_item.refresh()
         
         if designer:
