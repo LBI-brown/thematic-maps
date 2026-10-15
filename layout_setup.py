@@ -97,8 +97,10 @@ class layoutSetup:
 
     # Create map if none found in layout
     def add_map_to_layout(self, layout):
+        
         # 1. Instantiate the map item linked to your layout
         map_item = QgsLayoutItemMap(layout)
+        layout.addLayoutItem(map_item)
 
         canvas = iface.mapCanvas()
         canvas_extent = canvas.extent()
@@ -112,8 +114,8 @@ class layoutSetup:
         # 4. Set the map's width and height (e.g., 200mm wide by 150mm high)
         map_item.attemptResize(QgsLayoutSize(200, 150, QgsUnitTypes.LayoutMillimeters))
         
-        # 5. Add the item to the layout's item manager
-        layout.addLayoutItem(map_item)
+        map_item.refresh()
+        layout.refresh()
 
         print(f"map item added to layout")
         
