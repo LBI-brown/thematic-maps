@@ -107,22 +107,7 @@ class ThematicMaps:
         settings = QSettings()
         self.dockwidget.resize(settings.value("ThematicMaps/size",
                                               QSize(300, 200)))
-
-        """Initialises and registers the Processing provider safely."""
-        registry = QgsApplication.processingRegistry()
-        
-        # 1. Instantiate your provider object
-        self.provider = CustomProcessingProvider()
-        
-        # 2. Check if a provider with this exact ID already exists in QGIS memory
-        # (This happens during Plugin Reloads)
-        existing_provider = registry.providerById(self.provider.id())
-        if existing_provider:
-            # Forcibly strip out the duplicate to clean the workspace
-            registry.removeProvider(existing_provider)
-            
-        # 3. Safely register your fresh instance
-        registry.addProvider(self.provider)
+    
 
     def tr(self, message):
         """Get the translation for a string using Qt translation API."""
@@ -143,10 +128,7 @@ class ThematicMaps:
 
 
     def unload(self):
-        # Safely remove the provider to prevent QGIS from crashing on close
-        if self.provider:
-            QgsApplication.processingRegistry().removeProvider(self.provider)
-            self.provider = None  # Explicitly clear the variable reference
+        pass
 
     def coverage_layer(self):
 
