@@ -18,7 +18,7 @@ class LayoutRunnerDialog(QDialog):
         # Connect the QgsLayoutComboBox to the active QGIS project
         self.layoutComboBox.setLayoutManager(QgsProject.instance().layoutManager())
 
-        self.layoutComboBox.insertItem(0, "")
+        self.layoutComboBox.setAllowEmptyLayout(True)
         self.layoutComboBox.setPlaceholderText("Existing layouts...")
         
         # Connect the button click signal to your execution method
