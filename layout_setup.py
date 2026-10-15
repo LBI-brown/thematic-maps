@@ -98,9 +98,12 @@ class layoutSetup:
     def add_map_to_layout(self, layout):
         # 1. Instantiate the map item linked to your layout
         map_item = QgsLayoutItemMap(layout)
+
+        canvas = iface.mapCanvas()
+        canvas_extent = canvas.extent()
         
         # 2. Set the map's default background canvas and extents
-        map_item.setToCanvasExtent()
+        map_item.setExtent(canvas_extent)
         
         # 3. Position the map on the page (X, Y coordinates from top-left)
         map_item.attemptMove(QgsLayoutPoint(20, 20, QgsUnitTypes.LayoutMillimeters))
