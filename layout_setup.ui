@@ -53,6 +53,13 @@
     </widget>
    </item>
    <item>
+   <widget class="QLabel" name="label">
+    <property name="text">
+     <string>* Set map layers to follow current Atlas theme</string>      
+    </property>
+   </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label">
      <property name="text">
       <string>These settings will allow output of themed maps from the Atlas</string>      
