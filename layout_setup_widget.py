@@ -19,6 +19,7 @@ class LayoutRunnerDialog(QDialog):
         self.layoutComboBox.setLayoutManager(QgsProject.instance().layoutManager())
 
         self.layoutComboBox.setAllowEmptyLayout(True)
+        self.layoutComboBox.setCurrentIndex(0)
         self.layoutComboBox.setPlaceholderText("Existing layouts...")
         
         # Connect the button click signal to your execution method
