@@ -29,12 +29,7 @@ class layoutSetup:
         self.coverage_layer = coverage_layer
         self.layout = layout
 
-        designer = iface.openLayoutDesigner(layout)
-        layout_view = designer.view()
-    
-        # 2. Wait 100 milliseconds for the window to draw, then execute zoomFull
-        QTimer.singleShot(100, lambda: layout_view.zoomFull())
-        
+        designer = iface.openLayoutDesigner(layout)                
         self.configureAtlas(layout, coverage_layer)
 
     def mapItem(self, layout):
@@ -50,9 +45,8 @@ class layoutSetup:
         return None
 
     def configureAtlas(self, layout, coverage_layer):
-        # Always use the execution context project instance for thread safety
+        
         project = QgsProject.instance()
-
         layout_name = layout.name()
 
         # 1. Initialize Atlas
@@ -60,8 +54,6 @@ class layoutSetup:
         atlas.setEnabled(True)
         atlas.setCoverageLayer(self.coverage_layer)
         atlas.setHideCoverage(True)
-        
-        # Format field name properly inside the expression quotes
         atlas.setPageNameExpression(f'"{self.LAYER_THEME_FIELD_NAME}"')
         
         # 2. Safely retrieve the map item using the helper method or create new map
@@ -69,12 +61,9 @@ class layoutSetup:
         map_item.setFollowVisibilityPreset(True)
         
         # 3. Boot up the atlas preview to load the first feature into memory
-        atlas.first()
-
-        
+        atlas.first()        
         
         # Assign dynamic map theme based on the current feature attribute
-        #expression_string = f"attribute(@atlas_feature, '{self.LAYER_THEME_FIELD_NAME}')"
         expression_string = self.LAYER_THEME_FIELD_NAME
         map_item.dataDefinedProperties().setProperty(
             QgsLayoutObject.DataDefinedProperty.MapStylePreset, 
@@ -87,11 +76,9 @@ class layoutSetup:
         # Set the margin around the feature (e.g., 5% margin)
         map_item.setAtlasMargin(0.05)
 
-        # 4. Set the scaling mode (FIXED: Corrected enum path)
+        # 4. Set the scaling mode 
         map_item.setAtlasScalingMode(QgsLayoutItemMap.Auto)
 
-        # FIXED: Removed map_item.setFollowVisibilityPreset(True) 
-        # because it conflicts with the dynamic DataDefinedProperty MapStylePreset
         
         # Commit layout map parameters and refresh bounding dimensions
         map_item.refresh()
@@ -99,6 +86,9 @@ class layoutSetup:
         
         # Example processing task: Print the layout name
         print(f"Executing script using layout: {layout_name}")
+
+        layout_view = designer.view()
+        layout_view.zoomFull()
                 
         QMessageBox.information(
             iface.mainWindow(), 
@@ -122,7 +112,7 @@ class layoutSetup:
         # 6. Capture the main user window view focus bounds
         map_item.zoomToExtent(iface.mapCanvas().extent())
         
-        # 7. CRITICAL UI FIX: Force focus on the item so the panel populates
+        # 7. Force focus on the item so the panel populates
         layout.setSelectedItem(map_item)
         
         # 8. Cleanly cycle the redraw and update engines
