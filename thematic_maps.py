@@ -29,6 +29,7 @@ from qgis.PyQt.QtCore import (
     QVariant
 )
 from qgis.PyQt.QtWidgets import (
+    QDialog,
     QInputDialog,
     QMessageBox
 )
@@ -48,8 +49,6 @@ from qgis.core import (
 )
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QDialog, QMessageBox
-
 
 # Import the code for the DockWidget
 from .thematic_maps_dockwidget import ThematicMapsDockWidget
@@ -125,10 +124,6 @@ class ThematicMaps:
         # Initialize widget functionality
         self.populate()
         self.connect_signals()
-
-
-    def unload(self):
-        pass
 
     def coverage_layer(self):
 
@@ -236,8 +231,8 @@ class ThematicMaps:
                 layer.changeAttributeValue(first_match.id(), field_idx2, bookmark_match.id())
                 layer.changeGeometry(first_match.id(),geom)
                 print(f"Feature '{first_match[LAYER_THEME_FIELD_NAME]}' updated successfully.")     
-            except:
-                print(f"No matching theme found")
+            except Exception as e:
+                print(f"An unexpected plugin error occurred: {e}")
             finally:
                 layer.commitChanges() 
         else:
@@ -308,10 +303,10 @@ class ThematicMaps:
         bookmark_for_theme = self.bookmark_lookup(theme)
         try:
             theme_index = self.dockwidget.PresetComboBox.findText(theme, Qt.MatchFixedString)
-            theme_result_index = theme_index if type(theme_index) == int else -1
-        except:
+            theme_result_index = theme_index if isinstance(theme_index, int) else -1
+        except Exception as e:
             theme_result_index = -1
-            print(f"no matching theme")
+            print(f"No matching theme. Error:{e}")
         self.dockwidget.PresetComboBox.setCurrentIndex(theme_result_index)
         print(type(bookmark_for_theme))
         self.set_bookmark(bookmark_for_theme)
@@ -332,9 +327,10 @@ class ThematicMaps:
         try:
             bmk_index = self.dockwidget.BookmarkComboBox.findText(bookmark_for_theme,Qt.MatchFixedString)
             print(type(bmk_index))
-            bmk_result_index = bmk_index if type(bmk_index) == int else -1
-        except:
+            bmk_result_index = bmk_index if isinstance(bmk_index,int) else -1
+        except Exception as e:
             bmk_result_index = -1
+            print(f"No matching bookmark. Error:{e}")
         self.dockwidget.BookmarkComboBox.setCurrentIndex(bmk_result_index)
 
     def bookmark_added(self,id):
@@ -455,8 +451,8 @@ class ThematicMaps:
                         layer.updateFeature(first_match)
                         self.populate()
                         self.set_combo_text(name)
-                    except:
-                        print(f"no matching feature with old theme '{theme}'")
+                    except Exception as e:
+                        print(f"No matching feature with old theme '{theme}'. Error: {e}")
                       
             else:
                 QMessageBox.warning(None, self.tr("Theme Not Found"),
@@ -518,7 +514,7 @@ class ThematicMaps:
         #finds bookmark corresponding to theme
         assoc_bmk = bookmark_lookup_dict.get(theme, "Theme not found")  
         print(f"from fnc bookmark lookup:{bookmark_lookup_dict} returning bookmark '{assoc_bmk}' ")
-        bmk_string_name = assoc_bmk if type(assoc_bmk) == str else None
+        bmk_string_name = assoc_bmk if isinstance(assoc_bmk, str) else None
         return bmk_string_name 
 
     def get_current_theme(self):
