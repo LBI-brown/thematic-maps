@@ -128,12 +128,13 @@ class ThematicMaps:
     def coverage_layer(self):
 
         project = QgsProject.instance()
-        layer = project.mapLayer(TARGET_LAYER_ID)
+        layers = QgsProject.instance().mapLayersByShortName(LAYER_NAME)
+        layer = layers[0]
 
         if layer:
-            print(f"COVERAGE Layer called and found")
+            print(f"'{LAYER_NAME}' layer called and found")
         else:
-            print(f"Coverage Layer with ID '{TARGET_LAYER_ID}' not found. Creating a new one...")
+            print(f"'{LAYER_NAME}' layer not found. Creating a new one...")
             
             # 2. Create a new memory (scratch) layer
             # Format URI syntax: "Type?crs=EPSG:xxxx"
@@ -141,9 +142,8 @@ class ThematicMaps:
             layer = QgsVectorLayer(GEOMETRY_TYPE, LAYER_NAME, "memory")
             layer.setCrs(project.crs())
             
-            # 3. Set the custom layer ID
-            # Note: QGIS automatically appends a random string to custom IDs to ensure absolute uniqueness
-            layer.setId(TARGET_LAYER_ID)
+            # 3. Set the layer short name to identify it
+            layer.setShortName(LAYER_NAME)
             
             # 4. Add a new field to the layer
             # We use dataProvider() to add fields before the layer is loaded into the project registry
