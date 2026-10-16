@@ -128,10 +128,10 @@ class ThematicMaps:
     def coverage_layer(self):
 
         project = QgsProject.instance()
-        layers = QgsProject.instance().mapLayersByShortName(LAYER_NAME)
-        layer = layers[0]
-
-        if layer:
+        layers = QgsProject.instance().mapLayersByShortName(LAYER_NAME) 
+        
+        if layers:
+            layer = layers[0]
             print(f"'{LAYER_NAME}' layer called and found")
         else:
             print(f"'{LAYER_NAME}' layer not found. Creating a new one...")
