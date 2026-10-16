@@ -12,7 +12,7 @@ from qgis.core import (
     QgsUnitTypes,
     Qgis
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from qgis.PyQt.QtWidgets import (
     QMessageBox
 )
@@ -30,7 +30,10 @@ class layoutSetup:
         self.layout = layout
 
         designer = iface.openLayoutDesigner(layout)
-        designer.actionZoomFullExtent().trigger()
+        layout_view = designer.view()
+    
+        # 2. Wait 100 milliseconds for the window to draw, then execute zoomFull
+        QTimer.singleShot(100, lambda: layout_view.zoomFull())
         
         self.configureAtlas(layout, coverage_layer)
 
