@@ -30,6 +30,8 @@ class layoutSetup:
         self.layout = layout
 
         designer = iface.openLayoutDesigner(layout)
+        layout_view = designer.view()
+        layout_view.zoomFull()
         
         self.configureAtlas(layout, coverage_layer)
 
