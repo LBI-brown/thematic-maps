@@ -29,7 +29,7 @@ class layoutSetup:
         self.coverage_layer = coverage_layer
         self.layout = layout
 
-        designer = iface.openLayoutDesigner(layout)                
+        self.designer = iface.openLayoutDesigner(layout)                
         self.configureAtlas(layout, coverage_layer)
 
     def mapItem(self, layout):
@@ -87,7 +87,7 @@ class layoutSetup:
         # Example processing task: Print the layout name
         print(f"Executing script using layout: {layout_name}")
 
-        layout_view = designer.view()
+        layout_view = self.designer.view()
         layout_view.zoomFull()
                 
         QMessageBox.information(
